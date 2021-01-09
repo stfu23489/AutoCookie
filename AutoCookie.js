@@ -16,21 +16,21 @@ AC.Auto.clickGolden = undefined;
 AC.Auto.clickBuff = undefined;
 
 /***************************************
- *  This function (re)loads all of the autos.
+ *  This function (re)sets all of the autos.
  *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
 ***************************************/
 AC.Auto.load = function() {
-    AC.Auto.toggleClick()
-    AC.Auto.toggleClickBuff()
-    AC.Auto.toggleClickGolden()
+    AC.Auto.setClick()
+    AC.Auto.setClickBuff()
+    AC.Auto.setClickGolden()
 }
 
 /***************************************
- *  This function toggles the auto clicker timer.
+ *  This function sets the auto clicker timer.
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
 ***************************************/
-AC.Auto.toggleClick = function() {
+AC.Auto.setClick = function() {
     if (AC.Config.clicksPerSecond) {
         AC.Auto.click = setInterval(Game.ClickCookie, 1000/AC.Config.clicksPerSecond);
     } else {
@@ -39,11 +39,11 @@ AC.Auto.toggleClick = function() {
 }
 
 /***************************************
- *  This function toggles a buff to the auto clicker for when under the effects of a click boosting buff.
+ *  This function sets a buff to the auto clicker for when under the effects of a click boosting buff.
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.clicksPerSecondBuff   How many more times per second the auto clicker should click.
 ***************************************/
-AC.Auto.toggleClickBuff = function() {
+AC.Auto.setClickBuff = function() {
     if (AC.Config.clicksPerSecondBuff) {
         AC.Auto.clickBuff = setInterval(function() {
             if (Game.hasBuff("Click frenzy") ||
@@ -59,12 +59,12 @@ AC.Auto.toggleClickBuff = function() {
 }
 
 /***************************************
- *  This function toggles the automatic clicking of golden cookies.
+ *  This function sets the automatic clicking of golden cookies.
  *  It is called by AC.Auto.load()
  *  @global {bool}  AC.Config.autoClickGolden   0 if off. 1 if on.
  *  @global {int}   AC.Config.checkForGoldenTimer   How often the check for golden cookies triggers.
 ***************************************/
-AC.Auto.toggleClickGolden = function() {
+AC.Auto.setClickGolden = function() {
     if (AC.Config.autoClickGolden) {
         AC.Auto.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
