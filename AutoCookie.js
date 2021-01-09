@@ -1,4 +1,8 @@
-var AC = {};
+var AC = {
+    "Auto": {},
+    "Config": {},
+    "Helper": {}
+};
 
 // Variables for timers.
 AC.Auto.click = undefined;
