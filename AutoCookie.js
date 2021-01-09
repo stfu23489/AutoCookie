@@ -10,18 +10,18 @@ AC.Auto.clickGolden = undefined;
 AC.Auto.clickBuff = undefined;
 
 // Auto-Clicking Options.
-AC.Config.clicksPerSecond = 1;
-AC.Config.autoClickGolden = true;
+AC.Config.clicksPerSecond = 0;
+AC.Config.autoClickGolden = 1;
 AC.Config.clicksPerSecondBuff = 10;
 AC.Config.checkForGoldenTimer = 1000;
 
 AC.Helper.isEmpty = function(obj) {
     for(var key in obj) {
         if (obj.hasOwnProperty(key)) {
-            return false;
+            return 0;
         }
     }
-    return true;
+    return 1;
 }
 
 AC.Auto.load = function() {
