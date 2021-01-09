@@ -27,6 +27,7 @@ AC.Auto.load = function() {
 
 /***************************************
  *  This function toggles the auto clicker timer.
+ *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
 ***************************************/
 AC.Auto.toggleClick = function() {
@@ -39,6 +40,7 @@ AC.Auto.toggleClick = function() {
 
 /***************************************
  *  This function toggles a buff to the auto clicker for when under the effects of a click boosting buff.
+ *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.clicksPerSecondBuff   How many more times per second the auto clicker should click.
 ***************************************/
 AC.Auto.toggleClickBuff = function() {
@@ -58,6 +60,7 @@ AC.Auto.toggleClickBuff = function() {
 
 /***************************************
  *  This function toggles the automatic clicking of golden cookies.
+ *  It is called by AC.Auto.load()
  *  @global {bool}  AC.Config.autoClickGolden   0 if off. 1 if on.
  *  @global {int}   AC.Config.checkForGoldenTimer   How often the check for golden cookies triggers.
 ***************************************/
@@ -65,7 +68,7 @@ AC.Auto.toggleClickGolden = function() {
     if (AC.Config.autoClickGolden) {
         AC.Auto.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
-                if (shimmer.type == "golden" && (shimmer.wrath ==0 || AC.Helper.isEmpty(Game.buffs))) {
+                if (shimmer.type == "golden" && (shimmer.wrath == 0 || AC.Helper.isEmpty(Game.buffs))) {
                     shimmer.pop();
                 }
             });
