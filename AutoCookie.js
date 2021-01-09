@@ -65,7 +65,7 @@ AC.Auto.setClickBuff = function() {
  *  @global {int}   AC.Config.checkForGoldenTimer   How often the check for golden cookies triggers.
 ***************************************/
 AC.Auto.setClickGolden = function() {
-    if (AC.Config.autoClickGolden) {
+    if (AC.Config.autoClickGolden && AC.Config.checkForGoldenTimer) {
         AC.Auto.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
                 if (shimmer.type == "golden" && (shimmer.wrath == 0 || AC.Helper.isEmpty(Game.buffs))) {
