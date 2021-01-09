@@ -1,10 +1,4 @@
-RunAutoCookieHeader = function() {
-    var AC = {};
-}
-
-if (typeof AC == "undefined") {
-    RunAutoCookieHeader();
-}
+var AC = {};
 
 // Auto-Clicking Options
 AC.clicksPerSecond = 10;
