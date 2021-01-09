@@ -2,7 +2,7 @@ var AC = {
     "Auto": {},
     "Config": {},
     "Helper": {}
-};
+}
 
 // Variables for timers.
 AC.Auto.click = undefined;
@@ -37,7 +37,7 @@ AC.Auto.load = function() {
                 if (shimmer.type == "golden" && (shimmer.wrath ==0 || AC.Helper.isEmpty(Game.buffs))) {
                     shimmer.pop();
                 }
-            })
+            });
         }, AC.Config.checkForGoldenTimer);
     } else {
         AC.Auto.clickGolden = clearInterval(AC.Auto.clickGolden);
