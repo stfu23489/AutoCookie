@@ -53,3 +53,5 @@ AC.init = function() {
         AC.autoClickBuff = setInterval(AC.autoClickBuffFunc, 1000/AC.clicksPerSecondBuff);
     }
 }
+
+Ac.init();
