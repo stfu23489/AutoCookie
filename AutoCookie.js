@@ -115,7 +115,6 @@ AC.Data.configOff = {
 /*******************************************************************************
  *  Helper
 *******************************************************************************/
-
 /***************************************
  *  Thus function returns 0 if the dictionary is empty and 1 if it has contents.
  *  @param  {dict}  obj The dictionary to be checked.
