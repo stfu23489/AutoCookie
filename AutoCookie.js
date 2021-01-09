@@ -1,7 +1,7 @@
 var AC = {};
 
 // Auto-Clicking Options
-AC.clicksPerSecond = 10;
+AC.clicksPerSecond = 0;
 AC.autoClickGoldenOn = true;
 AC.clicksPerSecondBuff = 10;
 AC.checkForGoldenTimer = 1000;
