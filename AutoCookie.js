@@ -24,13 +24,15 @@ AC.Helper.isEmpty = function(obj) {
     return 1;
 }
 
-AC.Auto.load = function() {
+AC.Auto.toggleClick = function() {
     if (AC.Config.clicksPerSecond) {
         AC.Auto.click = setInterval(Game.ClickCookie, 1000/AC.Config.clicksPerSecond);
     } else {
         AC.Auto.click = clearInterval(AC.Auto.click);
     }
+}
 
+AC.Auto.toggleClickGolden = function() {
     if (AC.Config.autoClickGolden) {
         AC.Auto.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
@@ -42,7 +44,9 @@ AC.Auto.load = function() {
     } else {
         AC.Auto.clickGolden = clearInterval(AC.Auto.clickGolden);
     }
+}
 
+AC.Auto.toggleClickBuff = function() {
     if (AC.Config.clicksPerSecondBuff) {
         AC.Auto.clickBuff = setInterval(function() {
             if (Game.hasBuff("Click frenzy") ||
@@ -55,6 +59,12 @@ AC.Auto.load = function() {
     } else {
         AC.Auto.clickBuff = clearInterval(AC.Auto.clickBuff);
     }
+}
+
+AC.Auto.load = function() {
+    AC.Auto.toggleClick()
+    AC.Auto.toggleClickBuff()
+    AC.Auto.toggleClickGolden()
 }
 
 AC.Auto.load();
