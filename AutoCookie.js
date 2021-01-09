@@ -95,21 +95,21 @@ AC.Config.load = function(obj) {
  *  Data
 *******************************************************************************/
 AC.Data.configDefault = {
-    "clicksPerSecond" = 0,
-    "clicksPerSecondBuff" = 10,
-    "checkForGoldenTimer" = 1000
+    "clicksPerSecond": 0,
+    "clicksPerSecondBuff": 10,
+    "checkForGoldenTimer": 1000
 }
 
 AC.Data.configMax = {
-    "clicksPerSecond" = 100,
-    "clicksPerSecondBuff" = 0,
-    "checkForGoldenTimer" = 1000
+    "clicksPerSecond": 100,
+    "clicksPerSecondBuff": 0,
+    "checkForGoldenTimer": 1000
 }
 
 AC.Data.configOff = {
-    "clicksPerSecond" = 0,
-    "clicksPerSecondBuff" = 0,
-    "checkForGoldenTimer" = 0
+    "clicksPerSecond":0,
+    "clicksPerSecondBuff": 0,
+    "checkForGoldenTimer": 0
 }
 
 /*******************************************************************************
