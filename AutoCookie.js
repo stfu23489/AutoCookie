@@ -3,7 +3,7 @@ var AC = {};
 // Auto-Clicking Options
 AC.Config.clicksPerSecond = 0;
 AC.Config.autoClickGoldenOn = true;
-AC.Congif.clicksPerSecondBuff = 10;
+AC.Config.clicksPerSecondBuff = 10;
 AC.Config.checkForGoldenTimer = 1000;
 
 AC.Helper.isEmpty = function(obj) {
@@ -21,7 +21,7 @@ AC.Auto.clickFunc = function() {
 
 AC.Auto.clickGoldenFunc = function() {
     Game.shimmers.forEach(function(shimmer) {
-        if (shimmer.type == "golden" && (shimmer.wrath ==0 || AC.helper.isEmpty(Game.buffs))) {
+        if (shimmer.type == "golden" && (shimmer.wrath ==0 || AC.Helper.isEmpty(Game.buffs))) {
             shimmer.pop();
         }
     })
