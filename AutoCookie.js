@@ -20,9 +20,9 @@ AC.Auto.clickBuff = undefined;
  *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
 ***************************************/
 AC.Auto.load = function() {
-    AC.Auto.setClick()
-    AC.Auto.setClickBuff()
-    AC.Auto.setClickGolden()
+    AC.Auto.setClick();
+    AC.Auto.setClickBuff();
+    AC.Auto.setClickGolden();
 }
 
 /***************************************
