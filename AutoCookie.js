@@ -6,7 +6,7 @@ AC.Auto.clickGolden = undefined;
 AC.Auto.clickBuff = undefined;
 
 // Auto-Clicking Options.
-AC.Config.clicksPerSecond = 0;
+AC.Config.clicksPerSecond = 1;
 AC.Config.autoClickGolden = true;
 AC.Config.clicksPerSecondBuff = 10;
 AC.Config.checkForGoldenTimer = 1000;
