@@ -4,6 +4,7 @@
 var AC = {
     "Auto": {},
     "Config": {},
+    "Data": {},
     "Helper": {}
 }
 
@@ -65,7 +66,7 @@ AC.Auto.setClickBuff = function() {
  *  @global {int}   AC.Config.checkForGoldenTimer   How often the check for golden cookies triggers.
 ***************************************/
 AC.Auto.setClickGolden = function() {
-    if (AC.Config.autoClickGolden && AC.Config.checkForGoldenTimer) {
+    if (AC.Config.checkForGoldenTimer) {
         AC.Auto.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
                 if (shimmer.type == "golden" && (shimmer.wrath == 0 || AC.Helper.isEmpty(Game.buffs))) {
@@ -81,11 +82,28 @@ AC.Auto.setClickGolden = function() {
 /*******************************************************************************
  *  Config
 *******************************************************************************/
-// Auto-Clicking Options.
-AC.Config.clicksPerSecond = 0;
-AC.Config.autoClickGolden = 1;
-AC.Config.clicksPerSecondBuff = 10;
-AC.Config.checkForGoldenTimer = 1000;
+
+
+/*******************************************************************************
+ *  Data
+*******************************************************************************/
+AC.Data.configDefault = {
+    "clicksPerSecond" = 0,
+    "clicksPerSecondBuff" = 10,
+    "checkForGoldenTimer" = 1000
+}
+
+AC.Data.configMax = {
+    "clicksPerSecond" = 100,
+    "clicksPerSecondBuff" = 0,
+    "checkForGoldenTimer" = 1000
+}
+
+AC.Data.configOff = {
+    "clicksPerSecond" = 0,
+    "clicksPerSecondBuff" = 0,
+    "checkForGoldenTimer" = 0
+}
 
 /*******************************************************************************
  *  Helper
@@ -107,4 +125,5 @@ AC.Helper.isEmpty = function(obj) {
 /*******************************************************************************
  *  Main
 *******************************************************************************/
+AC.Auto.Config = AC.Data.configDefault
 AC.Auto.load();
