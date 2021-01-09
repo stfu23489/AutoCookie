@@ -2,9 +2,9 @@
 
 **Auto Cookie** is an addon for Cookie Clicker that adds automation to certain aspects of the game.
 
-## Current Features
+## Features
 
-Currently Auto Cookie can automate the following tasks.
+Currently Auto Cookie can automate the following tasks. *Not actually fully implemented yet.*
 
 * Automatically clicking the big cookie up to 100 times per second. As well as an option to click even faster when under a buff that affects the number of cookies earned when the big cookie is clicked.
 * Automatically clicking golden cookies and wrath cookies when appropriate.
