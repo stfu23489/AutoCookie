@@ -2,7 +2,7 @@ var AC = {};
 
 // Auto-Clicking Options
 AC.Config.clicksPerSecond = 0;
-AC.Config.autoClickGoldenOn = true;
+AC.Config.autoClickGolden = true;
 AC.Config.clicksPerSecondBuff = 10;
 AC.Config.checkForGoldenTimer = 1000;
 
@@ -37,13 +37,13 @@ AC.Auto.clickBuffFunc = function() {
 }
 
 AC.Auto.init = function() {
-    if (AC.Config.clicksPerSecond != 0) {
+    if (!AC.Config.clicksPerSecond) {
         AC.Auto.click = setInterval(AC.Auto.clickFunc, 1000/AC.Config.clicksPerSecond);
     }
-    if (AC.Config.autoClickGoldenOn) {
+    if (AC.Config.autoClickGolden) {
         AC.Auto.clickGolden = setInterval(AC.Auto.clickGoldenFunc, AC.Config.checkForGoldenTimer);
     }
-    if (AC.Config.clicksPerSecondBuff != 0) {
+    if (!AC.Config.clicksPerSecondBuff) {
         AC.Auto.clickBuff = setInterval(AC.Auto.clickBuffFunc, 1000/AC.Config.clicksPerSecondBuff);
     }
 }
