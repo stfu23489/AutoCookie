@@ -48,5 +48,4 @@ AC.init = function() {
     }
 }
 
-Ac.init();
-
+AC.init();
