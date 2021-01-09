@@ -69,7 +69,10 @@ AC.Auto.setClickGolden = function() {
     if (AC.Config.checkForGoldenTimer) {
         AC.Auto.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
-                if (shimmer.type == "golden" && (shimmer.wrath == 0 || AC.Helper.isEmpty(Game.buffs))) {
+                if (shimmer.type == "golden" && (shimmer.wrath == 0 ||
+                                                 AC.Helper.isEmpty(Game.buffs) ||
+                                                 Game.hasBuff("Cookie chain") ||
+                                                 Game.hasBuff("Cookie storm")) {
                     shimmer.pop();
                 }
             });
