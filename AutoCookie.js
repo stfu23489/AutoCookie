@@ -1,6 +1,11 @@
 var AC = {};
 
-// Auto-Clicking Options
+// Variables for timers.
+AC.Auto.click = undefined;
+AC.Auto.clickGolden = undefined;
+AC.Auto.clickBuff = undefined;
+
+// Auto-Clicking Options.
 AC.Config.clicksPerSecond = 0;
 AC.Config.autoClickGolden = true;
 AC.Config.clicksPerSecondBuff = 10;
@@ -15,37 +20,37 @@ AC.Helper.isEmpty = function(obj) {
     return true;
 }
 
-AC.Auto.clickFunc = function() {
-    Game.ClickCookie();
-}
-
-AC.Auto.clickGoldenFunc = function() {
-    Game.shimmers.forEach(function(shimmer) {
-        if (shimmer.type == "golden" && (shimmer.wrath ==0 || AC.Helper.isEmpty(Game.buffs))) {
-            shimmer.pop();
-        }
-    })
-}
-
-AC.Auto.clickBuffFunc = function() {
-    if (Game.hasBuff("Click frenzy") ||
-        Game.hasBuff("Cursed finger") ||
-        Game.hasBuff("Devastation") ||
-        Game.hasBuff("Dragonflight")) {
-        Game.ClickCookie();
+AC.Auto.load = function() {
+    if (AC.Config.clicksPerSecond) {
+        AC.Auto.click = setInterval(Game.ClickCookie, 1000/AC.Config.clicksPerSecond);
+    } else {
+        AC.Auto.click = clearInterval(AC.Auto.click);
     }
-}
 
-AC.Auto.init = function() {
-    if (!AC.Config.clicksPerSecond) {
-        AC.Auto.click = setInterval(AC.Auto.clickFunc, 1000/AC.Config.clicksPerSecond);
-    }
     if (AC.Config.autoClickGolden) {
-        AC.Auto.clickGolden = setInterval(AC.Auto.clickGoldenFunc, AC.Config.checkForGoldenTimer);
+        AC.Auto.clickGolden = setInterval(function() {
+            Game.shimmers.forEach(function(shimmer) {
+                if (shimmer.type == "golden" && (shimmer.wrath ==0 || AC.Helper.isEmpty(Game.buffs))) {
+                    shimmer.pop();
+                }
+            })
+        }, AC.Config.checkForGoldenTimer);
+    } else {
+        AC.Auto.clickGolden = clearInterval(AC.Auto.clickGolden);
     }
-    if (!AC.Config.clicksPerSecondBuff) {
-        AC.Auto.clickBuff = setInterval(AC.Auto.clickBuffFunc, 1000/AC.Config.clicksPerSecondBuff);
+
+    if (AC.Config.clicksPerSecondBuff) {
+        AC.Auto.clickBuff = setInterval(function() {
+            if (Game.hasBuff("Click frenzy") ||
+                Game.hasBuff("Cursed finger") ||
+                Game.hasBuff("Devastation") ||
+                Game.hasBuff("Dragonflight")) {
+                Game.ClickCookie();
+            }
+        }, 1000/AC.Config.clicksPerSecondBuff);
+    } else {
+        AC.Auto.clickBuff = clearInterval(AC.Auto.clickBuff);
     }
 }
 
-AC.Auto.init();
+AC.Auto.load();
