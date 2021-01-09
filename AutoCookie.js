@@ -84,9 +84,11 @@ AC.Auto.setClickGolden = function() {
 *******************************************************************************/
 /***************************************
  *  This function loads configuration data.
+ *  @global {dict}  AC.Config   The configuration dictionary.
+ *  @param  {dict}  obj The configuration options to load into AC.Config.
 ***************************************/
-AC.Config.load = function() {
-    Object.assign(AC.Config, AC.Data.configDefault);
+AC.Config.load = function(obj) {
+    Object.assign(AC.Config, obj);
 }
 
 /*******************************************************************************
@@ -130,5 +132,5 @@ AC.Helper.isEmpty = function(obj) {
 /*******************************************************************************
  *  Main
 *******************************************************************************/
-AC.Config.load();
+AC.Config.load(AC.Data.configDefault);
 AC.Auto.load();
