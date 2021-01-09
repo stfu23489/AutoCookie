@@ -1,12 +1,12 @@
 var AC = {};
 
 // Auto-Clicking Options
-AC.clicksPerSecond = 0;
-AC.autoClickGoldenOn = true;
-AC.clicksPerSecondBuff = 10;
-AC.checkForGoldenTimer = 1000;
+AC.Config.clicksPerSecond = 0;
+AC.Config.autoClickGoldenOn = true;
+AC.Congif.clicksPerSecondBuff = 10;
+AC.Config.checkForGoldenTimer = 1000;
 
-AC.isEmpty = function(obj) {
+AC.Helper.isEmpty = function(obj) {
     for(var key in obj) {
         if (obj.hasOwnProperty(key)) {
             return false;
@@ -15,19 +15,19 @@ AC.isEmpty = function(obj) {
     return true;
 }
 
-AC.autoClickFunc = function() {
+AC.Auto.clickFunc = function() {
     Game.ClickCookie();
 }
 
-AC.autoClickGoldenFunc = function() {
+AC.Auto.clickGoldenFunc = function() {
     Game.shimmers.forEach(function(shimmer) {
-        if (shimmer.type == "golden" && (shimmer.wrath ==0 || isEmpty(Game.buffs))) {
+        if (shimmer.type == "golden" && (shimmer.wrath ==0 || AC.helper.isEmpty(Game.buffs))) {
             shimmer.pop();
         }
     })
 }
 
-AC.autoClickBuffFunc = function() {
+AC.Auto.clickBuffFunc = function() {
     if (Game.hasBuff("Click frenzy") ||
         Game.hasBuff("Cursed finger") ||
         Game.hasBuff("Devastation") ||
@@ -36,16 +36,16 @@ AC.autoClickBuffFunc = function() {
     }
 }
 
-AC.init = function() {
-    if (AC.clicksPerSecond != 0) {
-        AC.autoClick = setInterval(AC.autoClickFunc, 1000/AC.clicksPerSecond);
+AC.Auto.init = function() {
+    if (AC.Config.clicksPerSecond != 0) {
+        AC.Auto.click = setInterval(AC.Auto.clickFunc, 1000/AC.Config.clicksPerSecond);
     }
-    if (AC.autoClickGoldenOn) {
-        AC.autoClickGolden = setInterval(AC.autoClickGoldenFunc, AC.checkForGoldenTimer);
+    if (AC.Config.autoClickGoldenOn) {
+        AC.Auto.clickGolden = setInterval(AC.Auto.clickGoldenFunc, AC.Config.checkForGoldenTimer);
     }
-    if (AC.clicksPerSecondBuff != 0) {
-        AC.autoClickBuff = setInterval(AC.autoClickBuffFunc, 1000/AC.clicksPerSecondBuff);
+    if (AC.Config.clicksPerSecondBuff != 0) {
+        AC.Auto.clickBuff = setInterval(AC.Auto.clickBuffFunc, 1000/AC.Config.clicksPerSecondBuff);
     }
 }
 
-AC.init();
+AC.Auto.init();
