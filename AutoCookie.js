@@ -92,7 +92,7 @@ AC.Auto.setClickGolden = function() {
 AC.Auto.setCastFtHoF = function() {
     if (AC.Config.castFtHoFTimer) {
         AC.Auto.castFtHoF = setInterval(function() {
-            var minigame = Game.Objects['Wizard tower'].minigame.magicM
+            var minigame = Game.Objects['Wizard tower'].minigame
             if(!AC.Helper.isEmpty(Game.buffs) && minigame.magic >= (10 + 0.6*minigame.magicM)) {
                 minigame.castSpell(minigame.spellsById[1]);
             }
