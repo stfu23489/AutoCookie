@@ -85,15 +85,15 @@ AC.Auto.setClickGolden = function() {
 }
 
 /***************************************
- *  This function sets the auto clicker timer.
+ *  This function sets the auto FtHoF caster.
  *  It is called by AC.Auto.load()
- *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
+ *  @global {int}   AC.Config.castFtHoFTimer    If 0, turn off auto caster. Else create a timer with this length.
 ***************************************/
 AC.Auto.setCastFtHoF = function() {
     if (AC.Config.castFtHoFTimer) {
         AC.Auto.castFtHoF = setInterval(function() {
             var minigame = Game.Objects['Wizard tower'].minigame
-            if(!AC.Helper.isEmpty(Game.buffs) && minigame.magic >= (10 + 0.6*minigame.magicM)) {
+            if(!AC.Helper.isEmpty(Game.buffs) && !AC.Helper.hadBadBuff() && minigame.magic >= (10 + 0.6*minigame.magicM)) {
                 minigame.castSpell(minigame.spellsById[1]);
             }
         }, AC.Config.castFtHoFTimer);
@@ -138,12 +138,43 @@ AC.Data.configOff = {
     "castFtHoFTimer": 0
 }
 
-AC.Data.goodBuffs = [
+AC.Data.badBuffs = [
+    "Slap to the face",
+    "Senility",
+    "Locusts",
+    "Cave-in",
+    "Jammed machinery",
+    "Recession",
+    "Crisis of faith",
+    "Magivores",
+    "Black holes",
+    "Lab disaster",
+    "Dimensional calamity",
+    "Time jam",
+    "Predictable tragedy",
+    "Eclipse",
+    "Dry spell",
+    "Microcosm",
+    "Antipattern",
+    "Big crunch",
+    "Clot"
 ]
 
 /*******************************************************************************
  *  Helper
 *******************************************************************************/
+/***************************************
+ *  Thus function returns 0 if there is no active debuff and the number of debuffs otherwise.
+ *  @global {list}  AC.Data.badBuffs    A list of debuffs.
+***************************************/
+AC.Helper.hasBadBuff = function() {
+	var num = 0;
+	AC.Data.badBuffs.forEach(function(buff) {
+		if (Game.hasBuff(buff)) {num += 1}
+	});
+	return num;
+}
+
 /***************************************
  *  Thus function returns 0 if the dictionary is empty and 1 if it has contents.
  *  @param  {dict}  obj The dictionary to be checked.
