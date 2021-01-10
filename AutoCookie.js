@@ -64,7 +64,6 @@ AC.Auto.setClickBuff = function() {
 /***************************************
  *  This function sets the automatic clicking of golden cookies.
  *  It is called by AC.Auto.load()
- *  @global {bool}  AC.Config.autoClickGolden   0 if off. 1 if on.
  *  @global {int}   AC.Config.checkForGoldenTimer   How often the check for golden cookies triggers.
 ***************************************/
 AC.Auto.setClickGolden = function() {
@@ -87,7 +86,7 @@ AC.Auto.setClickGolden = function() {
 /***************************************
  *  This function sets the auto FtHoF caster.
  *  It is called by AC.Auto.load()
- *  @global {int}   AC.Config.castFtHoFTimer    If 0, turn off auto caster. Else create a timer with this length.
+ *  @global {int}   AC.Config.castFtHoFTimer    How often the check to for casting triggers.
 ***************************************/
 AC.Auto.setCastFtHoF = function() {
     if (AC.Config.castFtHoFTimer) {
