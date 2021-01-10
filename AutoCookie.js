@@ -89,7 +89,7 @@ AC.Auto.setClickGolden = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
 ***************************************/
-AC.Auto.setClick = function() {
+AC.Auto.setCastFtHoF = function() {
     if (AC.Config.castFtHoFTimer) {
         AC.Auto.castFtHoF = setInterval(function() {
             var minigame = Game.Objects['Wizard tower'].minigame.magicM
