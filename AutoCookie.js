@@ -15,6 +15,7 @@ var AC = {
 AC.Auto.click = undefined;
 AC.Auto.clickGolden = undefined;
 AC.Auto.clickBuff = undefined;
+AC.Auto.castFtHoF = undefined;
 
 /***************************************
  *  This function (re)sets all of the autos.
@@ -24,6 +25,7 @@ AC.Auto.load = function() {
     AC.Auto.setClick();
     AC.Auto.setClickBuff();
     AC.Auto.setClickGolden();
+    AC.Auto.setCastFtHoF();
 }
 
 /***************************************
@@ -82,6 +84,24 @@ AC.Auto.setClickGolden = function() {
     }
 }
 
+/***************************************
+ *  This function sets the auto clicker timer.
+ *  It is called by AC.Auto.load()
+ *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
+***************************************/
+AC.Auto.setClick = function() {
+    if (AC.Config.castFtHoFTimer) {
+        AC.Auto.castFtHoF = setInterval(function() {
+            var minigame = Game.Objects['Wizard tower'].minigame.magicM
+            if(!AC.Helper.isEmpty(Game.buffs) && minigame.magic >= (10 + 0.6*minigame.magicM)) {
+                minigame.castSpell(minigame.spellsById[1]);
+            }
+        }, AC.Config.castFtHoFTimer);
+    } else {
+        AC.Auto.castFtHoF = clearInterval(AC.Auto.castFtHoF);
+    }
+}
+
 /*******************************************************************************
  *  Config
 *******************************************************************************/
@@ -100,19 +120,22 @@ AC.Config.load = function(obj) {
 AC.Data.configDefault = {
     "clicksPerSecond": 0,
     "clicksPerSecondBuff": 10,
-    "checkForGoldenTimer": 1000
+    "checkForGoldenTimer": 1000,
+    "castFtHoFTimer": 1000
 }
 
 AC.Data.configMax = {
     "clicksPerSecond": 100,
     "clicksPerSecondBuff": 0,
-    "checkForGoldenTimer": 1000
+    "checkForGoldenTimer": 1000,
+    "castFtHoFTimer": 1000
 }
 
 AC.Data.configOff = {
     "clicksPerSecond":0,
     "clicksPerSecondBuff": 0,
-    "checkForGoldenTimer": 0
+    "checkForGoldenTimer": 0,
+    "castFtHoFTimer": 0
 }
 
 /*******************************************************************************
