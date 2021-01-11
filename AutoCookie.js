@@ -11,6 +11,9 @@ var AC = {
 
 /*******************************************************************************
  *  Auto
+ *  All functions in Auto (except load) should be associated to a timer for that Auto.
+ *  The naming structure for a function associated to timeer "Timer" is "setTimer".
+ *  The names of timers should be stored in AC.Data.autos.
 *******************************************************************************/
 /***************************************
  *  This function (re)sets all of the autos.
