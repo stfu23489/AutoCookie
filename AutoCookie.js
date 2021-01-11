@@ -32,8 +32,8 @@ AC.Auto.load = function() {
     // Set the timers.
     AC.Data.autos.forEach(function(auto) {
         var autoFnName = "AC.Auto.set" + auto.charAt(0).toUpperCase() + auto.slice(1);
-        console.log(AutoFnName);
-        var autoFn = window[AutoFnName];
+        console.log(autoFnName);
+        var autoFn = window[autoFnName];
         if (typeof autoFn === "function") {autoFn(); console.log(auto+' ran')} else {auto+ 'fail'};
     });
 }
