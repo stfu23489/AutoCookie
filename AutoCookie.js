@@ -53,7 +53,7 @@ AC.Auto.Fns.castFtHoF = function() {
     if (AC.Config.Options.loaded.castFtHoFTimer) {
         AC.Auto.Timers.castFtHoF = setInterval(function() {
             var minigame = Game.Objects['Wizard tower'].minigame
-            if(!AC.Helper.isEmpty(Game.buffs) && !AC.Helper.hasBadBuff() && minigame.magic >= (10 + 0.6*minigame.magicM)) {
+            if (!AC.Helper.isEmpty(Game.buffs) && !AC.Helper.hasBadBuff() && minigame.magic >= (10 + 0.6*minigame.magicM)) {
                 minigame.castSpell(minigame.spellsById[1]);
             }
         }, AC.Config.Options.loaded.castFtHoFTimer);
