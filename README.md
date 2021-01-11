@@ -1,6 +1,6 @@
 ## Auto Cookie
 
-**Auto Cookie** is an addon for Cookie Clicker that adds automation to certain aspects of the game. I created it as part of my run through with Cookie Clicker. I wanted to unlock all achievements quickly and I was okay with a very specific kind of cheating: If I could program it myself and it didn't I only cheated in ways that just (inhumanly) sped up gameplay, I could do it.
+**Auto Cookie** is an addon for Cookie Clicker that adds automation to certain aspects of the game. I created it as part of my run through with Cookie Clicker. I wanted to unlock all achievements quickly and I was okay with a very specific kind of cheating: If I could program it myself and it didn't I only cheated in ways that (inhumanly) sped up gameplay, I could do it. So autoclickers, buyers, and sellers were fine, but just cheating the achievements in wasn't.
 
 ## Features
 
