@@ -275,5 +275,5 @@ AC.Helper.isEmpty = function(obj) {
 /*******************************************************************************
  *  Main
 *******************************************************************************/
-AC.Config.load(AC.Data.configDefault);
+AC.Config.load(AC.Data.configMax);
 AC.Auto.load();
