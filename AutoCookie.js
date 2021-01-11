@@ -33,7 +33,6 @@ var AC = {
     },
     "Data": {},
     "Helper": {},
-    "Mod": {},
     "Version": "5.1"
 }
 
@@ -301,7 +300,7 @@ AC.Helper.isEmpty = function(obj) {
  *  Mod
  *  The functions called by Cookie Clicker to initialize the mod and save/load settings.
 *******************************************************************************/
-AC.Mod.init = function() {
+AC.init = function() {
     var delay = setTimeout(function() {AC.Auto.load(AC.Config.Options.loaded); delay = clearTimeout(delay)}, 500);
     if (Game.prefs.popups) {
         Game.Popup("Auto Cookie " + AC.Version + " loaded.");
@@ -311,11 +310,11 @@ AC.Mod.init = function() {
     Game.Win("Third-party");
 }
 
-AC.Mod.save = function() {
+AC.save = function() {
     return AC.Config.Options.loaded;
 }
 
-AC.Mod.load = function(saveStr) {
+AC.load = function(saveStr) {
     try {
         var options = JSON.stringify(saveStr);
         console.log(options);
@@ -330,4 +329,4 @@ AC.Mod.load = function(saveStr) {
     }
 }
 
-AC.Mod.init()
+Game.registerMod("AC", AC);
