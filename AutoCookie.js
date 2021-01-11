@@ -17,6 +17,7 @@ AC.Auto.click = undefined;
 AC.Auto.clickGolden = undefined;
 AC.Auto.clickBuff = undefined;
 AC.Auto.castFtHoF = undefined;
+AC.Auto.godzmazokLoop = undefined;
 
 /***************************************
  *  This function (re)sets all of the autos.
@@ -27,6 +28,7 @@ AC.Auto.load = function() {
     AC.Auto.setClickBuff();
     AC.Auto.setClickGolden();
     AC.Auto.setCastFtHoF();
+	AC.Auto.setGodzmazokLoop();
 }
 
 /***************************************
@@ -103,13 +105,14 @@ AC.Auto.setCastFtHoF = function() {
 }
 
 /***************************************
- *  This function sets the auto FtHoF caster.
+ *  This function sets the broken auto godzmazok loop.
  *  It is called by AC.Auto.load()
- *  @global {int}   AC.Config.castFtHoFTimer    How often the check to for casting triggers.
+ *  @global {int}   AC.Config.godzmazokLoopCount	How many times to iterate buying and selling 100 cursors.
+ *  @global {int}   AC.Config.godzmazokLoopTimer	How often the check to for casting triggers.
 ***************************************/
 AC.Auto.setGodzmazokLoop = function() {
 	AC.Cache.godzamokHasMouse = 0;
-    if (AC.Config.godzmazokLoopCount && AC.Config.godzmazokLoopTimer) {
+	if (AC.Config.godzmazokLoopCount && AC.Config.godzmazokLoopTimer) {
 		AC.Auto.godzmazokLoop = setInterval(function() {
 			if (AC.Cache.godzamokHasMouse == 0) {
 				AC.Data.mouseUpgrades.forEach(function(upgrade) {if (Game.Has(upgrade)) {AC.Cache.godzamokHasMouse = 1}});
@@ -129,9 +132,9 @@ AC.Auto.setGodzmazokLoop = function() {
 				Game.Objects.Cursor.buy(cursorAmount);
 			}
 		}, AC.Config.godzmazokLoopTimer);
-    } else {
-        AC.Auto.castFtHoF = clearInterval(AC.Auto.castFtHoF);
-    }
+	} else {
+		AC.Auto.godzmazokLoop = clearInterval(AC.Auto.godzmazokLoop);
+	}
 }
 
 /*******************************************************************************
