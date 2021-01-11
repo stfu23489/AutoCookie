@@ -2,7 +2,10 @@
  *  Header
 *******************************************************************************/
 var AC = {
-    "Auto": {},
+    "Auto": {
+        "Set": {},
+        "Timers": {}
+    },
     "Cache": {},
     "Config": {},
     "Data": {},
@@ -12,28 +15,28 @@ var AC = {
 /*******************************************************************************
  *  Auto
  *  All functions in Auto (except load) should be associated to a timer for that Auto.
- *  The naming structure for a function associated to timeer "Timer" is "setTimer".
+ *  The naming structure for a function associated to timer "timer" is "setTimer".
  *  The names of timers should be stored in AC.Data.autos.
 *******************************************************************************/
 /***************************************
  *  This function (re)sets all of the autos.
- *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
+ *  @param {dict}   configuration   A configuration dictionary.
 ***************************************/
 AC.Auto.load = function(configuration) {
-    AC.Config.load(configuration);
+    Object.assign(AC.Config, configuration);
     
     // Clear old timers and define variables.
     AC.Data.autos.forEach(function(auto) {
-        if (typeof AC.Auto[auto] !== "undefined") {
-            AC.Auto[auto] = clearInterval(AC.Auto[auto]);
+        if (typeof AC.Auto.Timers[auto] !== "undefined") {
+            AC.Auto.Timers[auto] = clearInterval(AC.Auto.Timers[auto]);
         } else {
-            AC.Auto[auto] = undefined;
+            AC.Auto.Timers[auto] = undefined;
         }
     });
     
     // Set the timers.
     AC.Data.autos.forEach(function(auto) {
-        eval("AC.Auto.set" + auto.charAt(0).toUpperCase() + auto.slice(1) + "()");
+        eval("AC.Auto.Set." + auto + "()");
     });
 }
 
@@ -42,11 +45,11 @@ AC.Auto.load = function(configuration) {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
 ***************************************/
-AC.Auto.setClick = function() {
+AC.Auto.Set.Click = function() {
     if (AC.Config.clicksPerSecond) {
-        AC.Auto.click = setInterval(Game.ClickCookie, 1000/AC.Config.clicksPerSecond);
+        AC.Auto.Timers.click = setInterval(Game.ClickCookie, 1000/AC.Config.clicksPerSecond);
     } else {
-        AC.Auto.click = clearInterval(AC.Auto.click);
+        AC.Auto.Timers.click = clearInterval(AC.Auto.Timers.click);
     }
 }
 
@@ -55,9 +58,9 @@ AC.Auto.setClick = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.clicksPerSecondBuff   How many more times per second the auto clicker should click.
 ***************************************/
-AC.Auto.setClickBuff = function() {
+AC.Auto.Set.ClickBuff = function() {
     if (AC.Config.clicksPerSecondBuff) {
-        AC.Auto.clickBuff = setInterval(function() {
+        AC.Auto.Timers.clickBuff = setInterval(function() {
             if (Game.hasBuff("Click frenzy") ||
                 Game.hasBuff("Cursed finger") ||
                 Game.hasBuff("Devastation") ||
@@ -66,7 +69,7 @@ AC.Auto.setClickBuff = function() {
             }
         }, 1000/AC.Config.clicksPerSecondBuff);
     } else {
-        AC.Auto.clickBuff = clearInterval(AC.Auto.clickBuff);
+        AC.Auto.Timers.clickBuff = clearInterval(AC.Auto.Timers.clickBuff);
     }
 }
 
@@ -75,9 +78,9 @@ AC.Auto.setClickBuff = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.checkForGoldenTimer   How often the check for golden cookies triggers.
 ***************************************/
-AC.Auto.setClickGolden = function() {
+AC.Auto.Set.ClickGolden = function() {
     if (AC.Config.checkForGoldenTimer) {
-        AC.Auto.clickGolden = setInterval(function() {
+        AC.Auto.Timers.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
                 if (shimmer.type == "golden" && (shimmer.wrath == 0 ||
                     AC.Helper.isEmpty(Game.buffs) ||
@@ -88,7 +91,7 @@ AC.Auto.setClickGolden = function() {
             });
         }, AC.Config.checkForGoldenTimer);
     } else {
-        AC.Auto.clickGolden = clearInterval(AC.Auto.clickGolden);
+        AC.Auto.Timers.clickGolden = clearInterval(AC.Auto.Timers.clickGolden);
     }
 }
 
@@ -97,16 +100,16 @@ AC.Auto.setClickGolden = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.castFtHoFTimer    How often the check to for casting triggers.
 ***************************************/
-AC.Auto.setCastFtHoF = function() {
+AC.Auto.Set.CastFtHoF = function() {
     if (AC.Config.castFtHoFTimer) {
-        AC.Auto.castFtHoF = setInterval(function() {
+        AC.Auto.Timers.castFtHoF = setInterval(function() {
             var minigame = Game.Objects['Wizard tower'].minigame
             if(!AC.Helper.isEmpty(Game.buffs) && !AC.Helper.hasBadBuff() && minigame.magic >= (10 + 0.6*minigame.magicM)) {
                 minigame.castSpell(minigame.spellsById[1]);
             }
         }, AC.Config.castFtHoFTimer);
     } else {
-        AC.Auto.castFtHoF = clearInterval(AC.Auto.castFtHoF);
+        AC.Auto.Timers.castFtHoF = clearInterval(AC.Auto.Timers.castFtHoF);
     }
 }
 
@@ -116,10 +119,10 @@ AC.Auto.setCastFtHoF = function() {
  *  @global {int}   AC.Config.godzmazokLoopCount	How many times to iterate buying and selling 100 cursors.
  *  @global {int}   AC.Config.godzmazokLoopTimer	How often the check to for casting triggers.
 ***************************************/
-AC.Auto.setGodzmazokLoop = function() {
+AC.Auto.Set.GodzmazokLoop = function() {
     AC.Cache.godzamokHasMouse = 0;
     if (AC.Config.godzmazokLoopCount && AC.Config.godzmazokLoopTimer) {
-        AC.Auto.godzmazokLoop = setInterval(function() {
+        AC.Auto.Timers.godzmazokLoop = setInterval(function() {
             if (AC.Cache.godzamokHasMouse == 0) {
                 AC.Data.mouseUpgrades.forEach(function(upgrade) {if (Game.Has(upgrade)) {AC.Cache.godzamokHasMouse = 1}});
                 if (AC.Cache.godzamokHasMouse == 0 && Game.HasUnlocked("Plastic mouse") && (Game.Upgrades["Plastic mouse"].getPrice() <= Game.cookies)) {
@@ -139,7 +142,7 @@ AC.Auto.setGodzmazokLoop = function() {
             }
         }, AC.Config.godzmazokLoopTimer);
     } else {
-        AC.Auto.godzmazokLoop = clearInterval(AC.Auto.godzmazokLoop);
+        AC.Auto.Timers.godzmazokLoop = clearInterval(AC.Auto.Timers.godzmazokLoop);
     }
 }
 
@@ -151,15 +154,6 @@ AC.Cache.godzamokHasMouse = 0;
 /*******************************************************************************
  *  Config
 *******************************************************************************/
-/***************************************
- *  This function loads configuration data.
- *  This function is called by AC.Auto.load()
- *  @global {dict}  AC.Config   The configuration dictionary.
- *  @param  {dict}  obj The configuration options to load into AC.Config.
-***************************************/
-AC.Config.load = function(obj) {
-    Object.assign(AC.Config, obj);
-}
 
 /*******************************************************************************
  *  Data
@@ -243,7 +237,7 @@ AC.Data.mouseUpgrades = [
 *******************************************************************************/
 /***************************************
  *  Thus function returns 0 if there is no active debuff and the number of debuffs otherwise.
- *  This function is called by AC.Auto.setCastFtHoF().
+ *  This function is called by AC.Auto.Set.CastFtHoF().
  *  @global {list}  AC.Data.badBuffs    A list of debuffs.
 ***************************************/
 AC.Helper.hasBadBuff = function() {
@@ -256,7 +250,7 @@ AC.Helper.hasBadBuff = function() {
 
 /***************************************
  *  Thus function returns 0 if the dictionary is empty and 1 if it has contents.
- *  This function is called by bAC.Auto.setClickGolden(), AC.Auto.setCastFtHoF().
+ *  This function is called by AC.Auto.Set.ClickGolden(), AC.Auto.Set.CastFtHoF().
  *  @param  {dict}  obj The dictionary to be checked.
 ***************************************/
 AC.Helper.isEmpty = function(obj) {
