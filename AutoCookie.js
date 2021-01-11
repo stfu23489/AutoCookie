@@ -12,30 +12,25 @@ var AC = {
 /*******************************************************************************
  *  Auto
 *******************************************************************************/
-AC.Auto.click = undefined;
-AC.Auto.clickGolden = undefined;
-AC.Auto.clickBuff = undefined;
-AC.Auto.castFtHoF = undefined;
-AC.Auto.godzmazokLoop = undefined;
-
 /***************************************
  *  This function (re)sets all of the autos.
  *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
 ***************************************/
 AC.Auto.load = function() {
     // Clear old timers and define variables.
-    AC.Helper.resetTimer(AC.Auto.click)
-    AC.Helper.resetTimer(AC.Auto.clickGolden)
-    AC.Helper.resetTimer(AC.Auto.clickBuff)
-    AC.Helper.resetTimer(AC.Auto.castFtHoF)
-    AC.Helper.resetTimer(AC.Auto.godzmazokLoop)
+    AC.Data.autos.forEach(function(auto) {
+        if (typeof AC.Auto[auto] !== "undefined") {
+            AC.Auto[auto] = clearInterval(AC.Auto[auto]);
+        } else {
+            AC.Auto[auto] = undefined;
+        }
+    });
     
     // Set the timers.
-    AC.Auto.setClick();
-    AC.Auto.setClickBuff();
-    AC.Auto.setClickGolden();
-    AC.Auto.setCastFtHoF();
-    AC.Auto.setGodzmazokLoop();
+    AC.Data.autos.forEach(function(auto) {
+        var autoFn = window["AC.Auto.set" + auto.charAt(0).toUpperCase() + auto.slice(1)];
+        if (typeof autoFn === "function") autoFn();
+    }
 }
 
 /***************************************
@@ -164,6 +159,14 @@ AC.Config.load = function(obj) {
 /*******************************************************************************
  *  Data
 *******************************************************************************/
+AC.Data.autos = [
+    "click",
+    "clickGolden"
+    "clickBuff"
+    "castFtHoF"
+    "godzmazokLoop"
+]
+    
 AC.Data.configDefault = {
     "clicksPerSecond": 0,
     "clicksPerSecondBuff": 10,
