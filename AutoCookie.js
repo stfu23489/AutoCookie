@@ -3,7 +3,7 @@
 *******************************************************************************/
 var AC = {
     "Auto": {           // Things to do with automation.
-        "Set": {},      // Functions that set-up timers for automation.
+        "Fns": {},      // Functions that set-up timers for automation.
         "Timers": {}    // IDs of timers.
     },
     "Cache": {},        // Things that need to be referenced repeatedly, to speed up this mod.
@@ -17,6 +17,7 @@ var AC = {
 /*******************************************************************************
  *  Auto
  *  All functions in Auto.Fn are automatically associated with a timer ID in Auto.Timers with the same name for its own use.
+ *  Each function in Auto.Fn should start a single timer and tie its given timer ID to it.
 *******************************************************************************/
 /***************************************
  *  This function (re)sets all of the autos.
