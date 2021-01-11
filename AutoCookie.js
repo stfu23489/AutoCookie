@@ -6,7 +6,7 @@ var AC = {
         "Set": {},      // Functions that set-up timers for automation.
         "Timers": {}    // IDs of timers.
     },
-    "Cache": {},        // Things that need to be referenced repeatedly, to speed up the game.
+    "Cache": {},        // Things that need to be referenced repeatedly, to speed up this mod.
     "Config": {         // Things to do with the configuration of this mod.
         "Options:" {},  // Dictionaries of different user options
     },
@@ -26,7 +26,7 @@ var AC = {
 ***************************************/
 AC.Auto.load = function(configuration) {
     // Loads the configuration options
-    Object.assign(AC.Config, configuration);
+    Object.assign(AC.Config.Options.loaded, configuration);
     
     // Clear old timers and define AC.Auto.Timers.
     var autos = Object.keys(AC.Auto.Set)
@@ -47,16 +47,16 @@ AC.Auto.load = function(configuration) {
 /***************************************
  *  This function sets the auto FtHoF caster.
  *  It is called by AC.Auto.load()
- *  @global {int}   AC.Config.castFtHoFTimer    How often the check to for casting triggers.
+ *  @global {int}   AC.Config.Options.loaded.castFtHoFTimer How often the check to for casting triggers.
 ***************************************/
 AC.Auto.Set.castFtHoF = function() {
-    if (AC.Config.castFtHoFTimer) {
+    if (AC.Config.Options.loaded.castFtHoFTimer) {
         AC.Auto.Timers.castFtHoF = setInterval(function() {
             var minigame = Game.Objects['Wizard tower'].minigame
             if(!AC.Helper.isEmpty(Game.buffs) && !AC.Helper.hasBadBuff() && minigame.magic >= (10 + 0.6*minigame.magicM)) {
                 minigame.castSpell(minigame.spellsById[1]);
             }
-        }, AC.Config.castFtHoFTimer);
+        }, AC.Config.Options.loaded.castFtHoFTimer);
     } else {
         AC.Auto.Timers.castFtHoF = clearInterval(AC.Auto.Timers.castFtHoF);
     }
@@ -65,11 +65,11 @@ AC.Auto.Set.castFtHoF = function() {
 /***************************************
  *  This function sets the auto clicker timer.
  *  It is called by AC.Auto.load()
- *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
+ *  @global {int}   AC.Config.Options.loaded.clicksPerSecond    How many times per second the auto clicker should click.
 ***************************************/
 AC.Auto.Set.click = function() {
-    if (AC.Config.clicksPerSecond) {
-        AC.Auto.Timers.click = setInterval(Game.ClickCookie, 1000/AC.Config.clicksPerSecond);
+    if (AC.Config.Options.loaded.clicksPerSecond) {
+        AC.Auto.Timers.click = setInterval(Game.ClickCookie, 1000/AC.Config.Options.loaded.clicksPerSecond);
     } else {
         AC.Auto.Timers.click = clearInterval(AC.Auto.Timers.click);
     }
@@ -78,10 +78,10 @@ AC.Auto.Set.click = function() {
 /***************************************
  *  This function sets a buff to the auto clicker for when under the effects of a click boosting buff.
  *  It is called by AC.Auto.load()
- *  @global {int}   AC.Config.clicksPerSecondBuff   How many more times per second the auto clicker should click.
+ *  @global {int}   AC.Config.Options.loaded.clicksPerSecondBuff    How many more times per second the auto clicker should click.
 ***************************************/
 AC.Auto.Set.clickBuff = function() {
-    if (AC.Config.clicksPerSecondBuff) {
+    if (AC.Config.Options.loaded.clicksPerSecondBuff) {
         AC.Auto.Timers.clickBuff = setInterval(function() {
             if (Game.hasBuff("Click frenzy") ||
                 Game.hasBuff("Cursed finger") ||
@@ -89,7 +89,7 @@ AC.Auto.Set.clickBuff = function() {
                 Game.hasBuff("Dragonflight")) {
                 Game.ClickCookie();
             }
-        }, 1000/AC.Config.clicksPerSecondBuff);
+        }, 1000/AC.Config.Options.loaded.clicksPerSecondBuff);
     } else {
         AC.Auto.Timers.clickBuff = clearInterval(AC.Auto.Timers.clickBuff);
     }
@@ -98,10 +98,10 @@ AC.Auto.Set.clickBuff = function() {
 /***************************************
  *  This function sets the automatic clicking of golden cookies.
  *  It is called by AC.Auto.load()
- *  @global {int}   AC.Config.checkForGoldenTimer   How often the check for golden cookies triggers.
+ *  @global {int}   AC.Config.Options.loaded.checkForGoldenTimer    How often the check for golden cookies triggers.
 ***************************************/
 AC.Auto.Set.clickGolden = function() {
-    if (AC.Config.checkForGoldenTimer) {
+    if (AC.Config.Options.loaded.checkForGoldenTimer) {
         AC.Auto.Timers.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
                 if (shimmer.type == "golden" && (shimmer.wrath == 0 ||
@@ -111,7 +111,7 @@ AC.Auto.Set.clickGolden = function() {
                     shimmer.pop();
                 }
             });
-        }, AC.Config.checkForGoldenTimer);
+        }, AC.Config.Options.loaded.checkForGoldenTimer);
     } else {
         AC.Auto.Timers.clickGolden = clearInterval(AC.Auto.Timers.clickGolden);
     }
@@ -120,12 +120,12 @@ AC.Auto.Set.clickGolden = function() {
 /***************************************
  *  This function sets the broken auto godzmazok loop.
  *  It is called by AC.Auto.load()
- *  @global {int}   AC.Config.godzmazokLoopCount	How many times to iterate buying and selling 100 cursors.
- *  @global {int}   AC.Config.godzmazokLoopTimer	How often the check to for casting triggers.
+ *  @global {int}   AC.Config.Options.loaded.godzmazokLoopCount How many times to iterate buying and selling 100 cursors.
+ *  @global {int}   AC.Config.Options.loaded.godzmazokLoopTimer How often the check to for casting triggers.
 ***************************************/
 AC.Auto.Set.godzmazokLoop = function() {
     AC.Cache.godzamokHasMouse = 0;
-    if (AC.Config.godzmazokLoopCount && AC.Config.godzmazokLoopTimer) {
+    if (AC.Config.Options.loaded.godzmazokLoopCount && AC.Config.Options.loaded.godzmazokLoopTimer) {
         AC.Auto.Timers.godzmazokLoop = setInterval(function() {
             if (AC.Cache.godzamokHasMouse == 0) {
                 AC.Data.mouseUpgrades.forEach(function(upgrade) {if (Game.Has(upgrade)) {AC.Cache.godzamokHasMouse = 1}});
@@ -144,7 +144,7 @@ AC.Auto.Set.godzmazokLoop = function() {
                 }
                 Game.Objects.Cursor.buy(cursorAmount);
             }
-        }, AC.Config.godzmazokLoopTimer);
+        }, AC.Config.Options.loaded.godzmazokLoopTimer);
     } else {
         AC.Auto.Timers.godzmazokLoop = clearInterval(AC.Auto.Timers.godzmazokLoop);
     }
@@ -185,7 +185,16 @@ AC.Config.Options.Min = {
     "godzmazokLoopTimer": 0
 }
 
-AC.Config.Options.User = {
+AC.Config.Options.user = {
+    "clicksPerSecond": 0,
+    "clicksPerSecondBuff": 10,
+    "checkForGoldenTimer": 1000,
+    "castFtHoFTimer": 1000,
+    "godzmazokLoopCount": 0,
+    "godzmazokLoopTimer": 0
+}
+
+AC.Config.Options.loaded = {
     "clicksPerSecond": 0,
     "clicksPerSecondBuff": 10,
     "checkForGoldenTimer": 1000,
