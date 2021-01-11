@@ -15,7 +15,7 @@
  *  (0) Add a checker to AC.Auto.Fns.castFtHoF and .godzamokLoop to see if the minigame is unlocked. For the latter maybe add a routine to swap Godzamok into the pantheon.
  *  (1) Fix the indentation of the code.
  *  (2) Fix the indentation of the function descriptors.
- *  (3) Decide what AC.Auto.Fns should be named. Leave it as is or something more descriptive like AC.Auto.TimerFunctions.
+ *  (3) Decide what AC.Auto.Fns should be named. Leave it as is or something more descriptive like AC.Auto.Builders
  *  (i) Beautify code.
 *******************************************************************************/
 
@@ -32,7 +32,8 @@ var AC = {
         "Options": {},
     },
     "Data": {},
-    "Helper": {}
+    "Helper": {},
+    "Version": "5”
 }
 
 /*******************************************************************************
@@ -305,4 +306,5 @@ if (Game.prefs.popups) {
 } else {
     Game.Notify("Auto Cookie " + AC.Version + " loaded.", "", "", 1, 1);
 }
-// Figure out how the game wants you to register as mod. See Cookie monster as example.
+Game.Win("Third-party")
+// Figure out how the game wants you to register as mod. modding api
