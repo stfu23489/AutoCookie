@@ -6,14 +6,14 @@
 
 Currently Auto Cookie can automate the following tasks.
 
-* Automatically clicking the big cookie up to 100 times per second. As well as an option to click even faster when under a buff that affects the number of cookies earned when the big cookie is clicked.
+* Automatically clicking the big cookie up to 100 times per second. As well as an option to click up to an additional 100 times per second when under a buff that affects the number of cookies earned when the big cookie is clicked.
 * Automatically clicking golden cookies and wrath cookies when appropriate.
 * Casting Force the Hand of Fate at opportune times.
 * Spam buying/selling cursors with Godzamok, Spirit of Ruin in the pantheon to break the game.
 
 ## Source
 
-There's just one javascript file: `https://elekester.github.io/AutoCookie/AutoCookie.js`
+There's just the one javascript file: https://elekester.github.io/AutoCookie/AutoCookie.js
 
 ## Using Auto Cookie
 
