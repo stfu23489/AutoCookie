@@ -14,18 +14,20 @@ var AC = {
 
 /*******************************************************************************
  *  Auto
- *  All functions in Auto.Set are automatically associated with a timer ID in Auto.Timer for its own use.
+ *  All functions in Auto.Set are automatically associated with a timer ID in Auto.Timer with the same name for its own use.
 *******************************************************************************/
 /***************************************
  *  This function (re)sets all of the autos.
- *  @param {dict}   configuration   A configuration dictionary.
+ *  @param  {dict}  configuration   A configuration dictionary.
+ *  @global {dict}  AC.Auto.Set The automatic functions that are loaded.
+ *  @global {dict}  AC.Auto.Timers  The timers associated to each function.
 ***************************************/
 AC.Auto.load = function(configuration) {
+    // Loads the configuration options
     Object.assign(AC.Config, configuration);
     
+    // Clear old timers and define AC.Auto.Timers.
     var autos = Object.keys(AC.Auto.Set)
-    
-    // Clear old timers and define variables.
     autos.forEach(function(auto) {
         if (typeof AC.Auto.Timers[auto] !== "undefined") {
             AC.Auto.Timers[auto] = clearInterval(AC.Auto.Timers[auto]);
