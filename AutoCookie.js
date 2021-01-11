@@ -12,6 +12,12 @@ var AC = {
 /*******************************************************************************
  *  Auto
 *******************************************************************************/
+AC.Auto.click = undefined;
+AC.Auto.clickGolden = undefined;
+AC.Auto.clickBuff = undefined;
+AC.Auto.castFtHoF = undefined;
+AC.Auto.godzmazokLoop = undefined;
+
 /***************************************
  *  This function (re)sets all of the autos.
  *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
