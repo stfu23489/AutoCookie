@@ -74,9 +74,9 @@ AC.Auto.setClickGolden = function() {
         AC.Auto.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
                 if (shimmer.type == "golden" && (shimmer.wrath == 0 ||
-                                                 AC.Helper.isEmpty(Game.buffs) ||
-                                                 Game.hasBuff("Cookie chain") ||
-                                                 Game.hasBuff("Cookie storm"))) {
+                    AC.Helper.isEmpty(Game.buffs) ||
+                    Game.hasBuff("Cookie chain") ||
+                    Game.hasBuff("Cookie storm"))) {
                     shimmer.pop();
                 }
             });
@@ -111,30 +111,30 @@ AC.Auto.setCastFtHoF = function() {
  *  @global {int}   AC.Config.godzmazokLoopTimer	How often the check to for casting triggers.
 ***************************************/
 AC.Auto.setGodzmazokLoop = function() {
-	AC.Cache.godzamokHasMouse = 0;
-	if (AC.Config.godzmazokLoopCount && AC.Config.godzmazokLoopTimer) {
-		AC.Auto.godzmazokLoop = setInterval(function() {
-			if (AC.Cache.godzamokHasMouse == 0) {
-				AC.Data.mouseUpgrades.forEach(function(upgrade) {if (Game.Has(upgrade)) {AC.Cache.godzamokHasMouse = 1}});
-				if (AC.Cache.godzamokHasMouse == 0 && Game.HasUnlocked("Plastic mouse") && (Game.Upgrades["Plastic mouse"].getPrice() <= Game.cookies)) {
-					Game.Upgrades["Plastic mouse"].buy();
-					AC.Cache.godzamokHasMouse = 1;
-				}
-			}
-			if (!Game.hasBuff("Devastation" && hasMouse)) {
-				var i;
-				var cursorAmount = Game.Objects.Cursor.amount
-				Game.Objects.Cursor.sell(cursorAmount);
-				for (i = 0; i < AC.godzmazokLoopCount; i++) {
-					Game.Objects.Cursor.buy(100);
-					Game.Objects.Cursor.sell(100);
-				}
-				Game.Objects.Cursor.buy(cursorAmount);
-			}
-		}, AC.Config.godzmazokLoopTimer);
-	} else {
-		AC.Auto.godzmazokLoop = clearInterval(AC.Auto.godzmazokLoop);
-	}
+    AC.Cache.godzamokHasMouse = 0;
+    if (AC.Config.godzmazokLoopCount && AC.Config.godzmazokLoopTimer) {
+        AC.Auto.godzmazokLoop = setInterval(function() {
+            if (AC.Cache.godzamokHasMouse == 0) {
+                AC.Data.mouseUpgrades.forEach(function(upgrade) {if (Game.Has(upgrade)) {AC.Cache.godzamokHasMouse = 1}});
+                if (AC.Cache.godzamokHasMouse == 0 && Game.HasUnlocked("Plastic mouse") && (Game.Upgrades["Plastic mouse"].getPrice() <= Game.cookies)) {
+                    Game.Upgrades["Plastic mouse"].buy();
+                    AC.Cache.godzamokHasMouse = 1;
+                }
+            }
+            if (!Game.hasBuff("Devastation" && hasMouse)) {
+                var i;
+                var cursorAmount = Game.Objects.Cursor.amount
+                Game.Objects.Cursor.sell(cursorAmount);
+                for (i = 0; i < AC.godzmazokLoopCount; i++) {
+                    Game.Objects.Cursor.buy(100);
+                    Game.Objects.Cursor.sell(100);
+                }
+                Game.Objects.Cursor.buy(cursorAmount);
+            }
+        }, AC.Config.godzmazokLoopTimer);
+    } else {
+        AC.Auto.godzmazokLoop = clearInterval(AC.Auto.godzmazokLoop);
+    }
 }
 
 /*******************************************************************************
@@ -171,8 +171,8 @@ AC.Data.configMax = {
     "clicksPerSecondBuff": 0,
     "checkForGoldenTimer": 1000,
     "castFtHoFTimer": 1000,
-	"godzmazokLoopCount": 1000,
-	"godzmazokLoopTimer": 1000
+    "godzmazokLoopCount": 1000,
+    "godzmazokLoopTimer": 1000
 }
 
 AC.Data.configMin = {
@@ -180,8 +180,8 @@ AC.Data.configMin = {
     "clicksPerSecondBuff": 0,
     "checkForGoldenTimer": 0,
     "castFtHoFTimer": 0,
-	"godzmazokLoopCount": 0,
-	"godzmazokLoopTimer": 0
+    "godzmazokLoopCount": 0,
+    "godzmazokLoopTimer": 0
 }
 
 AC.Data.badBuffs = [
@@ -207,20 +207,20 @@ AC.Data.badBuffs = [
 ]
 
 AC.Data.mouseUpgrades = [
-	"Plastic mouse",
-	"Iron mouse",
-	"Titanium mouse",
-	"Adamantium mouse",
-	"Unobtainium mouse",
-	"Eludium mouse",
-	"Wishalloy mouse",
-	"Fantasteel mouse",
-	"Nevercrack mouse",
-	"Armythril mouse",
-	"Technobsidian mouse",
-	"Plasmarble mouse",
-	"Miraculite mouse",
-	"Fortune #104"
+    "Plastic mouse",
+    "Iron mouse",
+    "Titanium mouse",
+    "Adamantium mouse",
+    "Unobtainium mouse",
+    "Eludium mouse",
+    "Wishalloy mouse",
+    "Fantasteel mouse",
+    "Nevercrack mouse",
+    "Armythril mouse",
+    "Technobsidian mouse",
+    "Plasmarble mouse",
+    "Miraculite mouse",
+    "Fortune #104"
 ]
 
 /*******************************************************************************
@@ -231,11 +231,11 @@ AC.Data.mouseUpgrades = [
  *  @global {list}  AC.Data.badBuffs    A list of debuffs.
 ***************************************/
 AC.Helper.hasBadBuff = function() {
-	var num = 0;
-	AC.Data.badBuffs.forEach(function(buff) {
-		if (Game.hasBuff(buff)) {num += 1}
-	});
-	return num;
+    var num = 0;
+    AC.Data.badBuffs.forEach(function(buff) {
+        if (Game.hasBuff(buff)) {num += 1}
+    });
+    return num;
 }
 
 /***************************************
