@@ -1,13 +1,15 @@
 ## Auto Cookie
 
-**Auto Cookie** is an addon for Cookie Clicker that adds automation to certain aspects of the game.
+**Auto Cookie** is an addon for Cookie Clicker that adds automation to certain aspects of the game. I created it as part of my run through with Cookie Clicker. I wanted to unlock all achievements quickly and I was okay with a very specific kind of cheating: If I could program it myself and it didn't I only cheated in ways that just sped up gameplay (to inhuman) levels, I could do it.
 
 ## Features
 
-Currently Auto Cookie can automate the following tasks. *Not actually fully implemented yet.*
+Currently Auto Cookie can automate the following tasks.
 
 * Automatically clicking the big cookie up to 100 times per second. As well as an option to click even faster when under a buff that affects the number of cookies earned when the big cookie is clicked.
 * Automatically clicking golden cookies and wrath cookies when appropriate.
+* Casting Force the Hand of Fate at opportune times.
+* Spam buying/selling cursors with Godzamok, Spirit of Ruin in the pantheon to break the game.
 
 ## Using Auto Cookie
 
