@@ -14,8 +14,7 @@ var AC = {
 
 /*******************************************************************************
  *  Auto
- *  All functions in Auto.Set are associated with a timer ID in Auto.Timer.
- *  The names of timers should be stored in AC.Data.autos.
+ *  All functions in Auto.Set are automatically associated with a timer ID in Auto.Timer for its own use.
 *******************************************************************************/
 /***************************************
  *  This function (re)sets all of the autos.
@@ -24,8 +23,10 @@ var AC = {
 AC.Auto.load = function(configuration) {
     Object.assign(AC.Config, configuration);
     
+    var autos = Object.keys(AC.Auto.Set)
+    
     // Clear old timers and define variables.
-    AC.Data.autos.forEach(function(auto) {
+    autos.forEach(function(auto) {
         if (typeof AC.Auto.Timers[auto] !== "undefined") {
             AC.Auto.Timers[auto] = clearInterval(AC.Auto.Timers[auto]);
         } else {
@@ -34,7 +35,7 @@ AC.Auto.load = function(configuration) {
     });
     
     // Set the timers.
-    AC.Data.autos.forEach(function(auto) {
+    autos.forEach(function(auto) {
         eval("AC.Auto.Set." + auto + "()");
     });
 }
@@ -156,15 +157,7 @@ AC.Cache.godzamokHasMouse = 0;
 
 /*******************************************************************************
  *  Data
-*******************************************************************************/
-AC.Data.autos = [
-    "click",
-    "clickGolden",
-    "clickBuff",
-    "castFtHoF",
-    "godzmazokLoop"
-]
-    
+*******************************************************************************/    
 AC.Data.configDefault = {
     "clicksPerSecond": 0,
     "clicksPerSecondBuff": 10,
