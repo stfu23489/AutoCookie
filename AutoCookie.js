@@ -329,5 +329,3 @@ AC.Mod.load = function(saveStr) {
     
     AC.Auto.load(AC.Config.Options.loaded);
 }
-
-Game.registerMod("AC", AC.Mod);
