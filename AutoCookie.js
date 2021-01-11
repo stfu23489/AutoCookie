@@ -305,3 +305,4 @@ if (Game.prefs.popups) {
 } else {
     Game.Notify("Auto Cookie " + AC.Version + " loaded.", "", "", 1, 1);
 }
+// Figure out how the game wants you to register as mod. See Cookie monster as example.
