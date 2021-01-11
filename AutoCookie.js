@@ -15,7 +15,7 @@
  *  (0) Add a checker to AC.Auto.Fns.castFtHoF and .godzamokLoop to see if the minigame is unlocked. For the latter maybe add a routine to swap Godzamok into the pantheon.
  *  (1) Fix the indentation of the code.
  *  (2) Fix the indentation of the function descriptors.
- *  (3) Decide what AC.Auto.Fns should be named. Leave it as is or something more descriptive like AC.Auto.Builders
+ *  (3) Decide what AC.Auto.Fns should be named. Leave it as is or something more descriptive like AC.Auto.TimerFunctions.
  *  (i) Beautify code.
 *******************************************************************************/
 
@@ -29,11 +29,11 @@ var AC = {
     },
     "Cache": {},
     "Config": {
-        "Options": {}
+        "Options": {},
     },
     "Data": {},
     "Helper": {},
-    "Version": "5.1"
+    "Version": "4"
 }
 
 /*******************************************************************************
@@ -230,7 +230,7 @@ AC.Data.badBuffs = [
     "Slap to the face",
     "Senility",
     "Locusts",
-    "Cave-in",
+    "Cave-In",
     "Jammed machinery",
     "Recession",
     "Crisis of faith",
@@ -241,7 +241,7 @@ AC.Data.badBuffs = [
     "Time jam",
     "Predictable tragedy",
     "Eclipse",
-    "Dry spell",
+    "Dry Spell",
     "Microcosm",
     "Antipattern",
     "Big crunch",
@@ -297,36 +297,13 @@ AC.Helper.isEmpty = function(obj) {
 }
 
 /*******************************************************************************
- *  Mod
- *  The functions called by Cookie Clicker to initialize the mod and save/load settings.
+ *  Main
+ *  Let's run the mod.
 *******************************************************************************/
-AC.init = function() {
-    var delay = setTimeout(function() {AC.Auto.load(AC.Config.Options.loaded); delay = clearTimeout(delay)}, 500);
-    if (Game.prefs.popups) {
-        Game.Popup("Auto Cookie " + AC.Version + " loaded.");
-    } else {
-        Game.Notify("Auto Cookie " + AC.Version + " loaded.", "", "", 1, 1);
-    }
-    Game.Win("Third-party");
+AC.Auto.load(AC.Config.Options.default);
+if (Game.prefs.popups) {
+    Game.Popup("Auto Cookie " + AC.Version + " loaded.");
+} else {
+    Game.Notify("Auto Cookie " + AC.Version + " loaded.", "", "", 1, 1);
 }
-
-AC.save = function() {
-    return AC.Config.Options.loaded;
-}
-
-AC.load = function(saveStr) {
-    try {
-        var options = JSON.stringify(saveStr);
-        console.log(options);
-        for (var property in options) {
-            if (AC.Config.Options.default.hasOwnProperty(property)) {
-                AC.Config.Options.loaded[property] = options[property];
-            }
-        }
-    } catch(err) {
-        console.log("Auto Cookie: " + err +"\nNo save data present, loading default.");
-        AC.Config.Options.loaded = AC.Config.Options.default;
-    }
-}
-
-Game.registerMod("AC", AC);
+// Figure out how the game wants you to register as mod. See Cookie monster as example.
