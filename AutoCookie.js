@@ -16,12 +16,12 @@ var AC = {
 
 /*******************************************************************************
  *  Auto
- *  All functions in Auto.Set are automatically associated with a timer ID in Auto.Timers with the same name for its own use.
+ *  All functions in Auto.Fn are automatically associated with a timer ID in Auto.Timers with the same name for its own use.
 *******************************************************************************/
 /***************************************
  *  This function (re)sets all of the autos.
  *  @param  {dict}  configuration   A configuration dictionary.
- *  @global {dict}  AC.Auto.Set The automatic functions that are loaded.
+ *  @global {dict}  AC.Auto.Fns The automatic functions that are loaded.
  *  @global {dict}  AC.Auto.Timers  The timers associated to each function.
 ***************************************/
 AC.Auto.load = function(configuration) {
@@ -29,7 +29,7 @@ AC.Auto.load = function(configuration) {
     Object.assign(AC.Config.Options.loaded, configuration);
     
     // Clear old timers and define AC.Auto.Timers.
-    var autos = Object.keys(AC.Auto.Set)
+    var autos = Object.keys(AC.Auto.Fns)
     autos.forEach(function(auto) {
         if (typeof AC.Auto.Timers[auto] !== "undefined") {
             AC.Auto.Timers[auto] = clearInterval(AC.Auto.Timers[auto]);
@@ -40,7 +40,7 @@ AC.Auto.load = function(configuration) {
     
     // Set the timers.
     autos.forEach(function(auto) {
-        eval("AC.Auto.Set." + auto + "()");
+        eval("AC.Auto.Fns." + auto + "()");
     });
 }
 
@@ -49,7 +49,7 @@ AC.Auto.load = function(configuration) {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.castFtHoFTimer How often the check to for casting triggers.
 ***************************************/
-AC.Auto.Set.castFtHoF = function() {
+AC.Auto.Fns.castFtHoF = function() {
     if (AC.Config.Options.loaded.castFtHoFTimer) {
         AC.Auto.Timers.castFtHoF = setInterval(function() {
             var minigame = Game.Objects['Wizard tower'].minigame
@@ -67,7 +67,7 @@ AC.Auto.Set.castFtHoF = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.clicksPerSecond    How many times per second the auto clicker should click.
 ***************************************/
-AC.Auto.Set.click = function() {
+AC.Auto.Fns.click = function() {
     if (AC.Config.Options.loaded.clicksPerSecond) {
         AC.Auto.Timers.click = setInterval(Game.ClickCookie, 1000/AC.Config.Options.loaded.clicksPerSecond);
     } else {
@@ -80,7 +80,7 @@ AC.Auto.Set.click = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.clicksPerSecondBuff    How many more times per second the auto clicker should click.
 ***************************************/
-AC.Auto.Set.clickBuff = function() {
+AC.Auto.Fns.clickBuff = function() {
     if (AC.Config.Options.loaded.clicksPerSecondBuff) {
         AC.Auto.Timers.clickBuff = setInterval(function() {
             if (Game.hasBuff("Click frenzy") ||
@@ -100,7 +100,7 @@ AC.Auto.Set.clickBuff = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.checkForGoldenTimer    How often the check for golden cookies triggers.
 ***************************************/
-AC.Auto.Set.clickGolden = function() {
+AC.Auto.Fns.clickGolden = function() {
     if (AC.Config.Options.loaded.checkForGoldenTimer) {
         AC.Auto.Timers.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
@@ -123,7 +123,7 @@ AC.Auto.Set.clickGolden = function() {
  *  @global {int}   AC.Config.Options.loaded.godzmazokLoopCount How many times to iterate buying and selling 100 cursors.
  *  @global {int}   AC.Config.Options.loaded.godzmazokLoopTimer How often the check to for casting triggers.
 ***************************************/
-AC.Auto.Set.godzmazokLoop = function() {
+AC.Auto.Fns.godzmazokLoop = function() {
     AC.Cache.godzamokHasMouse = 0;
     if (AC.Config.Options.loaded.godzmazokLoopCount && AC.Config.Options.loaded.godzmazokLoopTimer) {
         AC.Auto.Timers.godzmazokLoop = setInterval(function() {
@@ -250,7 +250,7 @@ AC.Data.mouseUpgrades = [
 *******************************************************************************/
 /***************************************
  *  Thus function returns 0 if there is no active debuff and the number of debuffs otherwise.
- *  This function is called by AC.Auto.Set.CastFtHoF().
+ *  This function is called by AC.Auto.Fns.castFtHoF().
  *  @global {list}  AC.Data.badBuffs    A list of debuffs.
 ***************************************/
 AC.Helper.hasBadBuff = function() {
@@ -263,7 +263,7 @@ AC.Helper.hasBadBuff = function() {
 
 /***************************************
  *  Thus function returns 0 if the dictionary is empty and 1 if it has contents.
- *  This function is called by AC.Auto.Set.ClickGolden(), AC.Auto.Set.CastFtHoF().
+ *  This function is called by AC.Auto.Fns.clickGolden(), AC.Auto.Fns.castFtHoF().
  *  @param  {dict}  obj The dictionary to be checked.
 ***************************************/
 AC.Helper.isEmpty = function(obj) {
