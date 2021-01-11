@@ -19,7 +19,9 @@ var AC = {
  *  This function (re)sets all of the autos.
  *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
 ***************************************/
-AC.Auto.load = function() {
+AC.Auto.load = function(configuration) {
+    AC.Config.load(configuration);
+    
     // Clear old timers and define variables.
     AC.Data.autos.forEach(function(auto) {
         if (typeof AC.Auto[auto] !== "undefined") {
@@ -151,6 +153,7 @@ AC.Cache.godzamokHasMouse = 0;
 *******************************************************************************/
 /***************************************
  *  This function loads configuration data.
+ *  This function is called by AC.Auto.load()
  *  @global {dict}  AC.Config   The configuration dictionary.
  *  @param  {dict}  obj The configuration options to load into AC.Config.
 ***************************************/
@@ -240,6 +243,7 @@ AC.Data.mouseUpgrades = [
 *******************************************************************************/
 /***************************************
  *  Thus function returns 0 if there is no active debuff and the number of debuffs otherwise.
+ *  This function is called by AC.Auto.setCastFtHoF().
  *  @global {list}  AC.Data.badBuffs    A list of debuffs.
 ***************************************/
 AC.Helper.hasBadBuff = function() {
@@ -251,15 +255,8 @@ AC.Helper.hasBadBuff = function() {
 }
 
 /***************************************
- *  Thus function resets the timer at the given ID or sets obj to undefined if it hasn't been defined.
- *  @param {list}  obj  The ID of the timer to be reset.
-***************************************/
-AC.Helper.resetTimer = function(obj) {
-    if (typeof obj !== "undefined") {obj = clearInterval(obj)} else {obj = undefined}
-}
-
-/***************************************
  *  Thus function returns 0 if the dictionary is empty and 1 if it has contents.
+ *  This function is called by bAC.Auto.setClickGolden(), AC.Auto.setCastFtHoF().
  *  @param  {dict}  obj The dictionary to be checked.
 ***************************************/
 AC.Helper.isEmpty = function(obj) {
@@ -274,5 +271,4 @@ AC.Helper.isEmpty = function(obj) {
 /*******************************************************************************
  *  Main
 *******************************************************************************/
-AC.Config.load(AC.Data.configMax);
-AC.Auto.load();
+AC.Auto.load(AC.Data.configDefault);
