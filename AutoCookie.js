@@ -16,7 +16,7 @@ var AC = {
 
 /*******************************************************************************
  *  Auto
- *  All functions in Auto.Set are automatically associated with a timer ID in Auto.Timer with the same name for its own use.
+ *  All functions in Auto.Set are automatically associated with a timer ID in Auto.Timers with the same name for its own use.
 *******************************************************************************/
 /***************************************
  *  This function (re)sets all of the autos.
