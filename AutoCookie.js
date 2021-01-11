@@ -244,7 +244,7 @@ AC.Helper.hasBadBuff = function() {
  *  @param {list}  obj  The ID of the timer to be reset.
 ***************************************/
 AC.Helper.resetTimer = function(obj) {
-    if (typeof obj !== "undefined") {obj = clearInterval(obj))} else {obj = undefined}
+    if (typeof obj !== "undefined") {obj = clearInterval(obj)} else {obj = undefined}
 }
 
 /***************************************
