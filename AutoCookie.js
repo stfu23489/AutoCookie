@@ -164,9 +164,9 @@ AC.Config.load = function(obj) {
 *******************************************************************************/
 AC.Data.autos = [
     "click",
-    "clickGolden"
-    "clickBuff"
-    "castFtHoF"
+    "clickGolden",
+    "clickBuff",
+    "castFtHoF",
     "godzmazokLoop"
 ]
     
