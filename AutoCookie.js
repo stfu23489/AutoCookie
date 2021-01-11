@@ -158,7 +158,7 @@ AC.Cache.godzamokHasMouse = 0;
 /*******************************************************************************
  *  Config
 *******************************************************************************/
-AC.Config.Options.Default = {
+AC.Config.Options.default = {
     "clicksPerSecond": 0,
     "clicksPerSecondBuff": 10,
     "checkForGoldenTimer": 1000,
@@ -167,7 +167,7 @@ AC.Config.Options.Default = {
     "godzmazokLoopTimer": 0
 }
 
-AC.Config.Options.Max = {
+AC.Config.Options.max = {
     "clicksPerSecond": 100,
     "clicksPerSecondBuff": 0,
     "checkForGoldenTimer": 1000,
@@ -176,7 +176,7 @@ AC.Config.Options.Max = {
     "godzmazokLoopTimer": 1000
 }
 
-AC.Config.Options.Min = {
+AC.Config.Options.min = {
     "clicksPerSecond":0,
     "clicksPerSecondBuff": 0,
     "checkForGoldenTimer": 0,
@@ -278,4 +278,4 @@ AC.Helper.isEmpty = function(obj) {
 /*******************************************************************************
  *  Main
 *******************************************************************************/
-AC.Auto.load(AC.Data.configDefault);
+AC.Auto.load(AC.Config.Options.default);
