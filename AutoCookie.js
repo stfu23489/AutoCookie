@@ -8,7 +8,7 @@ var AC = {
     },
     "Cache": {},        // Things that need to be referenced repeatedly, to speed up this mod.
     "Config": {         // Things to do with the configuration of this mod.
-        "Options:" {},  // Dictionaries of different user options
+        "Options": {},  // Dictionaries of different user options
     },
     "Data": {},         // Things that are constant data from the game.
     "Helper": {}        // Helper functions.
