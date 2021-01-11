@@ -14,8 +14,7 @@ var AC = {
 
 /*******************************************************************************
  *  Auto
- *  All functions in Auto (except load) should be associated to a timer for that Auto.
- *  The naming structure for a function associated to timer "timer" is "setTimer".
+ *  All functions in Auto.Set are associated with a timer ID in Auto.Timer.
  *  The names of timers should be stored in AC.Data.autos.
 *******************************************************************************/
 /***************************************
@@ -45,7 +44,7 @@ AC.Auto.load = function(configuration) {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
 ***************************************/
-AC.Auto.Set.Click = function() {
+AC.Auto.Set.click = function() {
     if (AC.Config.clicksPerSecond) {
         AC.Auto.Timers.click = setInterval(Game.ClickCookie, 1000/AC.Config.clicksPerSecond);
     } else {
@@ -58,7 +57,7 @@ AC.Auto.Set.Click = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.clicksPerSecondBuff   How many more times per second the auto clicker should click.
 ***************************************/
-AC.Auto.Set.ClickBuff = function() {
+AC.Auto.Set.clickBuff = function() {
     if (AC.Config.clicksPerSecondBuff) {
         AC.Auto.Timers.clickBuff = setInterval(function() {
             if (Game.hasBuff("Click frenzy") ||
@@ -78,7 +77,7 @@ AC.Auto.Set.ClickBuff = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.checkForGoldenTimer   How often the check for golden cookies triggers.
 ***************************************/
-AC.Auto.Set.ClickGolden = function() {
+AC.Auto.Set.clickGolden = function() {
     if (AC.Config.checkForGoldenTimer) {
         AC.Auto.Timers.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
@@ -100,7 +99,7 @@ AC.Auto.Set.ClickGolden = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.castFtHoFTimer    How often the check to for casting triggers.
 ***************************************/
-AC.Auto.Set.CastFtHoF = function() {
+AC.Auto.Set.castFtHoF = function() {
     if (AC.Config.castFtHoFTimer) {
         AC.Auto.Timers.castFtHoF = setInterval(function() {
             var minigame = Game.Objects['Wizard tower'].minigame
@@ -119,7 +118,7 @@ AC.Auto.Set.CastFtHoF = function() {
  *  @global {int}   AC.Config.godzmazokLoopCount	How many times to iterate buying and selling 100 cursors.
  *  @global {int}   AC.Config.godzmazokLoopTimer	How often the check to for casting triggers.
 ***************************************/
-AC.Auto.Set.GodzmazokLoop = function() {
+AC.Auto.Set.godzmazokLoop = function() {
     AC.Cache.godzamokHasMouse = 0;
     if (AC.Config.godzmazokLoopCount && AC.Config.godzmazokLoopTimer) {
         AC.Auto.Timers.godzmazokLoop = setInterval(function() {
