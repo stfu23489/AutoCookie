@@ -11,7 +11,15 @@
 *******************************************************************************/
 
 /*******************************************************************************
- *  AC
+ *	To Do:
+ *	(1) Fix the indentation of the code.
+ *  (2) Fix the indentation of the function descriptors.
+ *	(3) Decide what AC.Auto.Fns should be named. Leave it as is or something more descriptive like AC.Auto.TimerFunctions.
+ *	(i) Beautify code.
+*******************************************************************************/
+
+/*******************************************************************************
+ *  AC Declaration
 *******************************************************************************/
 var AC = {
     "Auto": {
