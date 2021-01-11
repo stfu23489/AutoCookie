@@ -13,10 +13,10 @@
 /*******************************************************************************
  *	To Do:
  *  (0) Add a checker to AC.Auto.Fns.castFtHoF and .godzamokLoop to see if the minigame is unlocked. For the latter maybe add a routine to swap Godzamok into the pantheon.
- *	(1) Fix the indentation of the code.
+ *  (1) Fix the indentation of the code.
  *  (2) Fix the indentation of the function descriptors.
- *	(3) Decide what AC.Auto.Fns should be named. Leave it as is or something more descriptive like AC.Auto.TimerFunctions.
- *	(i) Beautify code.
+ *  (3) Decide what AC.Auto.Fns should be named. Leave it as is or something more descriptive like AC.Auto.TimerFunctions.
+ *  (i) Beautify code.
 *******************************************************************************/
 
 /*******************************************************************************
