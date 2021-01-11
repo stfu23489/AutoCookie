@@ -122,7 +122,7 @@ AC.Auto.setGodzmazokLoop = function() {
                     AC.Cache.godzamokHasMouse = 1;
                 }
             }
-            if (!Game.hasBuff("Devastation" && hasMouse)) {
+            if (!Game.hasBuff("Devastation" && AC.Cache.godzamokHasMouse)) {
                 var i;
                 var cursorAmount = Game.Objects.Cursor.amount
                 Game.Objects.Cursor.sell(cursorAmount);
