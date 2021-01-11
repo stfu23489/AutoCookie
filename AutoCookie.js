@@ -2,22 +2,21 @@
  *  Header
 *******************************************************************************/
 var AC = {
-    "Auto": {           // Things to do with automation.
-        "Fns": {},      // Functions that set-up timers for automation.
-        "Timers": {}    // IDs of timers.
+    "Auto": {
+        "Fns": {},
+        "Timers": {}
     },
-    "Cache": {},        // Things that need to be referenced repeatedly, to speed up this mod.
-    "Config": {         // Things to do with the configuration of this mod.
-        "Options": {},  // Dictionaries of different user options
+    "Cache": {},
+    "Config": {
+        "Options": {},
     },
-    "Data": {},         // Things that are constant data from the game.
-    "Helper": {}        // Helper functions.
+    "Data": {},
+    "Helper": {}
 }
 
 /*******************************************************************************
  *  Auto
- *  All functions in Auto.Fn are automatically associated with a timer ID in Auto.Timers with the same name for its own use.
- *  Each function in Auto.Fn should start a single timer and tie its given timer ID to it.
+ *  Functions and other objects to do with automation.
 *******************************************************************************/
 /***************************************
  *  This function (re)sets all of the autos.
@@ -46,10 +45,16 @@ AC.Auto.load = function(configuration) {
 }
 
 /***************************************
+ *  Auto.Fns
+ *  All functions in Auto.Fn are automatically associated with a timer ID in Auto.Timers with the same name for its own use.
+ *  Each function in Auto.Fn should start a single timer and tie its given timer ID to it.
+***************************************/
+
+/*******************
  *  This function sets the auto FtHoF caster.
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.castFtHoFTimer How often the check to for casting triggers.
-***************************************/
+*******************/
 AC.Auto.Fns.castFtHoF = function() {
     if (AC.Config.Options.loaded.castFtHoFTimer) {
         AC.Auto.Timers.castFtHoF = setInterval(function() {
@@ -63,11 +68,11 @@ AC.Auto.Fns.castFtHoF = function() {
     }
 }
 
-/***************************************
+/*******************
  *  This function sets the auto clicker timer.
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.clicksPerSecond    How many times per second the auto clicker should click.
-***************************************/
+*******************/
 AC.Auto.Fns.click = function() {
     if (AC.Config.Options.loaded.clicksPerSecond) {
         AC.Auto.Timers.click = setInterval(Game.ClickCookie, 1000/AC.Config.Options.loaded.clicksPerSecond);
@@ -76,11 +81,11 @@ AC.Auto.Fns.click = function() {
     }
 }
 
-/***************************************
+/*******************
  *  This function sets a buff to the auto clicker for when under the effects of a click boosting buff.
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.clicksPerSecondBuff    How many more times per second the auto clicker should click.
-***************************************/
+*******************/
 AC.Auto.Fns.clickBuff = function() {
     if (AC.Config.Options.loaded.clicksPerSecondBuff) {
         AC.Auto.Timers.clickBuff = setInterval(function() {
@@ -96,11 +101,11 @@ AC.Auto.Fns.clickBuff = function() {
     }
 }
 
-/***************************************
+/*******************
  *  This function sets the automatic clicking of golden cookies.
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.checkForGoldenTimer    How often the check for golden cookies triggers.
-***************************************/
+*******************/
 AC.Auto.Fns.clickGolden = function() {
     if (AC.Config.Options.loaded.checkForGoldenTimer) {
         AC.Auto.Timers.clickGolden = setInterval(function() {
@@ -118,12 +123,12 @@ AC.Auto.Fns.clickGolden = function() {
     }
 }
 
-/***************************************
+/*******************
  *  This function sets the broken auto godzmazok loop.
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.godzmazokLoopCount How many times to iterate buying and selling 100 cursors.
  *  @global {int}   AC.Config.Options.loaded.godzmazokLoopTimer How often the check to for casting triggers.
-***************************************/
+*******************/
 AC.Auto.Fns.godzmazokLoop = function() {
     AC.Cache.godzamokHasMouse = 0;
     if (AC.Config.Options.loaded.godzmazokLoopCount && AC.Config.Options.loaded.godzmazokLoopTimer) {
@@ -153,12 +158,19 @@ AC.Auto.Fns.godzmazokLoop = function() {
 
 /*******************************************************************************
  *  Cache
+ *  Everything stored in AC.Cache is a variable that is referenced multiple times and should be stored here for optimization.
 *******************************************************************************/
 AC.Cache.godzamokHasMouse = 0;
 
 /*******************************************************************************
  *  Config
+ *  Functions and dictionaries that store the confriguration of this mod.
 *******************************************************************************/
+/***************************************
+ *  Config.Options
+ *  These dictionaries store the configuration options that the user has control over.
+ *  default are the default options, while min and max are the minimum and maximum values.
+***************************************/
 AC.Config.Options.default = {
     "clicksPerSecond": 0,
     "clicksPerSecondBuff": 10,
@@ -170,7 +182,7 @@ AC.Config.Options.default = {
 
 AC.Config.Options.max = {
     "clicksPerSecond": 100,
-    "clicksPerSecondBuff": 0,
+    "clicksPerSecondBuff": 100,
     "checkForGoldenTimer": 1000,
     "castFtHoFTimer": 1000,
     "godzmazokLoopCount": 10000,
@@ -186,26 +198,11 @@ AC.Config.Options.min = {
     "godzmazokLoopTimer": 0
 }
 
-AC.Config.Options.user = {
-    "clicksPerSecond": 0,
-    "clicksPerSecondBuff": 10,
-    "checkForGoldenTimer": 1000,
-    "castFtHoFTimer": 1000,
-    "godzmazokLoopCount": 0,
-    "godzmazokLoopTimer": 0
-}
-
-AC.Config.Options.loaded = {
-    "clicksPerSecond": 0,
-    "clicksPerSecondBuff": 10,
-    "checkForGoldenTimer": 1000,
-    "castFtHoFTimer": 1000,
-    "godzmazokLoopCount": 0,
-    "godzmazokLoopTimer": 0
-}
+AC.Config.Options.loaded = AC.Config.Options.default
 
 /*******************************************************************************
  *  Data
+ *  Game data that is difficult to rip from the game at runtime.
 *******************************************************************************/
 AC.Data.badBuffs = [
     "Slap to the face",
@@ -248,6 +245,7 @@ AC.Data.mouseUpgrades = [
 
 /*******************************************************************************
  *  Helper
+ *  Additional functions that aid in other calculations.
 *******************************************************************************/
 /***************************************
  *  Thus function returns 0 if there is no active debuff and the number of debuffs otherwise.
@@ -278,5 +276,6 @@ AC.Helper.isEmpty = function(obj) {
 
 /*******************************************************************************
  *  Main
+ *  Let's run the mod.
 *******************************************************************************/
 AC.Auto.load(AC.Config.Options.default);
