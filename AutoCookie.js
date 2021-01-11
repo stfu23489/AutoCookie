@@ -3,7 +3,7 @@
 *******************************************************************************/
 var AC = {
     "Auto": {},
-	"Cache": {},
+    "Cache": {},
     "Config": {},
     "Data": {},
     "Helper": {}
@@ -28,7 +28,7 @@ AC.Auto.load = function() {
     AC.Auto.setClickBuff();
     AC.Auto.setClickGolden();
     AC.Auto.setCastFtHoF();
-	AC.Auto.setGodzmazokLoop();
+    AC.Auto.setGodzmazokLoop();
 }
 
 /***************************************
