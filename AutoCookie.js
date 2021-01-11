@@ -12,18 +12,19 @@ var AC = {
 /*******************************************************************************
  *  Auto
 *******************************************************************************/
-// Variables for timers.
-AC.Auto.click = undefined;
-AC.Auto.clickGolden = undefined;
-AC.Auto.clickBuff = undefined;
-AC.Auto.castFtHoF = undefined;
-AC.Auto.godzmazokLoop = undefined;
-
 /***************************************
  *  This function (re)sets all of the autos.
  *  @global {int}   AC.Config.clicksPerSecond   How many times per second the auto clicker should click.
 ***************************************/
 AC.Auto.load = function() {
+    // Clear old timers and define variables.
+    AC.Helper.resetTimer(AC.Auto.click)
+    AC.Helper.resetTimer(AC.Auto.clickGolden)
+    AC.Helper.resetTimer(AC.Auto.clickBuff)
+    AC.Helper.resetTimer(AC.Auto.castFtHoF)
+    AC.Helper.resetTimer(AC.Auto.godzmazokLoop)
+    
+    // Set the timers.
     AC.Auto.setClick();
     AC.Auto.setClickBuff();
     AC.Auto.setClickGolden();
@@ -236,6 +237,14 @@ AC.Helper.hasBadBuff = function() {
         if (Game.hasBuff(buff)) {num += 1}
     });
     return num;
+}
+
+/***************************************
+ *  Thus function resets the timer at the given ID or sets obj to undefined if it hasn't been defined.
+ *  @param {list}  obj  The ID of the timer to be reset.
+***************************************/
+AC.Helper.resetTimer = function(obj) {
+    if (typeof obj !== "undefined") {obj = clearInterval(obj))} else {obj = undefined}
 }
 
 /***************************************
