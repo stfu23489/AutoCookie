@@ -324,6 +324,7 @@ AC.Mod.load = function(saveStr) {
             }
         }
     } catch(err) {
+        console.log("Auto Cookie: " + err +"\nNo save data present, loading default.");
         AC.Config.Options.loaded = AC.Config.Options.default;
     }
 }
