@@ -29,11 +29,12 @@ var AC = {
     },
     "Cache": {},
     "Config": {
-        "Options": {},
+        "Options": {}
     },
     "Data": {},
     "Helper": {},
-    "Version": "5”
+    "Mod": {},
+    "Version": 5
 }
 
 /*******************************************************************************
@@ -297,14 +298,36 @@ AC.Helper.isEmpty = function(obj) {
 }
 
 /*******************************************************************************
- *  Main
- *  Let's run the mod.
+ *  Mod
+ *  The functions called by Cookie Clicker to initialize the mod and save/load settings.
 *******************************************************************************/
-AC.Auto.load(AC.Config.Options.default);
-if (Game.prefs.popups) {
-    Game.Popup("Auto Cookie " + AC.Version + " loaded.");
-} else {
-    Game.Notify("Auto Cookie " + AC.Version + " loaded.", "", "", 1, 1);
+AC.Mod.init = function() {
+    AC.Auto.load(AC.Config.Options.default);
+    if (Game.prefs.popups) {
+        Game.Popup("Auto Cookie " + AC.Version + " loaded.");
+    } else {
+        Game.Notify("Auto Cookie " + AC.Version + " loaded.", "", "", 1, 1);
+    }
+    Game.Win("Third-party");
 }
-Game.Win("Third-party")
-// Figure out how the game wants you to register as mod. modding api
+
+AC.Mod.save = function() {
+    return AC.Config.Options.loaded;
+}
+
+AC.Mod.load = function(saveStr) {
+    try {
+        var options = JSON.stringify(saveStr);
+        for (var property in options) {
+            if (AC.Config.Options.default.hasOwnProperty(property)) {
+                AC.Config.Options.loaded[property] = options[property];
+            }
+        }
+    } catch(err) {
+        AC.Config.Options.loaded = AC.Config.Options.default;
+    }
+    
+    AC.Auto.load(AC.Config.Options.loaded);
+}
+
+Game.registerMod("AC", AC.Mod);
