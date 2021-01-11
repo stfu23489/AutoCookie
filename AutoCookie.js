@@ -2,14 +2,16 @@
  *  Header
 *******************************************************************************/
 var AC = {
-    "Auto": {
-        "Set": {},
-        "Timers": {}
+    "Auto": {           // Things to do with automation.
+        "Set": {},      // Functions that set-up timers for automation.
+        "Timers": {}    // IDs of timers.
     },
-    "Cache": {},
-    "Config": {},
-    "Data": {},
-    "Helper": {}
+    "Cache": {},        // Things that need to be referenced repeatedly, to speed up the game.
+    "Config": {         // Things to do with the configuration of this mod.
+        "Options:" {},  // Dictionaries of different user options
+    },
+    "Data": {},         // Things that are constant data from the game.
+    "Helper": {}        // Helper functions.
 }
 
 /*******************************************************************************
@@ -40,6 +42,24 @@ AC.Auto.load = function(configuration) {
     autos.forEach(function(auto) {
         eval("AC.Auto.Set." + auto + "()");
     });
+}
+
+/***************************************
+ *  This function sets the auto FtHoF caster.
+ *  It is called by AC.Auto.load()
+ *  @global {int}   AC.Config.castFtHoFTimer    How often the check to for casting triggers.
+***************************************/
+AC.Auto.Set.castFtHoF = function() {
+    if (AC.Config.castFtHoFTimer) {
+        AC.Auto.Timers.castFtHoF = setInterval(function() {
+            var minigame = Game.Objects['Wizard tower'].minigame
+            if(!AC.Helper.isEmpty(Game.buffs) && !AC.Helper.hasBadBuff() && minigame.magic >= (10 + 0.6*minigame.magicM)) {
+                minigame.castSpell(minigame.spellsById[1]);
+            }
+        }, AC.Config.castFtHoFTimer);
+    } else {
+        AC.Auto.Timers.castFtHoF = clearInterval(AC.Auto.Timers.castFtHoF);
+    }
 }
 
 /***************************************
@@ -98,24 +118,6 @@ AC.Auto.Set.clickGolden = function() {
 }
 
 /***************************************
- *  This function sets the auto FtHoF caster.
- *  It is called by AC.Auto.load()
- *  @global {int}   AC.Config.castFtHoFTimer    How often the check to for casting triggers.
-***************************************/
-AC.Auto.Set.castFtHoF = function() {
-    if (AC.Config.castFtHoFTimer) {
-        AC.Auto.Timers.castFtHoF = setInterval(function() {
-            var minigame = Game.Objects['Wizard tower'].minigame
-            if(!AC.Helper.isEmpty(Game.buffs) && !AC.Helper.hasBadBuff() && minigame.magic >= (10 + 0.6*minigame.magicM)) {
-                minigame.castSpell(minigame.spellsById[1]);
-            }
-        }, AC.Config.castFtHoFTimer);
-    } else {
-        AC.Auto.Timers.castFtHoF = clearInterval(AC.Auto.Timers.castFtHoF);
-    }
-}
-
-/***************************************
  *  This function sets the broken auto godzmazok loop.
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.godzmazokLoopCount	How many times to iterate buying and selling 100 cursors.
@@ -156,11 +158,7 @@ AC.Cache.godzamokHasMouse = 0;
 /*******************************************************************************
  *  Config
 *******************************************************************************/
-
-/*******************************************************************************
- *  Data
-*******************************************************************************/    
-AC.Data.configDefault = {
+AC.Config.Options.Default = {
     "clicksPerSecond": 0,
     "clicksPerSecondBuff": 10,
     "checkForGoldenTimer": 1000,
@@ -169,7 +167,7 @@ AC.Data.configDefault = {
     "godzmazokLoopTimer": 0
 }
 
-AC.Data.configMax = {
+AC.Config.Options.Max = {
     "clicksPerSecond": 100,
     "clicksPerSecondBuff": 0,
     "checkForGoldenTimer": 1000,
@@ -178,7 +176,7 @@ AC.Data.configMax = {
     "godzmazokLoopTimer": 1000
 }
 
-AC.Data.configMin = {
+AC.Config.Options.Min = {
     "clicksPerSecond":0,
     "clicksPerSecondBuff": 0,
     "checkForGoldenTimer": 0,
@@ -187,6 +185,18 @@ AC.Data.configMin = {
     "godzmazokLoopTimer": 0
 }
 
+AC.Config.Options.User = {
+    "clicksPerSecond": 0,
+    "clicksPerSecondBuff": 10,
+    "checkForGoldenTimer": 1000,
+    "castFtHoFTimer": 1000,
+    "godzmazokLoopCount": 0,
+    "godzmazokLoopTimer": 0
+}
+
+/*******************************************************************************
+ *  Data
+*******************************************************************************/
 AC.Data.badBuffs = [
     "Slap to the face",
     "Senility",
