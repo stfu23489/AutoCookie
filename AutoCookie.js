@@ -300,3 +300,8 @@ AC.Helper.isEmpty = function(obj) {
  *  Let's run the mod.
 *******************************************************************************/
 AC.Auto.load(AC.Config.Options.default);
+if (Game.prefs.popups) {
+    Game.Popup("Auto Cookie " + AC.Version + " loaded.");
+} else {
+    Game.Notify("Auto Cookie " + AC.Version + " loaded.", "", "", 1, 1);
+}
