@@ -180,7 +180,7 @@ AC.Data.configMax = {
     "clicksPerSecondBuff": 0,
     "checkForGoldenTimer": 1000,
     "castFtHoFTimer": 1000,
-    "godzmazokLoopCount": 1000,
+    "godzmazokLoopCount": 10000,
     "godzmazokLoopTimer": 1000
 }
 
