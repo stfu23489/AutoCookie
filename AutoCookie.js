@@ -318,6 +318,7 @@ AC.Mod.save = function() {
 AC.Mod.load = function(saveStr) {
     try {
         var options = JSON.stringify(saveStr);
+        console.log(options);
         for (var property in options) {
             if (AC.Config.Options.default.hasOwnProperty(property)) {
                 AC.Config.Options.loaded[property] = options[property];
