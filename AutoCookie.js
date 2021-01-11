@@ -33,7 +33,7 @@ AC.Auto.load = function() {
     AC.Data.autos.forEach(function(auto) {
         var autoFn = window["AC.Auto.set" + auto.charAt(0).toUpperCase() + auto.slice(1)];
         if (typeof autoFn === "function") autoFn();
-    }
+    });
 }
 
 /***************************************
