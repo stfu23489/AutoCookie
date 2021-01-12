@@ -11,10 +11,11 @@
 *******************************************************************************/
 
 /*******************************************************************************
- *  To Do:
- *  (1) Add the ability for AC.Auto.Builders.godzamokLoop() to slot Godzamok if he is unslotted.
- *  (2) Fix the indentation of the code.
- *  (3) Fix the indentation of the function descriptors.
+ *  To Do
+ *  -- Add the ability for AC.Auto.Builders.godzamokLoop() to slot Godzamok if he is unslotted.
+ *  -- Make the autoclicker faster. when the clicks/second > 1000 divide by 100 and truncate. Run a for loop to click that many times.
+ *  -- Fix the indentation of the code.
+ *  -- Fix the indentation of the function descriptors.
 *******************************************************************************/
 
 /*******************************************************************************
