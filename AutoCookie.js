@@ -355,13 +355,7 @@ AC.Mod.init = function() {
 }
 
 AC.Mod.save = function() {
-    var options = {};
-	for (option in AC.Config.Options.default) {
-		if (AC.Config.Options.default[option] != AC.Config.Options.loaded[option]) {
-			options[option] = AC.Config.Options.loaded[option];
-		}
-	}
-    return JSON.stringify(options);
+    return JSON.stringify(AC.Config.Options.loaded);
 }
 
 AC.Mod.load = function(saveStr) {
