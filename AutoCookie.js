@@ -240,7 +240,7 @@ AC.Config.Options.default = {
     "godzmazokLoopCount": 0,
     "godzmazokLoopTimer": 0,
     "popWrinklersTimer": 60000,
-    "fortuneClickTimer": 1000
+    "fortuneClickTimer": 10000
 }
 
 AC.Config.Options.max = {
@@ -251,7 +251,7 @@ AC.Config.Options.max = {
     "godzmazokLoopCount": 10000,
     "godzmazokLoopTimer": 1000,
     "popWrinklersTimer": 3600000,
-    "fortuneClickTimer": 1000
+    "fortuneClickTimer": 11111
 }
 
 AC.Config.Options.min = {
