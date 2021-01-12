@@ -214,6 +214,7 @@ AC.Auto.Builders.fortuneClicker = function() {
         }, AC.Config.Options.loaded.fortuneClickTimer);
     } else {
         AC.Auto.Timers.fortuneClicker = clearInterval(AC.Auto.Timers.fortuneClicker);
+    }
 }
 
 /*******************************************************************************
