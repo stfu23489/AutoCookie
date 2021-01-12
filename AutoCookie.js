@@ -12,10 +12,9 @@
 
 /*******************************************************************************
  *  To Do:
- *  (0) Add a checker to AC.Auto.Builders.castFtHoF and .godzamokLoop to see if the minigame is unlocked. For the latter maybe add a routine to swap Godzamok into the pantheon.
- *  (1) Fix the indentation of the code.
- *  (2) Fix the indentation of the function descriptors.
- *  (i) Beautify code.
+ *  (1) Add the ability for AC.Auto.Builders.godzamokLoop() to slot Godzamok if he is unslotted.
+ *  (2) Fix the indentation of the code.
+ *  (3) Fix the indentation of the function descriptors.
 *******************************************************************************/
 
 /*******************************************************************************
@@ -80,9 +79,11 @@ AC.Auto.load = function(configuration) {
 AC.Auto.Builders.castFtHoF = function() {
     if (AC.Config.Options.loaded.castFtHoFTimer) {
         AC.Auto.Timers.castFtHoF = setInterval(function() {
-            var minigame = Game.Objects['Wizard tower'].minigame
-            if (!AC.Helper.isEmpty(Game.buffs) && !AC.Helper.hasBadBuff() && minigame.magic >= (10 + 0.6*minigame.magicM)) {
-                minigame.castSpell(minigame.spellsById[1]);
+            if (Game.isMinigameReady(Game.Objects["Wizard tower"])) {
+                var minigame = Game.Objects['Wizard tower'].minigame;
+                if (!AC.Helper.isEmpty(Game.buffs) && !AC.Helper.hasBadBuff() && minigame.magic >= (10 + 0.6*minigame.magicM)) {
+                    minigame.castSpell(minigame.spellsById[1]);
+                }
             }
         }, AC.Config.Options.loaded.castFtHoFTimer);
     } else {
@@ -155,6 +156,7 @@ AC.Auto.Builders.godzmazokLoop = function() {
     AC.Cache.godzamokHasMouse = 0;
     if (AC.Config.Options.loaded.godzmazokLoopCount && AC.Config.Options.loaded.godzmazokLoopTimer) {
         AC.Auto.Timers.godzmazokLoop = setInterval(function() {
+            // Check if you have an upgrade that multiplies clicks by cps. Buys Plastic Mouse if you don't.
             if (AC.Cache.godzamokHasMouse == 0) {
                 AC.Data.mouseUpgrades.forEach(function(upgrade) {if (Game.Has(upgrade)) {AC.Cache.godzamokHasMouse = 1}});
                 if (AC.Cache.godzamokHasMouse == 0 && Game.HasUnlocked("Plastic mouse") && (Game.Upgrades["Plastic mouse"].getPrice() <= Game.cookies)) {
@@ -162,6 +164,15 @@ AC.Auto.Builders.godzmazokLoop = function() {
                     AC.Cache.godzamokHasMouse = 1;
                 }
             }
+            
+            // Checks to see if Godzamok is slotted.
+            try {
+                AC.Cache.godzamokHasMouse *= Game.hasGod("ruin");
+            } catch(err) {
+                AC.Cache.godzamokHasMouse = 0;
+            }
+            
+            // Only buy/sell loop if the above is true.
             if (!Game.hasBuff("Devastation") && AC.Cache.godzamokHasMouse) {
                 var i;
                 var cursorAmount = Game.Objects.Cursor.amount
