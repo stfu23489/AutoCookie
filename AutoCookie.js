@@ -355,8 +355,13 @@ AC.Mod.init = function() {
 }
 
 AC.Mod.save = function() {
-    // Could optimize for size by removing options that are the same as default due to how the loader works.
-    return JSON.stringify(AC.Config.Options.loaded);
+    var options = {};
+	for (option in AC.Config.Options.default) {
+		if (AC.Config.Options.default[option] != AC.Config.Options.loaded[option]) {
+			options[option] = AC.Config.Options.loaded[option];
+		}
+	}
+    return JSON.stringify(options);
 }
 
 AC.Mod.load = function(saveStr) {
