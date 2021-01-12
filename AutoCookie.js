@@ -133,10 +133,8 @@ AC.Auto.Builders.clickGolden = function() {
     if (AC.Config.Options.loaded.checkForGoldenTimer) {
         AC.Auto.Timers.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
-                if (shimmer.type == "golden" && (shimmer.wrath == 0 ||
-                    AC.Helper.isEmpty(Game.buffs) ||
-                    Game.hasBuff("Cookie chain") ||
-                    Game.hasBuff("Cookie storm"))) {
+                var condition = (shimmer.type == "golden" && (shimmer.wrath == 0 || AC.Helper.isEmpty(Game.buffs) || Game.hasBuff("Cookie chain") || Game.hasBuff("Cookie storm")))) || shimmer.type == "reindeer"
+                if (condition) {
                     shimmer.pop();
                 }
             });
