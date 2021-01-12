@@ -325,6 +325,7 @@ AC.Mod.load = function(saveStr) {
     } catch(err) {
         AC.Config.Options.loaded = AC.Config.Options.default;
     }
+    AC.Auto.load(AC.Config.Options.loaded);
 }
 
 Game.registerMod("AutoCookie", AC.Mod);
