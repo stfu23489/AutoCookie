@@ -12,10 +12,9 @@
 
 /*******************************************************************************
  *  To Do:
- *  (0) Add a checker to AC.Auto.Fns.castFtHoF and .godzamokLoop to see if the minigame is unlocked. For the latter maybe add a routine to swap Godzamok into the pantheon.
+ *  (0) Add a checker to AC.Auto.Builders.castFtHoF and .godzamokLoop to see if the minigame is unlocked. For the latter maybe add a routine to swap Godzamok into the pantheon.
  *  (1) Fix the indentation of the code.
  *  (2) Fix the indentation of the function descriptors.
- *  (3) Decide what AC.Auto.Fns should be named. Leave it as is or something more descriptive like AC.Auto.TimerFunctions.
  *  (i) Beautify code.
 *******************************************************************************/
 
@@ -24,7 +23,7 @@
 *******************************************************************************/
 var AC = {
     "Auto": {
-        "Fns": {},
+        "Builders": {},
         "Timers": {}
     },
     "Cache": {},
@@ -33,7 +32,8 @@ var AC = {
     },
     "Data": {},
     "Helper": {},
-    "Version": "4"
+    "Mod": {},
+    "Version": "2.031/5"
 }
 
 /*******************************************************************************
@@ -43,7 +43,7 @@ var AC = {
 /***************************************
  *  This function (re)sets all of the autos.
  *  @param  {dict}  configuration   A configuration dictionary.
- *  @global {dict}  AC.Auto.Fns The automatic functions that are loaded.
+ *  @global {dict}  AC.Auto.Builders The automatic functions that are loaded.
  *  @global {dict}  AC.Auto.Timers  The timers associated to each function.
 ***************************************/
 AC.Auto.load = function(configuration) {
@@ -51,7 +51,7 @@ AC.Auto.load = function(configuration) {
     Object.assign(AC.Config.Options.loaded, configuration);
     
     // Clear old timers and define AC.Auto.Timers.
-    var autos = Object.keys(AC.Auto.Fns)
+    var autos = Object.keys(AC.Auto.Builders)
     autos.forEach(function(auto) {
         if (typeof AC.Auto.Timers[auto] !== "undefined") {
             AC.Auto.Timers[auto] = clearInterval(AC.Auto.Timers[auto]);
@@ -62,12 +62,12 @@ AC.Auto.load = function(configuration) {
     
     // Set the timers.
     autos.forEach(function(auto) {
-        eval("AC.Auto.Fns." + auto + "()");
+        eval("AC.Auto.Builders." + auto + "()");
     });
 }
 
 /***************************************
- *  Auto.Fns
+ *  Auto.Builders
  *  All functions in Auto.Fn are automatically associated with a timer ID in Auto.Timers with the same name for its own use.
  *  Each function in Auto.Fn should start a single timer and tie its given timer ID to it.
 ***************************************/
@@ -77,7 +77,7 @@ AC.Auto.load = function(configuration) {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.castFtHoFTimer How often the check to for casting triggers.
 *******************/
-AC.Auto.Fns.castFtHoF = function() {
+AC.Auto.Builders.castFtHoF = function() {
     if (AC.Config.Options.loaded.castFtHoFTimer) {
         AC.Auto.Timers.castFtHoF = setInterval(function() {
             var minigame = Game.Objects['Wizard tower'].minigame
@@ -95,7 +95,7 @@ AC.Auto.Fns.castFtHoF = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.clicksPerSecond    How many times per second the auto clicker should click.
 *******************/
-AC.Auto.Fns.click = function() {
+AC.Auto.Builders.click = function() {
     if (AC.Config.Options.loaded.clicksPerSecond) {
         AC.Auto.Timers.click = setInterval(Game.ClickCookie, 1000/AC.Config.Options.loaded.clicksPerSecond);
     } else {
@@ -108,7 +108,7 @@ AC.Auto.Fns.click = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.clicksPerSecondBuff    How many more times per second the auto clicker should click.
 *******************/
-AC.Auto.Fns.clickBuff = function() {
+AC.Auto.Builders.clickBuff = function() {
     if (AC.Config.Options.loaded.clicksPerSecondBuff) {
         AC.Auto.Timers.clickBuff = setInterval(function() {
             if (Game.hasBuff("Click frenzy") ||
@@ -128,7 +128,7 @@ AC.Auto.Fns.clickBuff = function() {
  *  It is called by AC.Auto.load()
  *  @global {int}   AC.Config.Options.loaded.checkForGoldenTimer    How often the check for golden cookies triggers.
 *******************/
-AC.Auto.Fns.clickGolden = function() {
+AC.Auto.Builders.clickGolden = function() {
     if (AC.Config.Options.loaded.checkForGoldenTimer) {
         AC.Auto.Timers.clickGolden = setInterval(function() {
             Game.shimmers.forEach(function(shimmer) {
@@ -151,7 +151,7 @@ AC.Auto.Fns.clickGolden = function() {
  *  @global {int}   AC.Config.Options.loaded.godzmazokLoopCount How many times to iterate buying and selling 100 cursors.
  *  @global {int}   AC.Config.Options.loaded.godzmazokLoopTimer How often the check to for casting triggers.
 *******************/
-AC.Auto.Fns.godzmazokLoop = function() {
+AC.Auto.Builders.godzmazokLoop = function() {
     AC.Cache.godzamokHasMouse = 0;
     if (AC.Config.Options.loaded.godzmazokLoopCount && AC.Config.Options.loaded.godzmazokLoopTimer) {
         AC.Auto.Timers.godzmazokLoop = setInterval(function() {
@@ -271,7 +271,7 @@ AC.Data.mouseUpgrades = [
 *******************************************************************************/
 /***************************************
  *  Thus function returns 0 if there is no active debuff and the number of debuffs otherwise.
- *  This function is called by AC.Auto.Fns.castFtHoF().
+ *  This function is called by AC.Auto.Builders.castFtHoF().
  *  @global {list}  AC.Data.badBuffs    A list of debuffs.
 ***************************************/
 AC.Helper.hasBadBuff = function() {
@@ -284,7 +284,7 @@ AC.Helper.hasBadBuff = function() {
 
 /***************************************
  *  Thus function returns 0 if the dictionary is empty and 1 if it has contents.
- *  This function is called by AC.Auto.Fns.clickGolden(), AC.Auto.Fns.castFtHoF().
+ *  This function is called by AC.Auto.Builders.clickGolden(), AC.Auto.Builders.castFtHoF().
  *  @param  {dict}  obj The dictionary to be checked.
 ***************************************/
 AC.Helper.isEmpty = function(obj) {
@@ -297,13 +297,34 @@ AC.Helper.isEmpty = function(obj) {
 }
 
 /*******************************************************************************
- *  Main
+ *  Mod
  *  Let's run the mod.
 *******************************************************************************/
-AC.Auto.load(AC.Config.Options.default);
-if (Game.prefs.popups) {
-    Game.Popup("Auto Cookie " + AC.Version + " loaded.");
-} else {
-    Game.Notify("Auto Cookie " + AC.Version + " loaded.", "", "", 1, 1);
+AC.Mod.init = function() {
+    if (Game.prefs.popups) {
+        Game.Popup("Auto Cookie " + AC.Version + " loaded.");
+    } else {
+        Game.Notify("Auto Cookie " + AC.Version + " loaded.", "", "", 1, 1);
+    }
+    Game.Win("Third-party");
 }
-// Figure out how the game wants you to register as mod. See Cookie monster as example.
+
+AC.Mod.save = function() {
+    return JSON.stringify(AC.Config.Options.loaded);
+}
+
+AC.Mod.load = function(saveStr) {
+    AC.Config.Options.loaded = AC.Config.Options.default;
+    try {
+        var options = JSON.parse(saveStr);
+        for (var property in options) {
+            if (AC.Config.Options.default.hasOwnProperty(property)) {
+                AC.Config.Options.loaded[property] = options[property];
+            }
+        }
+    } catch(err) {
+        AC.Config.Options.loaded = AC.Config.Options.default;
+    }
+}
+
+Game.registerMod("AutoCookie", AC.Mod);
