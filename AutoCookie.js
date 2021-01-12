@@ -37,7 +37,7 @@ var AC = {
 }
 
 /*******************************************************************************
- *  Auto
+ *  AC.Auto
  *  Functions and other objects to do with automation.
 *******************************************************************************/
 /***************************************
@@ -67,11 +67,10 @@ AC.Auto.load = function(configuration) {
 }
 
 /***************************************
- *  Auto.Builders
+ *  AC.Auto.Builders
  *  All functions in Auto.Fn are automatically associated with a timer ID in Auto.Timers with the same name for its own use.
  *  Each function in Auto.Fn should start a single timer and tie its given timer ID to it.
 ***************************************/
-
 /*******************
  *  This function sets the auto FtHoF caster.
  *  It is called by AC.Auto.load()
@@ -155,20 +154,18 @@ AC.Auto.Builders.godzmazokLoop = function() {
     AC.Cache.godzamokHasMouse = 0;
     if (AC.Config.Options.loaded.godzmazokLoopCount && AC.Config.Options.loaded.godzmazokLoopTimer) {
         AC.Auto.Timers.godzmazokLoop = setInterval(function() {
-            // Check if you have an upgrade that multiplies clicks by cps. Buys Plastic Mouse if you don't.
+            // Check if you have an upgrade that multiplies clicks by cps. Buys Plastic Mouse if you don't. Then checks to see if Godzamok is slotted.
             if (AC.Cache.godzamokHasMouse == 0) {
                 AC.Data.mouseUpgrades.forEach(function(upgrade) {if (Game.Has(upgrade)) {AC.Cache.godzamokHasMouse = 1}});
                 if (AC.Cache.godzamokHasMouse == 0 && Game.HasUnlocked("Plastic mouse") && (Game.Upgrades["Plastic mouse"].getPrice() <= Game.cookies)) {
                     Game.Upgrades["Plastic mouse"].buy();
                     AC.Cache.godzamokHasMouse = 1;
                 }
-            }
-            
-            // Checks to see if Godzamok is slotted.
-            try {
-                AC.Cache.godzamokHasMouse *= Game.hasGod("ruin");
-            } catch(err) {
-                AC.Cache.godzamokHasMouse = 0;
+                try {
+                    AC.Cache.godzamokHasMouse *= Game.hasGod("ruin");
+                } catch(err) {
+                    AC.Cache.godzamokHasMouse = 0;
+                }
             }
             
             // Only buy/sell loop if the above is true.
@@ -188,18 +185,49 @@ AC.Auto.Builders.godzmazokLoop = function() {
     }
 }
 
+/*******************
+ *  This function sets the auto pop wrinkler timer.
+ *  It is called by AC.Auto.load()
+ *  @global {int}   AC.Config.Options.loaded.popWrinklersTimer    How often to pop all wrinklers.
+*******************/
+AC.Auto.Builders.popWrinklers = function() {
+    if (AC.Config.Options.loaded.popWrinklersTimer) {
+        AC.Auto.Timers.popWrinklers = setInterval(function() {
+            Game.CollectWrinklers();
+        }, AC.Config.Options.loaded.popWrinklersTimer);
+    } else {
+        AC.Auto.Timers.popWrinklers = clearInterval(AC.Auto.Timers.popWrinklers);
+    }
+}
+
+/*******************
+ *  This function sets the auto click fortune news ticker.
+ *  It is called by AC.Auto.load()
+ *  @global {int}   AC.Config.Options.loaded.fortuneClickTimer    How often to pop all wrinklers.
+*******************/
+AC.Auto.Builders.fortuneClicker = function() {
+    if (AC.Config.Options.loaded.fortuneClickTimer) {
+        AC.Auto.Timers.fortuneClicker = setInterval(function() {
+            if (Game.TickerEffect && Game.TickerEffect.type=='fortune') {
+                Game.tickerL.click();
+            }
+        }, AC.Config.Options.loaded.fortuneClickTimer);
+    } else {
+        AC.Auto.Timers.fortuneClicker = clearInterval(AC.Auto.Timers.fortuneClicker);
+}
+
 /*******************************************************************************
- *  Cache
+ *  AC.Cache
  *  Everything stored in AC.Cache is a variable that is referenced multiple times and should be stored here for optimization.
 *******************************************************************************/
 AC.Cache.godzamokHasMouse = 0;
 
 /*******************************************************************************
- *  Config
+ *  AC.Config
  *  Functions and dictionaries that store the confriguration of this mod.
 *******************************************************************************/
 /***************************************
- *  Config.Options
+ *  AC.Config.Options
  *  These dictionaries store the configuration options that the user has control over.
  *  default are the default options, while min and max are the minimum and maximum values.
 ***************************************/
@@ -209,7 +237,9 @@ AC.Config.Options.default = {
     "checkForGoldenTimer": 1000,
     "castFtHoFTimer": 1000,
     "godzmazokLoopCount": 0,
-    "godzmazokLoopTimer": 0
+    "godzmazokLoopTimer": 0,
+    "popWrinklersTimer": 60000,
+    "fortuneClickTimer": 1000
 }
 
 AC.Config.Options.max = {
@@ -218,7 +248,9 @@ AC.Config.Options.max = {
     "checkForGoldenTimer": 1000,
     "castFtHoFTimer": 1000,
     "godzmazokLoopCount": 10000,
-    "godzmazokLoopTimer": 1000
+    "godzmazokLoopTimer": 1000,
+    "popWrinklersTimer": 3600000,
+    "fortuneClickTimer": 1000
 }
 
 AC.Config.Options.min = {
@@ -227,13 +259,15 @@ AC.Config.Options.min = {
     "checkForGoldenTimer": 0,
     "castFtHoFTimer": 0,
     "godzmazokLoopCount": 0,
-    "godzmazokLoopTimer": 0
+    "godzmazokLoopTimer": 0,
+    "popWrinklersTimer": 0,
+    "fortuneClickTimer": 0
 }
 
 AC.Config.Options.loaded = AC.Config.Options.default
 
 /*******************************************************************************
- *  Data
+ *  AC.Data
  *  Game data that is difficult to rip from the game at runtime.
 *******************************************************************************/
 AC.Data.badBuffs = [
@@ -276,7 +310,7 @@ AC.Data.mouseUpgrades = [
 ]
 
 /*******************************************************************************
- *  Helper
+ *  AC.Helper
  *  Additional functions that aid in other calculations.
 *******************************************************************************/
 /***************************************
@@ -307,7 +341,7 @@ AC.Helper.isEmpty = function(obj) {
 }
 
 /*******************************************************************************
- *  Mod
+ *  AC.Mod
  *  Let's run the mod.
 *******************************************************************************/
 AC.Mod.init = function() {
@@ -320,6 +354,7 @@ AC.Mod.init = function() {
 }
 
 AC.Mod.save = function() {
+    // Could optimize for size by removing options that are the same as default due to how the loader works.
     return JSON.stringify(AC.Config.Options.loaded);
 }
 
