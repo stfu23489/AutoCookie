@@ -12,10 +12,24 @@
 
 /*******************************************************************************
  *  To Do
- *  -- Add the ability for AC.Auto.Builders.godzamokLoop() to slot Godzamok if he is unslotted.
- *  -- Make the autoclicker faster. when the clicks/second > 1000 divide by 100 and truncate. Run a for loop to click that many times.
- *  -- Fix the indentation of the code.
- *  -- Fix the indentation of the function descriptors.
+ *  -- Overhauls
+ *      -- Restructure AC.Config. Do the options need to be at their own level?    AC.Config.Options -> AC.Config
+ *      -- Replace AC.Auto?    AC.Auto.load() -> AC.startTimers()    AC.Auto.Builders -> AC.Auto/Builders/TimerConstructors    AC.Auto.Timers -> AC.Cache.Timers
+ *      -- Build one function that build a timer. I don't think this is what I want.
+ *          -- AC.buildTimer = function(options, interval, timerFunction) {if (condition based on options) {AC.Cache["timerFunction"] = setInterval(timerFunction, interval)} else {AC.Cache["timerFunction"] = clearInterval(AC.Cache["timerFunction"])}}
+ *  -- Beautify the code.
+ *      -- Fix the indentation of the code.
+ *      -- Fix the indentation of the function descriptors.
+ *  -- Bug Fixes.
+ *      -- Fix AC.Auto.Builders.godzamokLoop(). Currently doesn't sell multiple times. To quick for game?
+ *  -- Improvements
+ *      -- Make the autoclicker faster.
+ *  -- Roadmap
+ *      -- Autobuyer.
+ *          -- Function that calculates Expected cps based on https://cookieclicker.fandom.com/wiki/Expected_Long_Term_Cookie_Production
+ *          -- Evaluate the PP of buildings and upgrades based on this Expected cps function.
+ *          -- Create an autobuyer based on this evaluation.
+ *      -- Minigame players.
 *******************************************************************************/
 
 /*******************************************************************************
