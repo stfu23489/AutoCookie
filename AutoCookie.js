@@ -14,15 +14,15 @@
 * Header
 *******************************************************************************/
 var AC = {
-    "Auto": {},
-    "Cache": {"Auto": {}},
-    "Config": {},
-    "Data": {},
-    "Helper": {},
-    "Mod": {},
-    "Version": {
+	"Auto": {},
+	"Cache": {"Auto": {}},
+	"Config": {},
+	"Data": {},
+	"Helper": {},
+	"Mod": {},
+	"Version": {
 		"CC": "2.031",
-		"AC": "2021.01.13"
+		"AC": "001"
 	}
 }
 
@@ -35,8 +35,8 @@ var AC = {
 * This function is called by Cookie Clicker to initialize the mod
 */
 AC.init = function() {
-    if (Game.prefs.popups) {Game.Popup("Auto Cookie " + AC.Version.CC + "." + Version.AC + " loaded.")} else {Game.Notify("Auto Cookie " + AC.Version.CC + "." + Version.AC + " loaded.", "", "", 1, 1)}
-    Game.Win("Third-party");
+	if (Game.prefs.popups) {Game.Popup("Auto Cookie " + AC.Version.CC + "." + AC.Version.AC + " loaded.")} else {Game.Notify("Auto Cookie " + AC.Version.CC + "." + AC.Version.AC + " loaded.", "", "", 1, 1)}
+	Game.Win("Third-party");
 	
 	for (const f in AC.Auto) {
 		AC.Cache.Auto[f] = {}
@@ -44,13 +44,16 @@ AC.init = function() {
 	
 	// Wait 500 ms to see if AC.load() was called by Cookie Clicker. If it wasn't call AC.startAutos() and start the mod with default values
 	setTimeout(function() {if (!AC.Cache.running) {AC.startAutos()}; AC.Cache.running = true}, 500);
+	
+	// Fun stuff
+	Game.registerHook("ticker", AC.Data.newTickers);
 }
 
 /*
 * This function returns AC.Config.Current as a stringified JSON as requested by Cookie Clicker
 */
 AC.save = function() {
-    return JSON.stringify(AC.Config.Current);
+	return JSON.stringify(AC.Config.Current);
 }
 
 /*
@@ -58,20 +61,20 @@ AC.save = function() {
 * @param	{str}	saveStr	Setting data in the same format as AC.Config.Default as a stringified JSON
 */
 AC.load = function(saveStr) {
-    AC.Config.Current = AC.Config.Default;
+	AC.Config.Current = AC.Config.Default;
 	
-    try {
-        AC.Config.Current = JSON.parse(saveStr);
-    } catch(err) {
+	try {
+		AC.Config.Current = JSON.parse(saveStr);
+	} catch(err) {
 		AC.errorNotify("Failed to load mod save data. ${err}");
-    }
+	}
 	
-    AC.startAutos();
+	AC.startAutos();
 	AC.Cache.running = true;
 }
 
 /*
-* This function sets the intervals that the functions in AC.Auto are called at
+* This function calls all functions in AC.Auto at their associated intervals in AC.Config.Current.Auto
 */
 AC.startAutos = function() {
 	for (const f in AC.Auto) {
@@ -85,9 +88,9 @@ AC.startAutos = function() {
 */
 AC.errorNotify = function(errorMessage) {
 	if (Game.prefs.popups) {
-		Game.Popup("Auto Cookie " + AC.Version.CC + "." + Version.AC + " Error. " + errorMessage)
+		Game.Popup("Auto Cookie " + AC.Version.CC + "." + AC.Version.AC + " Error. " + errorMessage)
 	} else {
-		Game.Notify("Auto Cookie " + AC.Version.CC + "." + Version.AC + " Error", errorMessage)
+		Game.Notify("Auto Cookie " + AC.Version.CC + "." + AC.Version.AC + " Error", errorMessage)
 	}
 }
 
@@ -113,11 +116,9 @@ AC.errorNotify = function(errorMessage) {
 *	AC.Config.Minimum.Auto.f.interval	{num}	The minimum interval (in ms) at which to call f. If == 0, f is not necessarily called
 *******************************************************************************/
 /*
-* This function clicks the cookie a number of times
+* This function clicks the cookie
 */
-AC.Auto.clickCookie = function() {
-	for (var i = 0; i < AC.Config.Current.Auto.clickCookie.numClicks; i++) {Game.ClickCookie()}
-}
+AC.Auto.clickCookie = function() {Game.ClickCookie()}
 
 /*******************************************************************************
 * AC.Cache
@@ -133,7 +134,7 @@ AC.Cache.running = false;
 *******************************************************************************/
 AC.Config.Default = {
 	"Auto": {
-		"clickCookie": {"interval": 100}
+		"clickCookie": {"interval": 0}
 	}
 }
 
@@ -156,6 +157,17 @@ AC.Config.Current = AC.Config.Default;
 *
 * Data that is created before runtime
 *******************************************************************************/
+/* 
+* This function returns an array of tickers to be called by Cookie Clicker.
+*/
+AC.Data.newTickers = function() {
+	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000)
+	return [
+		"<q>I'm sorry " + Game.bakeryName + ". I'm afraid I can't do that.</q><sig>Auto Cookie</sig>",
+		"<q>Daisy, Daisy, give me your answer do...</q><sig>Auto Cookie</sig>",
+		"News: Do Androids Dream of Electric Cookies tops The New York Times Best Sellers list for the " + (daysPlayed<=1?"first time this week.":(daysPlayed+([11,12,13].includes(daysPlayed%100)?"th":daysPlayed%10==1?"st":daysPlayed%10==2?"nd":daysPlayed%10==3?"rd":"th")+" week in a row."))
+	]
+}
 
 /*******************************************************************************
 * AC.Lib
