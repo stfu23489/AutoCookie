@@ -14,7 +14,7 @@
 * Header
 *******************************************************************************/
 var AC = {
-    "Autos": {},
+    "Auto": {},
     "Cache": {
 		"Auto": {}
 	},
@@ -22,7 +22,7 @@ var AC = {
     "Data": {},
     "Helper": {},
     "Mod": {},
-    "Version": "2.031/5"
+    "Version": "2.031/Beta"
 }
 
 /*******************************************************************************
@@ -40,6 +40,9 @@ AC.init = function() {
 	for (const f in AC.Auto) {
 		AC.Cache.Auto[f] = {}
 	}
+	
+	// Wait 500 ms to see if AC.load() was called by Cookie Clicker. If it wasn't, call it and start the mod with default values.
+	setTimeout(function() {if (!AC.Cache.running) {AC.startAutos()}; AC.Cache.running = true}, 500);
 }
 
 /*
@@ -67,15 +70,16 @@ AC.load = function(saveStr) {
         AC.Config.loaded = AC.Config.default;
     }
 	
-    AC.startAutos(AC.Config.loaded);
+    AC.startAutos();
+	AC.Cache.running = true;
 }
 
 /*
 * This function sets the intervals that the functions in AC.Auto are called at
 */
 AC.startAutos = function() {
-	for (constf in AC.Auto) {
-		if (typeof AC.Cache.Auto[f].ID !== "undefined") {AC.Cache.Auto[f].ID = clearInterval(AC.Cache.Auto[f])} else {AC.Cache.Auto[f].ID = undefined}
+	for (const f in AC.Auto) {
+		if (typeof AC.Cache.Auto[f].ID !== "undefined") {AC.Cache.Auto[f].ID = clearInterval(AC.Cache.Auto[f].ID)} else {AC.Cache.Auto[f].ID = undefined}
 		if (AC.Config.current.Auto[f].interval != 0) {AC.Cache.Auto[f].ID = setInterval(AC.Auto[f], AC.Config.current.Auto[f].interval)}
 	}
 }
@@ -113,6 +117,7 @@ AC.Auto.clickCookie = function() {
 *
 * Data that is generated during runtime
 *******************************************************************************/
+AC.Cache.running = false;
 
 /*******************************************************************************
 * AC.Config
@@ -122,7 +127,8 @@ AC.Auto.clickCookie = function() {
 AC.Config.default = {
 	"Auto": {
 		"clickCookie": {
-			"numClicks": 5
+			"interval": 100,
+			"numClicks": 1
 		}
 	}
 }
@@ -130,6 +136,7 @@ AC.Config.default = {
 AC.Config.maximum = {
 	"Auto": {
 		"clickCookie": {
+			"interval": Infinity,
 			"numClicks": 250
 		}
 	}
@@ -138,6 +145,7 @@ AC.Config.maximum = {
 AC.Config.minimum = {
 	"Auto": {
 		"clickCookie": {
+			"interval": 0,
 			"numClicks": 0
 		}
 	}
