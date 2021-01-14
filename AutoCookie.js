@@ -38,6 +38,7 @@ AC.init = function() {
 	if (Game.prefs.popups) {Game.Popup("Auto Cookie " + AC.Version.CC + "." + AC.Version.AC + " loaded.")} else {Game.Notify("Auto Cookie " + AC.Version.CC + "." + AC.Version.AC + " loaded.", "", "", 1, 1)}
 	Game.Win("Third-party");
 	
+	// Initialize the cache for each function in AC.Auto
 	for (const f in AC.Auto) {
 		AC.Cache.Auto[f] = {}
 	}
@@ -161,7 +162,7 @@ AC.Config.Current = AC.Config.Default;
 * This function returns an array of tickers to be called by Cookie Clicker.
 */
 AC.Data.newTickers = function() {
-	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000)
+	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000);
 	return [
 		"<q>I'm sorry " + Game.bakeryName + ". I'm afraid I can't do that.</q><sig>Auto Cookie</sig>",
 		"<q>Daisy, Daisy, give me your answer do...</q><sig>Auto Cookie</sig>",
