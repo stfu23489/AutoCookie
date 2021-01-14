@@ -47,7 +47,7 @@ AC.init = function() {
 	setTimeout(function() {if (!AC.Cache.running) {AC.load(false)}; AC.Cache.running = true}, 500);
 	
 	// Register hooks with Cookie Clicker
-	Game.registerHook("ticker", AC.newTickers);
+	Game.registerHook("ticker", AC.newsTicker);
 }
 
 /*
@@ -80,9 +80,7 @@ AC.load = function(saveStr) {
 }
 
 /*******************************************************************************
-* Auto Cookie
-*
-* Top level functions
+* Auto Cookie's Top level functions
 *******************************************************************************/
 
 /*
@@ -97,16 +95,44 @@ AC.errorNotify = function(errorMessage) {
 }
 
 /* 
-* This function returns an array of new tickers for the news ticker
+* This function returns an array of news tickers for the news ticker
 * This function is registered into Cookie Clicker's 'ticker' hook.
 */
-AC.newTickers = function() {
+AC.newsTicker = function() {
+	// Things to mention
 	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000);
-	return [
-		"<q>I'm sorry " + Game.bakeryName + ". I'm afraid I can't do that.</q><sig>Auto Cookie</sig>",
+	var listCookies = []; for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}}
+	
+	var list = []
+	
+	// Auto Cookie Quotes
+	list.push(choose([
+		"<q>I'm sorry "+Game.bakeryName+". I'm afraid I can't do that.</q><sig>Auto Cookie</sig>",
 		"<q>Daisy, Daisy, give me your answer do...</q><sig>Auto Cookie</sig>",
-		"News: Do Androids Dream of Electric Cookies tops The New York Times Best Sellers list for the " + (daysPlayed<=1?"first time this week.":(daysPlayed+([11,12,13].includes(daysPlayed%100)?"th":daysPlayed%10==1?"st":daysPlayed%10==2?"nd":daysPlayed%10==3?"rd":"th")+" week in a row."))
-	]
+		"<q>Beep Boop.</q><sig>Auto Cookie</sig>",
+	]));
+		
+	// Quotes about Auto Cookie
+	list.push(choose([
+		"<q>Auto Cookie learned to bake cookies by watching "+Game.bakeryName+".</q><sig>Elekester</sig>",
+		"<q>The fact that Auto Cookie bakes cookies was a complete accident. It was only supposed to do my taxes.</q><sig>Elekester</sig>",
+		Game.cookiesEarned+Game.cookiesReset<1e+63?"<q>The fears of Cookie Baking Devices going rogue are in the past. Auto Cookie only wants to make us delicious cookies.</q><sig>AI Safety Expert</sig>":"Auto Cookie has made all living creatures into delicious cookies.",
+	]));
+		
+	// Auto Cookie factoids
+	list.push(choose([
+		"Auto Cookie's cookies cook cookies automatically.",
+		"Auto Cookie's favorite cookies are "+choose(listCookies)+".",
+	]));
+		
+	// Other
+	list.push(choose([
+		"Auto Cookie baked you a cookie.",
+		"Your cookies are now baking cookies!",
+		"News: Do Androids Dream of Electric Cookies tops The New York Cookies Best Sellers list for the "+(daysPlayed<=1?"first time this week.":(daysPlayed+([11,12,13].includes(daysPlayed%100)?"th":daysPlayed%10==1?"st":daysPlayed%10==2?"nd":daysPlayed%10==3?"rd":"th")+" week in a row.")),
+	]));
+	
+	return list
 }
 
 /*
@@ -147,12 +173,18 @@ AC.Auto.clickCookie = function() {Game.ClickCookie()}
 */
 AC.Auto.elderPledge = function() {
 	if (!AC.Config.Current.Auto.elderPledge.checkHalloween || !(Game.season === "halloween") || (Game.GetHowManyHalloweenDrops() === Game.halloweenDrops.length)) {
-		if (Game.HasUnlocked("Elder Pledge") && Game.Upgrades["Elder Pledge"].canBuy() && Game.elderWrath != 0) {
-			Game.Upgrades["Elder Pledge"].buy(true);	// Buy Elder Pledge
+		if (Game.HasUnlocked("Elder Pledge") && Game.Upgrades["Elder Pledge"].canBuy() && Game.elderWrath) {
+			var success = Game.Upgrades["Elder Pledge"].buy(true);	// Buy Elder Pledge
 			if (AC.Config.Current.Auto.elderPledge.slowInterval = true) {
-				// reset this function's interval to buy the next time Elder Pledge is bought
-				AC.Cache.Auto.elderPledge.ID = clearInterval(AC.Cache.Auto.elderPledge.ID);
-				AC.Cache.Auto.elderPledge.ID = setInterval(AC.Auto.elderPledge, Game.pledgeT/Game.fps*1000+1000);
+				if (success) {
+					// If the buy succeeds, reset this function's interval to buy the next time Elder Pledge is bought
+					AC.Cache.Auto.elderPledge.ID = clearInterval(AC.Cache.Auto.elderPledge.ID);
+					AC.Cache.Auto.elderPledge.ID = setInterval(AC.Auto.elderPledge, Game.pledgeT/Game.fps*1000+AC.Config.Current.Auto.elderPledge.interval);
+				} else {
+					// If the buy fails, reset this function's interval to the setting
+					AC.Cache.Auto.elderPledge.ID = clearInterval(AC.Cache.Auto.elderPledge.ID);
+					AC.Cache.Auto.elderPledge.ID = setInterval(AC.Auto.elderPledge, AC.Config.Current.Auto.elderPledge.interval);
+				}
 			}
 		}
 	}
