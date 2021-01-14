@@ -44,7 +44,7 @@ AC.init = function() {
 	}
 	
 	// Wait 500 ms to see if AC.load() was called by Cookie Clicker. If it wasn't, call AC.load(false) to start Auto Cookie with default settings
-	setTimeout(function() {if (!AC.Cache.running) {AC.load(false)}; AC.Cache.running = true}, 500);
+	setTimeout(function() {if (!AC.Cache.running) {AC.load(false)}}, 500);
 	
 	// Register hooks with Cookie Clicker
 	Game.registerHook("ticker", AC.newsTicker);
@@ -75,7 +75,7 @@ AC.load = function(saveStr) {
 	}
 	
 	// Start Auto Cookie
-	for (const f in AC.Auto) {AC.setAuto(f)}
+	AC.setAutos();
 	AC.Cache.running = true;
 }
 
@@ -143,6 +143,11 @@ AC.setAuto = function(f) {
 	if (typeof AC.Cache.Auto[f].ID !== "undefined") {AC.Cache.Auto[f].ID = clearInterval(AC.Cache.Auto[f].ID)} else {AC.Cache.Auto[f].ID = undefined}
 	if (AC.Config.Current.Auto[f].interval != 0) {AC.Cache.Auto[f].ID = setInterval(AC.Auto[f], AC.Config.Current.Auto[f].interval)}
 }
+
+/*
+* This function calls AC.setAuto for each function in AC.Auto
+*/
+AC.setAutos = function() {for (const f in AC.Auto) {AC.setAuto(f)}}
 
 /*******************************************************************************
 * AC.Auto
