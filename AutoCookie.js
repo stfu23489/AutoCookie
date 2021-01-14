@@ -247,14 +247,14 @@ AC.Cache.godzamokHasMouse = 0;
  *  default are the default options, while min and max are the minimum and maximum values.
 ***************************************/
 AC.Config.Options.default = {
-    "clicksPerSecond": 0,
-    "clicksPerSecondBuff": 10,
+    "clicksPerSecond": 100,
+    "clicksPerSecondBuff": 0,
     "checkForGoldenTimer": 1000,
     "castFtHoFTimer": 1000,
-    "godzmazokLoopCount": 0,
-    "godzmazokLoopTimer": 0,
-    "popWrinklersTimer": 60000,
-    "fortuneClickTimer": 10000
+    "godzmazokLoopCount": 1,
+    "godzmazokLoopTimer": 10050,
+    "popWrinklersTimer": 300000,
+    "fortuneClickTimer": 7500
 }
 
 AC.Config.Options.max = {
