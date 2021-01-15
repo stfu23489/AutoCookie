@@ -354,4 +354,4 @@ AC.Data.mouseUpgrades = [
 /*******************************************************************************
  * Register the mod with Cookie Clicker
  ******************************************************************************/
-Game.registerMod("AutoCookieBeta", AC);
+Game.registerMod("AutoCookie", AC);
