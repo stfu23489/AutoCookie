@@ -98,7 +98,6 @@ AC.load = function(saveStr) {
 /*******************************************************************************
  * Auto Cookie's Top Level Functions
  ******************************************************************************/
-
 /**
  * This function notifies the player that an error has occured.
  */
@@ -139,7 +138,7 @@ AC.newsTicker = function() {
 		"Auto Cookie baked you a cookie.",
 		"Your cookies are now baking cookies!",
 		"News: Do Androids Dream of Electric Cookies tops The New York Cookies Best Sellers list for the "+(daysPlayed<=1?"first time this week.":(daysPlayed+([11,12,13].includes(daysPlayed%100)?"th":daysPlayed%10==1?"st":daysPlayed%10==2?"nd":daysPlayed%10==3?"rd":"th")+" week in a row.")),
-		"<q>Auto Cookie learned to bake cookies by watching "+Game.bakeryName+".</q><sig>Elekester</sig>",
+		"<q>Auto Cookie learned to bake cookies by watching "+(Game.bakeryName=="Elekester"?"me":Game.bakeryName)+".</q><sig>Elekester</sig>",
 		"<q>The fact that Auto Cookie bakes cookies was a complete accident. It was only supposed to do my taxes.</q><sig>Elekester</sig>",
 		Game.cookiesEarned+Game.cookiesReset<1e+63?"<q>The fears of Cookie Baking Devices going rogue are in the past. Auto Cookie only wants to make us delicious cookies.</q><sig>AI Safety Expert</sig>":"Auto Cookie has made all living creatures into delicious cookies.",
 		"Auto Cookie's cookies cook cookies automatically.",
