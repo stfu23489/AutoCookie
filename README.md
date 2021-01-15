@@ -6,7 +6,7 @@
 
 Currently Auto Cookie can automate the following tasks.
 
-* The **Autoclicker**, up to 100 times per second.
+* The **Autoclicker**, which clicks up to 100 times per second.
 * The ability to **autoclick golden cookies**, with optional conditions for wrath cookies.
 * An **autoclicker** for fortunes in the news ticker, as well as a few other news ticker surprises.
 * The ability to autobuy **Elder Pledges**.
