@@ -45,10 +45,10 @@ If you'd rather use the addon as a script via per example Greasemonkey or Tamper
 // ==/UserScript==
 
 (function() {
-    const checkReady = setInterval(function() {
+    const launch = setInterval(function() {
         if (typeof Game.ready !== 'undefined' && Game.ready) {
             Game.LoadMod('https://elekester.github.io/AutoCookie/AutoCookie.js');
-            clearInterval(checkReady);
+            clearInterval(launch);
         }
     }, 1000);
 })();
