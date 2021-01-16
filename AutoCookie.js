@@ -190,7 +190,7 @@ AC.Auto = function(name, desc, intvl, settings, cache, actionFunction) {
 /**
  * This method fires the action function of the object at regular intervals
  * @param	{boolean}	runImmediately	If true (false by default), the action function will be called once immediately.
- * @param	{number}	interval	If provided, will override this.settings.interval
+ * @param	{number}	interval	If provided, will override this.settings.interval for this run
  * @returns	{boolean}	True if successful. False if failure.
  */
 AC.Auto.prototype.run = function(runImmediately, interval) {
@@ -219,7 +219,6 @@ AC.Auto.prototype.toggle = function() {
 	if (!this.intvlID) this.run();
 	else this.stop();
 	if (Game.onMenu === "prefs") {
-		console.log(this.name + "Button");
 		var abutton = l(this.name + "Button");
 		abutton.innerHTML = this.name + (this.intvlID?" On":" Off");
 		abutton.className = "option" + (this.intvlID?"":" off");
@@ -266,7 +265,7 @@ new AC.Auto("Elder Pledge Buyer", "Purchases the Elder pledge when it is availab
 /**
  * This Automated Action clicks golden cookies and reindeer
  */
-new AC.Auto("Golden Cookie Clicker", "Autoclicks golden dookies and reindeer.",  1000, {
+new AC.Auto("Golden Cookie Clicker", "Autoclicks golden dookies and reindeer.", 1000, {
 	"clickWraths": 4,	// If 0, never click wraths. If 1 (or 2), click only when there is a buff in buffList active (or no buff). If -1 (or -2), click only when there isn't a buff in buffList active (or no buff). If 3, click if there is an active buff. If -3, click if there isn't an active buff. Otherwise, always click
 	"buffList": []	// List of buffs referenced in clickWraths
 }, {}, function() {
@@ -352,20 +351,20 @@ AC.Config.Settings = {
  * Data
  ******************************************************************************/
 AC.Data.mouseUpgrades = [
-    "Plastic mouse",
-    "Iron mouse",
-    "Titanium mouse",
-    "Adamantium mouse",
-    "Unobtainium mouse",
-    "Eludium mouse",
-    "Wishalloy mouse",
-    "Fantasteel mouse",
-    "Nevercrack mouse",
-    "Armythril mouse",
-    "Technobsidian mouse",
-    "Plasmarble mouse",
-    "Miraculite mouse",
-    "Fortune #104"
+	"Plastic mouse",
+	"Iron mouse",
+	"Titanium mouse",
+	"Adamantium mouse",
+	"Unobtainium mouse",
+	"Eludium mouse",
+	"Wishalloy mouse",
+	"Fantasteel mouse",
+	"Nevercrack mouse",
+	"Armythril mouse",
+	"Technobsidian mouse",
+	"Plasmarble mouse",
+	"Miraculite mouse",
+	"Fortune #104"
 ]
 
 /*******************************************************************************
@@ -380,8 +379,14 @@ AC.Display.UpdateMenu = function() {
 		// I'm better at HTML then I am at JS, so heres the HTML we'll be injecting
 		str = "<div class='title'>Auto Cookie Settings</div>";
 		str += "<div class='listing'>Version: " + AC.Version.Full + "</div>";
+		
+		// Right now you can just turn the autos on or off. They should all be sliders/text boxes were you can change the interval
 		for (auto in AC.Autos) {
 			str += "<div class='listing'><a class='option" + (AC.Autos[auto].intvlID?"":" off") + "' id='" + auto + "Button'" + Game.clickStr + "='AC.Autos[\"" + auto + "\"].toggle(); PlaySound(\"snd/tick.mp3\");'>" + auto + (AC.Autos[auto].intvlID?" On":" Off") + "</a><label>" + AC.Autos[auto].desc + "</label></div>";
+
+			/*
+			'<div class="sliderBox"><div style="float:left;">'+leftText+'</div><div style="float:right;" id="'+slider+'RightText">'+rightText.replace('[$]',startValueFunction())+'</div><input class="slider" style="clear:both;" type="range" min="0" max="100" step="1" value="'+startValueFunction()+'" onchange="'+callback+'" oninput="'+callback+'" onmouseup="PlaySound(\'snd/tick.mp3\');" id="'+slider+'"/></div>';
+			*/
 		}
 		
 		// Inject that HTML
