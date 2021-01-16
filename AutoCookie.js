@@ -365,6 +365,9 @@ AC.Data.mouseUpgrades = [
 /*******************************************************************************
  * Display
  ******************************************************************************/
+ /**
+  * This function appends Auto Cookie's settings to the options menu in Cookie Clicker
+  */
 AC.Display.UpdateMenu = function() {
 	if (Game.onMenu == 'prefs') {
 		// Get the subsection part of the menu (everything below Options)
@@ -376,11 +379,17 @@ AC.Display.UpdateMenu = function() {
 		str += '<div class="listing">Version: ' + AC.Version.Full + '</div>';
 		
 		// Right now you the sliders allow for a value between 0 and 11 at steps of 0.01. The maximum should be configurable by the auto and there should also be an input for the user to type in.
-		// Some of the calls, mostly onthing should be split into its own function.
+		// Some of the calls inside of the html, mostly onthing, should be split into its own function.
 		var onthing = ''
 		for (auto in AC.Autos) {
-			onthing = 'AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'Slider\').value; l(\'' + auto + 'Interval\').innerHTML = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2);';
-			str += '<div class="listing"><div class="sliderBox"><div style="float:left;">' + auto + '</div><div style="float:right;" id="' + auto + 'Interval">' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + ' s</div><input class="slider" style="clear:both;" type="range" min="0" max="11" step="0.01" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto + '\'].run(); PlaySound(\'snd/tick.mp3\');" id="' + auto + 'Slider"/></div><label>' + AC.Autos[auto].desc + '</label></div>';
+			
+			// Add the slider for the interval for this auto
+			onthing = 'AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'Slider\').value; l(\'' + auto + 'SliderRight\').value = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2);';
+			str += '<div class="listing"><div class="sliderBox"><div style="float:left;">' + auto + '</div><div style="float:right;">' + '<input class="option" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" autocomplete="off" style="width: 30 px" id="' + auto + 'SliderRight">' + '</div><input class="slider" style="clear:both;" type="range" min="0" max="11" step="0.01" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto + '\'].run(); PlaySound(\'snd/tick.mp3\');" id="' + auto + 'Slider"/></div><label>' + AC.Autos[auto].desc + '</label>';
+			
+			// Something to do with each auto's settings
+			
+			str += '</div>';
 		}
 		
 		// Inject that HTML
