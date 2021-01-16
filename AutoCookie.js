@@ -218,6 +218,11 @@ AC.Auto.prototype.stop = function() {
 AC.Auto.prototype.toggle = function() {
 	if (!this.intvlID) this.run();
 	else this.stop();
+	if (Game.onMenu === "prefs") {
+		var abutton = document.getElementByID(auto + "Button");
+		abutton.innerHTML = this.name + (this.intvlID?" On":" Off")';
+		abutton.className = "option" + (this.intvlID?"":" off");
+	}
 }
 
 /*******************************************************************************
@@ -375,7 +380,7 @@ AC.Display.UpdateMenu = function() {
 		str = "<div class='title'>Auto Cookie Settings</div>";
 		str += "<div class='listing'>Version: " + AC.Version.Full + "</div>";
 		for (auto in AC.Autos) {
-			str += "<div class='listing'><a class='option" + (AC.Autos[auto].intvlID?"":" off") + "' id='" + auto + "Button' onclick='AC.Autos[\"" + auto + "\"].toggle(); document.getElementById(\"" + auto + "Button\").innerHTML=(AC.Autos[\"" + auto + "\"].intvlID?on:off; PlaySound(\"snd/tick.mp3\");'>" + auto + "</a><label>" + AC.Autos[auto].desc + "</label></div>";
+			str += "<div class='listing'><a class='option" + (AC.Autos[auto].intvlID?"":" off") + "' id='" + auto + "Button'" + Game.clickStr + "='AC.Autos[\"" + auto + "\"].toggle(); PlaySound(\"snd/tick.mp3\");'>" + auto + (AC.Autos[auto].intvlID?" On":" Off") + "</a><label>" + AC.Autos[auto].desc + "</label></div>";
 		}
 		
 		// Inject that HTML
