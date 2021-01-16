@@ -14,19 +14,22 @@
  * Header
  ******************************************************************************/
 var AC = {
-	"Autos": {},
-	"Cache": {},
-	"Config": {},
-	"Data": {},
-	"Version": {
+	"Autos": {},	// Automated Actions
+	"Cache": {},	// Temporary Storage
+	"Config": {},	// Settings
+	"Data": {},	// Misc. Data
+	"Display": {},	// Display Functions
+	"Game": {},	// Copies of game functions and data
+	"Version": {	// Version Information
 		"CC": "2.031",
 		"AC": "3",
 	}
 }
+
 AC.Version.Full = AC.Version.CC + "." + AC.Version.AC;
 
 /*******************************************************************************
- * Cookie Clicker Modding API Functions
+ * Cookie Clicker Modding Functions
  *
  * Functions called by Cookie Clicker as part of its Modding API
  ******************************************************************************/
@@ -34,20 +37,31 @@ AC.Version.Full = AC.Version.CC + "." + AC.Version.AC;
  * This function is called by Cookie Clicker to initialize Auto Cookie
  */
 AC.init = function() {
-	// Notify the player that Auto Cookie has loaded
-	if (Game.prefs.popups) {Game.Popup("Auto Cookie " + AC.Version.Full + " loaded.")} else {Game.Notify("Auto Cookie " + AC.Version.Full + " loaded.", "", "", 1, 1)}
+	AC.Cache.loaded = false;
 	Game.Win("Third-party");
 	
-	// Wait 500 ms to see if AC.load() was called by Cookie Clicker. If it wasn't, call AC.load(false) to start Auto Cookie with default settings
-	setTimeout(function() {if (!AC.Cache.running) {AC.load(false)}; AC.Cache.running = true}, 500);
-	
-	// Register hooks with Cookie Clicker
-	Game.registerHook("ticker", AC.newsTicker);
+	setTimeout(function() {
+		// After waiting for the delay, check if Auto Cookie's save data has been loaded and the automated actions have been loaded
+		if (!AC.Cache.loaded) {AC.load(false)};
+		
+		// Register hooks with Cookie Clicker
+		Game.registerHook("ticker", AC.newsTicker);
+		
+		// Inject code into Cookie Clicker
+		AC.Game.UpdateMenu = Game.UpdateMenu;
+		Game.UpdateMenu = function() {
+			AC.Game.UpdateMenu();
+			AC.Display.UpdateMenu();
+		}
+		
+		// Notify the player that Auto Cookie has loaded
+		if (Game.prefs.popups) {Game.Popup("Auto Cookie " + AC.Version.Full + " loaded.")} else {Game.Notify("Auto Cookie " + AC.Version.Full + " loaded.", "", "", 1, 1)}
+	}, 500);
 }
 
 /**
  * This function saves Auto Cookie's current settings.
- * @returns	{string}	A stringified JSON containing AC.Config.Settings as well as AC.Autos[auto].interval and AC.Autos[auto].settings for each auto
+ * @returns	{string}	A stringified JSON containing AC.Config.Settings and AC.Autos[auto].settings for each auto
  */
 AC.save = function() {
 	var settings = AC.Config.Settings;
@@ -62,8 +76,9 @@ AC.save = function() {
 }
 
 /**
- * This function loads AC.Config.Current from the save data provided by Cookie Clicker
- * @param	{string}	saveStr	A stringified JSON containing AC.Config.Settings as well as AC.Autos[auto].interval and AC.Autos[auto].settings for each auto
+ * This function loads AC.Config.Settings and AC.Autos[auto].settings for each auto from the provided save data (if the save data is falsy, nothing is loaded and current settings are preserved)
+ * Then all Automated Actions are run
+ * @param	{string}	saveStr	A stringified JSON containing AC.Config.Settings and AC.Autos[auto].settings for each auto
  */
 AC.load = function(saveStr) {
 	if (saveStr) {
@@ -90,9 +105,8 @@ AC.load = function(saveStr) {
 		if (AC.Config.Settings[setting]) AC.Config.Settings[setting] = settings[setting];
 	}
 	
-	// Start Auto Cookie
+	AC.Cache.loaded = true;
 	for (var auto in AC.Autos) AC.Autos[auto].run();
-	AC.Cache.running = true;
 }
 
 /*******************************************************************************
@@ -322,11 +336,6 @@ new AC.Auto("Godzamok Loop", "Triggers Godzamok's Devastation buff automatically
 });
 
 /*******************************************************************************
- * Cache
- ******************************************************************************/
-AC.Cache.running = false;	// Whether or not Auto Cookie is running
-
-/*******************************************************************************
  * Config
  ******************************************************************************/
 AC.Config.Settings = {
@@ -352,6 +361,12 @@ AC.Data.mouseUpgrades = [
     "Miraculite mouse",
     "Fortune #104"
 ]
+
+/*******************************************************************************
+ * Display
+ ******************************************************************************/
+AC.Display.UpdateMenu = function() {
+}
 
 /*******************************************************************************
  * Register the mod with Cookie Clicker
