@@ -22,7 +22,7 @@ var AC = {
 	"Game": {},	// Copies of game functions and data
 	"Version": {	// Version Information
 		"CC": "2.031",
-		"AC": "7",
+		"AC": "8",
 	}
 }
 
@@ -218,11 +218,6 @@ AC.Auto.prototype.stop = function() {
 AC.Auto.prototype.toggle = function() {
 	if (!this.intvlID) this.run();
 	else this.stop();
-	if (Game.onMenu === "prefs") {
-		var abutton = l(this.name + "Button");
-		abutton.innerHTML = this.name + (this.intvlID?" On":" Off");
-		abutton.className = "option" + (this.intvlID?"":" off");
-	}
 }
 
 /*******************************************************************************
@@ -381,10 +376,20 @@ AC.Display.UpdateMenu = function() {
 		str += "<div class='listing'>Version: " + AC.Version.Full + "</div>";
 		
 		// Right now you can just turn the autos on or off. They should all be sliders/text boxes were you can change the interval
+		var callback = ""
 		for (auto in AC.Autos) {
-			str += "<div class='listing'><a class='option" + (AC.Autos[auto].intvlID?"":" off") + "' id='" + auto + "Button'" + Game.clickStr + "='AC.Autos[\"" + auto + "\"].toggle(); PlaySound(\"snd/tick.mp3\");'>" + auto + (AC.Autos[auto].intvlID?" On":" Off") + "</a><label>" + AC.Autos[auto].desc + "</label></div>";
-
+			callback = "AC.Autos['" + auto + "'].settings.intvl = 1000*l('" + auto + " Slider').value; l('" + auto + " Interval').innerHTML = AC.Autos['" + auto + "'].settings.intvl;"
+			str += "<div class='listing'><div class='sliderBox'><div style='float:left;'>" + auto + "</div><div style='float:right; id='" + auto + " Interval'>" + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + "</div><input class='slider' style='clear:both;' type='range' min='0' max='11' step='0.01' value='" + AC.Autos[auto].settings.intvl/1000 + "' onchange='" + callback + "' oninput='" callback + "' onmouseup='AC.Autos['" + auto + "'].run(); PlaySound(\"snd/tick.mp3\");' id='" + auto + " Slider'/></div><label>" + AC.Autos[auto].desc + "</label></div>";
+			
 			/*
+			set AC.Autos[auto].settings.intvl = slider's .value
+			set the right text's .innerHTML = AC.Autos[auto].settings.intvl
+			
+			'Game.setVolume(Math.round(l(\'volumeSlider\').value));l(\'volumeSliderRightText\').innerHTML=Game.volume+\'%\';'
+			
+			"<div class='listing'><a class='option" + (AC.Autos[auto].intvlID?"":" off") + "' id='" + auto + "Button'" + Game.clickStr + "='AC.Autos[\"" + auto + "\"].toggle(); PlaySound(\"snd/tick.mp3\");'>" + auto + (AC.Autos[auto].intvlID?" On":" Off") + "</a><label>" + AC.Autos[auto].desc + "</label></div>";
+
+
 			'<div class="sliderBox"><div style="float:left;">'+leftText+'</div><div style="float:right;" id="'+slider+'RightText">'+rightText.replace('[$]',startValueFunction())+'</div><input class="slider" style="clear:both;" type="range" min="0" max="100" step="1" value="'+startValueFunction()+'" onchange="'+callback+'" oninput="'+callback+'" onmouseup="PlaySound(\'snd/tick.mp3\');" id="'+slider+'"/></div>';
 			*/
 		}
