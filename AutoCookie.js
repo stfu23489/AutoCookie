@@ -22,7 +22,7 @@ var AC = {
 	'Game': {},	// Copies of game functions and data
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.191',
+		'AC': '0.192',
 	}
 }
 
@@ -50,6 +50,7 @@ AC.init = function() {
 		// Inject code into Cookie Clicker
 		AC.Game.UpdateMenu = Game.UpdateMenu;
 		Game.UpdateMenu = function() {
+			console.log("Update Menu");
 			AC.Game.UpdateMenu();
 			AC.Display.UpdateMenu();
 		}
