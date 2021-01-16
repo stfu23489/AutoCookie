@@ -3,11 +3,11 @@
 *
 * Copyright (c) 2021 Clayton Craig
 *  
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 *  
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 * 
-* THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *******************************************************************************/
 
 /*******************************************************************************
@@ -141,12 +141,12 @@ AC.hasBuffs = function(buffList) {
 AC.newsTicker = function() {
 	// Things to mention
 	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000);
-	var listCookies = []; for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == "cookie") {listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}}
+	var listCookies = []; for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}}
 	
 	var list = []
 	
 	list.push(choose([
-		'<q>I"m sorry '+Game.bakeryName+'. I"m afraid I can"t do that.</q><sig>Auto Cookie</sig>',
+		'<q>I'm sorry '+Game.bakeryName+'. I'm afraid I can't do that.</q><sig>Auto Cookie</sig>',
 		'<q>Daisy, Daisy, give me your answer do...</q><sig>Auto Cookie</sig>',
 		'<q>Beep Boop.</q><sig>Auto Cookie</sig>',
 		'Auto Cookie baked you a cookie.',
@@ -237,7 +237,7 @@ new AC.Auto('Autoclicker', 'Autoclicks the Big Cookie.', 200, {}, {}, function()
  * This Automated Action clicks fortunes on the news ticker
  */
  new AC.Auto('Fortune Clicker', 'Automatically clicks fortunes as they appear.', 7777, {}, {}, function() {
-	if (Game.TickerEffect && Game.TickerEffect.type=="fortune") {Game.tickerL.click()}
+	if (Game.TickerEffect && Game.TickerEffect.type=='fortune') {Game.tickerL.click()}
  });
  
  /**
@@ -261,7 +261,7 @@ new AC.Auto('Elder Pledge Buyer', 'Purchases the Elder pledge when it is availab
  * This Automated Action clicks golden cookies and reindeer
  */
 new AC.Auto('Golden Cookie Clicker', 'Autoclicks golden dookies and reindeer.', 1000, {
-	'clickWraths': 4,	// If 0, never click wraths. If 1 (or 2), click only when there is a buff in buffList active (or no buff). If -1 (or -2), click only when there isn"t a buff in buffList active (or no buff). If 3, click if there is an active buff. If -3, click if there isn"t an active buff. Otherwise, always click
+	'clickWraths': 4,	// If 0, never click wraths. If 1 (or 2), click only when there is a buff in buffList active (or no buff). If -1 (or -2), click only when there isn't a buff in buffList active (or no buff). If 3, click if there is an active buff. If -3, click if there isn't an active buff. Otherwise, always click
 	'buffList': []	// List of buffs referenced in clickWraths
 }, {}, function() {
 	Game.shimmers.forEach((function(shimmer) {
@@ -371,7 +371,7 @@ AC.Display.UpdateMenu = function() {
 		var subsection = document.getElementsByClassName('subsection')[0];
 		padding = subsection.removeChild(subsection.childNodes[subsection.childNodes.length-1]);
 		
-		// I"m better at HTML then I am at JS, so heres the HTML we"ll be injecting
+		// I'm better at HTML then I am at JS, so heres the HTML we'll be injecting
 		str = '<div class="title">Auto Cookie Settings</div>';
 		str += '<div class="listing">Version: ' + AC.Version.Full + '</div>';
 		
