@@ -235,21 +235,21 @@ AC.Auto.prototype.toggle = function() {
 /**
  * This Automated Action clicks the big cookie
  */
-new AC.Auto("Click", "Autoclicks the Big Cookie.", 200, {}, {}, function() {
+new AC.Auto("Autoclicker", "Autoclicks the Big Cookie.", 200, {}, {}, function() {
 	Game.ClickCookie();
 });
 
 /**
  * This Automated Action clicks fortunes on the news ticker
  */
- new AC.Auto("Click Fortune", "Automatically clicks fortunes as they appear.", 7777, {}, {}, function() {
+ new AC.Auto("Fortune Clicker", "Automatically clicks fortunes as they appear.", 7777, {}, {}, function() {
 	if (Game.TickerEffect && Game.TickerEffect.type=='fortune') {Game.tickerL.click()}
  });
  
  /**
  * This Automated Action purchases the Elder pledge upgrade
  */
-new AC.Auto("Elder Pledge", "Purchases the Elder pledge when it is available.", 1000, {
+new AC.Auto("Elder Pledge Buyer", "Purchases the Elder pledge when it is available.", 1000, {
 	"slowDown": true	// If true, then this autos interval will be slowed to match the Elder Pledge cooldown
 }, {}, function() {
 	if (this.settings.slowDown && Game.Upgrades["Elder Pledge"].bought) {
@@ -266,7 +266,7 @@ new AC.Auto("Elder Pledge", "Purchases the Elder pledge when it is available.", 
 /**
  * This Automated Action clicks golden cookies and reindeer
  */
-new AC.Auto("Click Golden", "Autoclicks golden dookies and reindeer.", 1000, {
+new AC.Auto("Golden Cookie Clicker", "Autoclicks golden dookies and reindeer.", 1000, {
 	"clickWraths": 4,	// If 0, never click wraths. If 1 (or 2), click only when there is a buff in buffList active (or no buff). If -1 (or -2), click only when there isn't a buff in buffList active (or no buff). If 3, click if there is an active buff. If -3, click if there isn't an active buff. Otherwise, always click
 	"buffList": []	// List of buffs referenced in clickWraths
 }, {}, function() {
@@ -303,7 +303,7 @@ new AC.Auto("Click Golden", "Autoclicks golden dookies and reindeer.", 1000, {
 /**
  * This Automated Action pops wrinklers
  */
-new AC.Auto("Pop Wrinklers", "Autopops wrinklers.", 0, {
+new AC.Auto("Wrinkler Popper", "Autopops wrinklers.", 0, {
 	"number": 0	// The number of wrinklers to keep around. If <0 keeps all but that many around
 }, {}, function() {
 	var wrinklers = Game.wrinklers.filter(wrinkler => wrinkler.sucked != 0);
