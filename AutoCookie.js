@@ -375,7 +375,7 @@ AC.Display.UpdateMenu = function() {
 		str = "<div class='title'>Auto Cookie Settings</div>";
 		str += "<div class='listing'>Version: " + AC.Version.Full + "</div>";
 		for (auto in AC.Autos) {
-			str += "<div class='listing'><a class='option" + AC.Autos[auto].intvlID?"":" off" + "' id='" + AC.Autos[auto].name +"' onclick='AC.Autos[\"" + AC.Autos[auto].name + "\"].toggle(); PlaySound(\"snd/tick.mp3\");'>" + AC.Autos[auto].name + "</a><label>" + AC.Autos[auto].desc + "</label>";
+			str += "<div class='listing'><a class='option" + (AC.Autos[auto].intvlID?"":" off") + "' id='" + AC.Autos[auto].name +"' onclick='AC.Autos[\"" + AC.Autos[auto].name + "\"].toggle(); PlaySound(\"snd/tick.mp3\");'>" + AC.Autos[auto].name + "</a><label>" + AC.Autos[auto].desc + "</label>";
 		}
 		
 		// Inject that HTML
