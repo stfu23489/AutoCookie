@@ -22,7 +22,7 @@ var AC = {
 	"Game": {},	// Copies of game functions and data
 	"Version": {	// Version Information
 		"CC": "2.031",
-		"AC": "6",
+		"AC": "7",
 	}
 }
 
@@ -219,7 +219,7 @@ AC.Auto.prototype.toggle = function() {
 	if (!this.intvlID) this.run();
 	else this.stop();
 	if (Game.onMenu === "prefs") {
-		var abutton = document.getElementByID(auto + "Button");
+		var abutton = document.getElementByID(this.name + "Button");
 		abutton.innerHTML = this.name + (this.intvlID?" On":" Off");
 		abutton.className = "option" + (this.intvlID?"":" off");
 	}
