@@ -22,11 +22,11 @@ var AC = {
 	'Game': {},	// Copies of game functions and data
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '16',
+		'AC': '0.017',
 	}
 }
 
-AC.Version.Full = AC.Version.CC + '.' + AC.Version.AC;
+AC.Version.Full = AC.Version.CC + ' / ' + AC.Version.AC;
 
 /*******************************************************************************
  * Cookie Clicker Modding Functions
@@ -140,7 +140,7 @@ AC.hasBuffs = function(buffList) {
  */
 AC.newsTicker = function() {
 	// Things to mention
-	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000);
+	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000) + 1;
 	var listCookies = []; for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}}
 	
 	var list = []
@@ -151,7 +151,7 @@ AC.newsTicker = function() {
 		'<q>Beep Boop.</q><sig>Auto Cookie</sig>',
 		'Auto Cookie baked you a cookie.',
 		'Your cookies are now baking cookies!',
-		'News: Do Androids Dream of Electric Cookies tops The New York Cookies Best Sellers list for the '+(daysPlayed<=1?'first time this week.':(daysPlayed+([11,12,13].includes(daysPlayed%100)?'th':daysPlayed%10==1?'st':daysPlayed%10==2?'nd':daysPlayed%10==3?'rd':'th')+' week in a row.')),
+		'News: "Do Androids Dream of Electric Cookies" tops The New York Times Best Sellers list '+(daysPlayed<=1?'in its first week.':('for the '+(daysPlayed+([11,12,13].includes(daysPlayed%100)?'th':daysPlayed%10==1?'st':daysPlayed%10==2?'nd':daysPlayed%10==3?'rd':'th')+' week in a row.'))),
 		'<q>Auto Cookie learned to bake cookies by watching '+(Game.bakeryName=='Elekester'?'me':Game.bakeryName)+'.</q><sig>Elekester</sig>',
 		'<q>The fact that Auto Cookie bakes cookies was a complete accident. It was only supposed to do my taxes.</q><sig>Elekester</sig>',
 		Game.cookiesEarned+Game.cookiesReset<1e+63?'<q>The fears of Cookie Baking Devices going rogue are in the past. Auto Cookie only wants to make us delicious cookies.</q><sig>AI Safety Expert</sig>':'Auto Cookie has made all living creatures into delicious cookies.',
@@ -260,7 +260,7 @@ new AC.Auto('Elder Pledge Buyer', 'Purchases the Elder pledge when it is availab
 /**
  * This Automated Action clicks golden cookies and reindeer
  */
-new AC.Auto('Golden Cookie Clicker', 'Autoclicks golden dookies and reindeer.', 1000, {
+new AC.Auto('Golden Cookie Clicker', 'Autoclicks golden cookies and reindeer when they appear.', 1000, {
 	'clickWraths': 4,	// If 0, never click wraths. If 1 (or 2), click only when there is a buff in buffList active (or no buff). If -1 (or -2), click only when there isn't a buff in buffList active (or no buff). If 3, click if there is an active buff. If -3, click if there isn't an active buff. Otherwise, always click
 	'buffList': []	// List of buffs referenced in clickWraths
 }, {}, function() {
@@ -372,27 +372,15 @@ AC.Display.UpdateMenu = function() {
 		padding = subsection.removeChild(subsection.childNodes[subsection.childNodes.length-1]);
 		
 		// I'm better at HTML then I am at JS, so heres the HTML we'll be injecting
-		str = '<div class="title">Auto Cookie Settings</div>';
+		str = '<div class="title" style="color: gold">Auto Cookie Settings</div>';
 		str += '<div class="listing">Version: ' + AC.Version.Full + '</div>';
 		
-		// Right now you can just turn the autos on or off. They should all be sliders/text boxes were you can change the interval
+		// Right now you the sliders allow for a value between 0 and 11 at steps of 0.01. The maximum should be configurable by the auto and there should also be an input for the user to type in.
+		// Some of the calls, mostly onthing should be split into its own function.
 		var onthing = ''
 		for (auto in AC.Autos) {
 			onthing = 'AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'Slider\').value; l(\'' + auto + 'Interval\').innerHTML = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2);';
-			str += '<div class="listing"><div class="sliderBox"><div style="float:left;">' + auto + '</div><div style="float:right;" id="' + auto + 'Interval">' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '</div><input class="slider" style="clear:both;" type="range" min="0" max="11" step="0.01" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto + '\'].run(); PlaySound(\'snd/tick.mp3\');" id="' + auto + 'Slider"/></div><label>' + AC.Autos[auto].desc + '</label></div>';
-			console.log(str);
-			
-			/*
-			set AC.Autos[auto].settings.intvl = slider's .value
-			set the right text's .innerHTML = AC.Autos[auto].settings.intvl
-			
-			"Game.setVolume(Math.round(l(\"volumeSlider\").value));l(\"volumeSliderRightText\").innerHTML=Game.volume+\"%\";"
-			
-			'<div class="listing"><a class="option' + (AC.Autos[auto].intvlID?'':' off') + '" id="' + auto + 'Button"' + Game.clickStr + '="AC.Autos[\'' + auto + '\'].toggle(); PlaySound(\'snd/tick.mp3\');">' + auto + (AC.Autos[auto].intvlID?' On':' Off') + '</a><label>' + AC.Autos[auto].desc + '</label></div>';
-
-
-			"<div class='sliderBox'><div style='float:left;'>"+leftText+"</div><div style='float:right;' id='"+slider+"RightText'>"+rightText.replace("[$]",startValueFunction())+"</div><input class='slider' style='clear:both;' type='range' min='0' max='100' step='1' value='"+startValueFunction()+"' onchange='"+callback+"' oninput='"+callback+"' onmouseup='PlaySound(\"snd/tick.mp3\");' id='"+slider+"'/></div>";
-			*/
+			str += '<div class="listing"><div class="sliderBox"><div style="float:left;">' + auto + '</div><div style="float:right;" id="' + auto + 'Interval">' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + ' s</div><input class="slider" style="clear:both;" type="range" min="0" max="11" step="0.01" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto + '\'].run(); PlaySound(\'snd/tick.mp3\');" id="' + auto + 'Slider"/></div><label>' + AC.Autos[auto].desc + '</label></div>';
 		}
 		
 		// Inject that HTML
