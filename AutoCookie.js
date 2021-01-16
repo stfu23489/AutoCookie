@@ -149,9 +149,7 @@ AC.newsTicker = function() {
 }
 
 /*******************************************************************************
- * Automated Actions
- *
- * An auto calls its action function at regular intervals to repeatedly perform game actions
+ * Automated Action Constructor and Prototypes
  ******************************************************************************/
 /**
  * Represents an Automated Action
@@ -177,11 +175,19 @@ AC.Auto = function(name, desc, intvl, settings, cache, actionFunction) {
 
 /**
  * This method fires the action function of the object at regular intervals
+ * @param	{boolean}	runImmediately	If true (false by default), the action function will be called once immediately.
+ * @param	{number}	interval	If provided, will override this.settings.interval
  * @returns	{boolean}	True if successful. False if failure.
  */
-AC.Auto.prototype.run = function() {
+AC.Auto.prototype.run = function(runImmediately, interval) {
+	runImmediately ??= false;
+	interval ??= this.settings.intvl;
 	this.intvlID = clearInterval(this.intvlID);	// Stops the action function if it is running
-	if (this.settings.intvl) {this.actionFunction(); this.intvlID = setInterval(this.actionFunction, this.settings.intvl); return true;}
+	if (interval) {
+		if (runImmediately) this.actionFunction();
+		this.intvlID = setInterval(this.actionFunction, interval);
+		return true;
+	}
 	return false;
 }
 
@@ -199,6 +205,12 @@ AC.Auto.prototype.toggle = function() {
 	if (!this.intvlID) this.run();
 	else this.stop();
 }
+
+/*******************************************************************************
+ * Automated Actions
+ *
+ * An automated action calls its action function at regular intervals to repeatedly perform game actions
+ ******************************************************************************/
 
 /**
  * This Automated Action clicks the big cookie
@@ -219,25 +231,15 @@ new AC.Auto("Click", "Autoclicks the Big Cookie.", 200, {}, {}, function() {
  */
 new AC.Auto("Elder Pledge", "Purchases the Elder pledge when it is available.", 1000, {
 	"slowDown": true	// If true, then this autos interval will be slowed to match the Elder Pledge cooldown
-}, {
-	"intvl": 0
-}, function() {
-	if (this.cache.intvl) return;	// Don't do anything if this is running itself
-	else if (this.settings.slowDown && Game.Upgrades["Elder Pledge"].bought) {
-		// Store the current interval setting in the cache
-		this.cache.intvl = this.settings.intvl;
-		
-		// Recalculate the interval to the Elder Pledge's cooldown and run this
-		this.settings.intvl = Math.ceil(33.333333333333336*Game.pledgeT)+50;
-		this.run();
-		
-		// Restore the interval settings
-		this.settings.intvl = this.cache.intvl;
-		this.cache.intvl = 0;
+}, {}, function() {
+	if (this.settings.slowDown && Game.Upgrades["Elder Pledge"].bought) {
+		this.run(false, Math.ceil(33.333333333333336*Game.pledgeT)+50)
 		return;
 	}
-	else if (Game.HasUnlocked("Elder Pledge") && !Game.Upgrades["Elder Pledge"].bought) {
-		if (Game.Upgrades["Elder Pledge"].canBuy()) Game.Upgrades["Elder Pledge"].buy();
+	else if (Game.HasUnlocked("Elder Pledge") && !Game.Upgrades["Elder Pledge"].bought && Game.Upgrades["Elder Pledge"].canBuy()) {
+		Game.Upgrades["Elder Pledge"].buy();
+		this.run(false);
+		return;
 	}
 });
 
@@ -354,4 +356,4 @@ AC.Data.mouseUpgrades = [
 /*******************************************************************************
  * Register the mod with Cookie Clicker
  ******************************************************************************/
-Game.registerMod("AutoCookieBeta", AC);
+Game.registerMod("AutoCookie", AC);
