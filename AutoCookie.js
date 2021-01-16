@@ -22,7 +22,7 @@ var AC = {
 	'Game': {},	// Copies of game functions and data
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.018',
+		'AC': '0.185',
 	}
 }
 
