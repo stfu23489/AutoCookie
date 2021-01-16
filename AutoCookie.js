@@ -376,10 +376,10 @@ AC.Display.UpdateMenu = function() {
 		str += "<div class='listing'>Version: " + AC.Version.Full + "</div>";
 		
 		// Right now you can just turn the autos on or off. They should all be sliders/text boxes were you can change the interval
-		var callback = ""
+		var onthing = ""
 		for (auto in AC.Autos) {
-			callback = "AC.Autos[\"" + auto + "\"].settings.intvl = 1000*l(\"" + auto + " Slider\").value; l(\"" + auto + " Interval\").innerHTML = (AC.Autos[\"" + auto + "\"].settings.intvl/1000).toFixed(2);";
-			str += "<div class='listing'><div class='sliderBox'><div style='float:left;'>" + auto + "</div><div style='float:right; id='" + auto + " Interval'>" + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + "</div><input class='slider' style='clear:both;' type='range' min='0' max='11' step='0.01' value='" + (AC.Autos[auto].settings.intvl/1000) + "' onchange='" + callback + "' oninput='" callback + "' onmouseup='AC.Autos[\"" + auto + "\"].run(); PlaySound(\"snd/tick.mp3\");' id='" + auto + " Slider'/></div><label>" + AC.Autos[auto].desc + "</label></div>";
+			onthing = "AC.Autos[\"" + auto + "\"].settings.intvl = 1000*l(\"" + auto + " Slider\").value; l(\"" + auto + " Interval\").innerHTML = (AC.Autos[\"" + auto + "\"].settings.intvl/1000).toFixed(2);";
+			str += "<div class='listing'><div class='sliderBox'><div style='float:left;'>" + auto + "</div><div style='float:right; id='" + auto + " Interval'>" + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + "</div><input class='slider' style='clear:both;' type='range' min='0' max='11' step='0.01' value='" + (AC.Autos[auto].settings.intvl/1000) + "' onchange='" + onthing + "' oninput='" onthing + "' onmouseup='AC.Autos[\"" + auto + "\"].run(); PlaySound(\"snd/tick.mp3\");' id='" + auto + " Slider'/></div><label>" + AC.Autos[auto].desc + "</label></div>";
 			
 			/*
 			set AC.Autos[auto].settings.intvl = slider's .value
