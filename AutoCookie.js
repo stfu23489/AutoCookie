@@ -219,7 +219,8 @@ AC.Auto.prototype.toggle = function() {
 	if (!this.intvlID) this.run();
 	else this.stop();
 	if (Game.onMenu === "prefs") {
-		var abutton = document.getElementByID(this.name + "Button");
+		console.log(this.name + "Button");
+		var abutton = l(this.name + "Button");
 		abutton.innerHTML = this.name + (this.intvlID?" On":" Off");
 		abutton.className = "option" + (this.intvlID?"":" off");
 	}
