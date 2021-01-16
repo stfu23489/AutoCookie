@@ -22,7 +22,7 @@ var AC = {
 	'Game': {},	// Copies of game functions and data
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.193',
+		'AC': '0.194',
 	}
 }
 
@@ -171,11 +171,12 @@ AC.newsTicker = function() {
  * Represents an Automated Action
  * @constructor
  */
-AC.Auto = function(name, desc, intvl, settings, cache, actionFunction) {
+AC.Auto = function(name, desc, intvl, maxintvl, settings, cache, actionFunction) {
 	this.name = name;
 	this.desc = desc;
 	this.settings = settings;
 	this.settings.intvl = intvl;
+	this.settings.maxintvl = maxintvl;
 	this.cache = cache;
 	this.actionFunction = actionFunction.bind(this);
 	
@@ -231,21 +232,21 @@ AC.Auto.prototype.toggle = function() {
 /**
  * This Automated Action clicks the big cookie
  */
-new AC.Auto('Autoclicker', 'Autoclicks the Big Cookie.', 200, {}, {}, function() {
+new AC.Auto('Autoclicker', 'Autoclicks the Big Cookie.', 200, 200, {}, {}, function() {
 	Game.ClickCookie();
 });
 
 /**
  * This Automated Action clicks fortunes on the news ticker
  */
- new AC.Auto('Fortune Clicker', 'Automatically clicks fortunes as they appear.', 7777, {}, {}, function() {
+ new AC.Auto('Fortune Clicker', 'Automatically clicks fortunes as they appear.', 7777, 10000, {}, {}, function() {
 	if (Game.TickerEffect && Game.TickerEffect.type=='fortune') {Game.tickerL.click()}
  });
  
  /**
  * This Automated Action purchases the Elder pledge upgrade
  */
-new AC.Auto('Elder Pledge Buyer', 'Purchases the Elder pledge when it is available.', 1000, {
+new AC.Auto('Elder Pledge Buyer', 'Purchases the Elder pledge when it is available.', 1000, 5000, {
 	'slowDown': true	// If true, then this autos interval will be slowed to match the Elder Pledge cooldown
 }, {}, function() {
 	if (this.settings.slowDown && Game.Upgrades['Elder Pledge'].bought) {
@@ -262,7 +263,7 @@ new AC.Auto('Elder Pledge Buyer', 'Purchases the Elder pledge when it is availab
 /**
  * This Automated Action clicks golden cookies and reindeer
  */
-new AC.Auto('Golden Cookie Clicker', 'Autoclicks golden cookies and reindeer when they appear.', 1000, {
+new AC.Auto('Golden Cookie Clicker', 'Autoclicks golden cookies and reindeer when they appear.', 1000, 2000, {
 	'clickWraths': 4,	// If 0, never click wraths. If 1 (or 2), click only when there is a buff in buffList active (or no buff). If -1 (or -2), click only when there isn't a buff in buffList active (or no buff). If 3, click if there is an active buff. If -3, click if there isn't an active buff. Otherwise, always click
 	'buffList': []	// List of buffs referenced in clickWraths
 }, {}, function() {
@@ -299,7 +300,7 @@ new AC.Auto('Golden Cookie Clicker', 'Autoclicks golden cookies and reindeer whe
 /**
  * This Automated Action pops wrinklers
  */
-new AC.Auto('Wrinkler Popper', 'Autopops wrinklers.', 0, {
+new AC.Auto('Wrinkler Popper', 'Autopops wrinklers.', 0, 3600000, {
 	'number': 0	// The number of wrinklers to keep around. If <0 keeps all but that many around
 }, {}, function() {
 	var wrinklers = Game.wrinklers.filter(wrinkler => wrinkler.sucked != 0);
@@ -313,7 +314,7 @@ new AC.Auto('Wrinkler Popper', 'Autopops wrinklers.', 0, {
 /**
  * This Automated Action triggers Godzamok's Devastation buff by selling and buying back cursors repeatedly
  */
-new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff automatically.', 10050, {
+new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff automatically.', 10050, 15000, {
 	'loopCount': 10	// The number of times to buy and sell 100 cursors after selling all your cursors the first time. This lags the game if its too high, which ruins the timers of everything else
 }, {
 	'condition': false	// Whether or not you have the necessary setup for Godzamok
@@ -380,15 +381,14 @@ AC.Display.UpdateMenu = function() {
 		str = '<div class="title" style="color: gold">Auto Cookie Settings</div>';
 		str += '<div class="listing">Version: ' + AC.Version.Full + '</div>';
 		
-		// Right now you the sliders allow for a value between 0 and 11 at steps of 0.01. The maximum should be configurable by the auto and there should also be an input for the user to type in.
-		// Some of the calls inside of the html, mostly onthing, should be split into its own function.
+		// Right now you the sliders allow for a value between 0 and 11 at steps of 0.01. At least the maximum should be configurable by the auto
 		var onthing = ''
 		for (auto in AC.Autos) {
 			
 			// Add the slider for the interval for this auto
 			onthing = 'AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'Slider\').value; l(\'' + auto + 'SliderRight\').value = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2);';
 			
-			str += '<div class="listing"><div class="sliderBox"><div style="float:left;">' + auto + '</div><div style="float:right;">' + '<input class="option" type="number" min="0" max="11" step="0.01" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" autocomplete="off" style="width: 65px; background-color: rgb(16,16,16); color: rgb(180,180,180);" onfocus="AC.Cache.freezeMenu = true;" onchange="AC.Cache.freezeMenu = false; AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'SliderRight\').value; l(\'' + auto + 'Slider\').value = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2); AC.Autos[\'' + auto + '\'].run();" id="' + auto + 'SliderRight">' + '</div><input class="slider" style="clear:both;" type="range" min="0" max="11" step="0.01" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto + '\'].run(); PlaySound(\'snd/tick.mp3\');" id="' + auto + 'Slider"/></div><label>' + AC.Autos[auto].desc + '</label>';
+			str += '<div class="listing"><div class="sliderBox"><div style="float:left;">' + auto + '</div><div style="float:right;">' + '<input class="option" type="number" min="0" max="' + AC.Autos[auto].settings.maxintvl/1000 + '" step="' + AC.Autos[auto].settings.maxintvl/100000 + '" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" autocomplete="off" style="width: 65px; background-color: rgb(16,16,16); color: rgb(180,180,180);" onfocus="AC.Cache.freezeMenu = true;" onchange="AC.Cache.freezeMenu = false; AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'SliderRight\').value; l(\'' + auto + 'Slider\').value = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2); AC.Autos[\'' + auto + '\'].run();" id="' + auto + 'SliderRight">' + '</div><input class="slider" style="clear:both;" type="range" min="0" max="' + AC.Autos[auto].settings.maxintvl/1000 + '" step="' + AC.Autos[auto].settings.maxintvl/100000 + '" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto + '\'].run(); PlaySound(\'snd/tick.mp3\');" id="' + auto + 'Slider"/></div><label>' + AC.Autos[auto].desc + '</label>';
 			
 			// Something to do with each auto's settings
 			
