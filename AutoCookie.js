@@ -379,6 +379,7 @@ AC.Display.UpdateMenu = function() {
 		var callback = ""
 		for (auto in AC.Autos) {
 			callback = "AC.Autos['" + auto + "'].settings.intvl = 1000*l('" + auto + " Slider').value; l('" + auto + " Interval').innerHTML = (AC.Autos['" + auto + "'].settings.intvl/1000).toFixed(2);";
+			console.log(callback);
 			str += "<div class='listing'><div class='sliderBox'><div style='float:left;'>" + auto + "</div><div style='float:right; id='" + auto + " Interval'>" + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + "</div><input class='slider' style='clear:both;' type='range' min='0' max='11' step='0.01' value='" + (AC.Autos[auto].settings.intvl/1000) + "' onchange='" + callback + "' oninput='" callback + "' onmouseup='AC.Autos['" + auto + "'].run(); PlaySound(\"snd/tick.mp3\");' id='" + auto + " Slider'/></div><label>" + AC.Autos[auto].desc + "</label></div>";
 			
 			/*
