@@ -22,7 +22,7 @@ var AC = {
 	'Game': {},	// Copies of game functions and data
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.195',
+		'AC': '0.197',
 	}
 }
 
@@ -379,7 +379,6 @@ AC.Display.UpdateMenu = function() {
 		str = '<div class="title" style="color: gold">Auto Cookie Settings</div>';
 		str += '<div class="listing">Version: ' + AC.Version.Full + '</div>';
 		
-		// Right now you the sliders allow for a value between 0 and 11 at steps of 0.01. At least the maximum should be configurable by the auto
 		var onthing = ''
 		for (auto in AC.Autos) {
 			
@@ -388,7 +387,7 @@ AC.Display.UpdateMenu = function() {
 			
 			str += '<div class="listing"><div class="sliderBox"><div style="float:left;">' + auto + '</div><div style="float:right;">' + '<input class="option" type="number" min="0" max="' + AC.Autos[auto].settings.maxintvl/1000 + '" step="' + AC.Autos[auto].settings.maxintvl/100000 + '" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" autocomplete="off" style="width: 65px; background-color: rgb(16,16,16); color: rgb(180,180,180);" onchange="AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'SliderRight\').value; l(\'' + auto + 'Slider\').value = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2); AC.Autos[\'' + auto + '\'].run();" id="' + auto + 'SliderRight">' + '</div><input class="slider" style="clear:both;" type="range" min="0" max="' + AC.Autos[auto].settings.maxintvl/1000 + '" step="' + AC.Autos[auto].settings.maxintvl/100000 + '" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto + '\'].run(); PlaySound(\'snd/tick.mp3\');" id="' + auto + 'Slider"/></div><label>' + AC.Autos[auto].desc + '</label>';
 			
-			// Something to do with each auto's settings
+			// Something to do with each auto's settings other than intvl and maxintvl
 			
 			str += '</div>';
 		}
