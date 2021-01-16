@@ -367,11 +367,20 @@ AC.Data.mouseUpgrades = [
  ******************************************************************************/
 AC.Display.UpdateMenu = function() {
 	if (Game.onMenu == "prefs") {
-		var subsection = document.getElementsByClassName("subsection")[0];	// Find the subsection that has the settings
-		padding = subsection.removeChild(subsection.childNodes[subsection.childNodes.length-1]);	// Remove the last div, it just contains padding
-		str = "<div class ='listing'><a class='option' onclick='AC.Cache.test = true;'>This is a test</a><label>The test was succesful</label></div>";
-		subsection.innerHTML += str;	// Append the string
-		subsection.appendChild(padding);	// Add the padding div back in
+		// Get the subsection part of the menu (everything below Options)
+		var subsection = document.getElementsByClassName("subsection")[0];
+		padding = subsection.removeChild(subsection.childNodes[subsection.childNodes.length-1]);
+		
+		// I'm better at HTML then I am at JS, so heres the HTML we'll be injecting
+		str = "<div class='title'>Auto Cookie Settings</div>";
+		str += "<div class='listing'>Version: " + AC.Version.Full + "</div>";
+		for (auto in AC.Autos) {
+			str += "<div class='listing'><a class='option" + AC.Autos[auto].intvlID?"":" off" + "' id='" + AC.Autos[auto].name +"' onclick='AC.Autos[\"" + AC.Autos[auto].name + "\"].toggle(); PlaySound(\"snd/tick.mp3\");'>" + AC.Autos[auto].name + "</a><label>" + AC.Autos[auto].desc + "</label>";
+		}
+		
+		// Inject that HTML
+		subsection.innerHTML += str;
+		subsection.appendChild(padding);
 		
 	}
 }
