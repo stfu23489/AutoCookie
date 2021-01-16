@@ -220,7 +220,7 @@ AC.Auto.prototype.toggle = function() {
 	else this.stop();
 	if (Game.onMenu === "prefs") {
 		var abutton = document.getElementByID(auto + "Button");
-		abutton.innerHTML = this.name + (this.intvlID?" On":" Off")';
+		abutton.innerHTML = this.name + (this.intvlID?" On":" Off");
 		abutton.className = "option" + (this.intvlID?"":" off");
 	}
 }
