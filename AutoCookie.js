@@ -22,7 +22,7 @@ var AC = {
 	'Game': {},	// Copies of game functions and data
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '15',
+		'AC': '16',
 	}
 }
 
@@ -146,7 +146,7 @@ AC.newsTicker = function() {
 	var list = []
 	
 	list.push(choose([
-		'<q>I'm sorry '+Game.bakeryName+'. I'm afraid I can't do that.</q><sig>Auto Cookie</sig>',
+		'<q>I\'m sorry '+Game.bakeryName+'. I\'m afraid I can\'t do that.</q><sig>Auto Cookie</sig>',
 		'<q>Daisy, Daisy, give me your answer do...</q><sig>Auto Cookie</sig>',
 		'<q>Beep Boop.</q><sig>Auto Cookie</sig>',
 		'Auto Cookie baked you a cookie.',
