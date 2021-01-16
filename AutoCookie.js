@@ -3,30 +3,30 @@
 *
 * Copyright (c) 2021 Clayton Craig
 *  
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 *  
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 * 
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+* THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 *******************************************************************************/
 
 /*******************************************************************************
  * Header
  ******************************************************************************/
 var AC = {
-	"Autos": {},	// Automated Actions
-	"Cache": {},	// Temporary Storage
-	"Config": {},	// Settings
-	"Data": {},	// Misc. Data
-	"Display": {},	// Display Functions
-	"Game": {},	// Copies of game functions and data
-	"Version": {	// Version Information
-		"CC": "2.031",
-		"AC": "13",
+	'Autos': {},	// Automated Actions
+	'Cache': {},	// Temporary Storage
+	'Config': {},	// Settings
+	'Data': {},	// Misc. Data
+	'Display': {},	// Display Functions
+	'Game': {},	// Copies of game functions and data
+	'Version': {	// Version Information
+		'CC': '2.031',
+		'AC': '14',
 	}
 }
 
-AC.Version.Full = AC.Version.CC + "." + AC.Version.AC;
+AC.Version.Full = AC.Version.CC + '.' + AC.Version.AC;
 
 /*******************************************************************************
  * Cookie Clicker Modding Functions
@@ -38,14 +38,14 @@ AC.Version.Full = AC.Version.CC + "." + AC.Version.AC;
  */
 AC.init = function() {
 	AC.Cache.loaded = false;
-	Game.Win("Third-party");
+	Game.Win('Third-party');
 	
 	setTimeout(function() {
 		// After waiting for the delay, check if Auto Cookie's save data has been loaded and the automated actions have been loaded
 		if (!AC.Cache.loaded) {AC.load(false)};
 		
 		// Register hooks with Cookie Clicker
-		Game.registerHook("ticker", AC.newsTicker);
+		Game.registerHook('ticker', AC.newsTicker);
 		
 		// Inject code into Cookie Clicker
 		AC.Game.UpdateMenu = Game.UpdateMenu;
@@ -55,7 +55,7 @@ AC.init = function() {
 		}
 		
 		// Notify the player that Auto Cookie has loaded
-		if (Game.prefs.popups) {Game.Popup("Auto Cookie " + AC.Version.Full + " loaded.")} else {Game.Notify("Auto Cookie " + AC.Version.Full + " loaded.", "", "", 1, 1)}
+		if (Game.prefs.popups) {Game.Popup('Auto Cookie ' + AC.Version.Full + ' loaded.')} else {Game.Notify('Auto Cookie ' + AC.Version.Full + ' loaded.', '', '', 1, 1)}
 	}, 100);
 }
 
@@ -85,12 +85,12 @@ AC.load = function(saveStr) {
 		try {
 			var settings = JSON.parse(saveStr);
 		} catch(err) {
-			AC.errorNotify("Failed to load corrupt save data. The corrupt save data was logged to the console (F12). Loading Auto Cookie with default settings.");
+			AC.errorNotify('Failed to load corrupt save data. The corrupt save data was logged to the console (F12). Loading Auto Cookie with default settings.');
 			console.log(saveStr);
-			settings = {"Autos": {}}
+			settings = {'Autos': {}}
 		}
 	}
-	else {settings = {"Autos": {}}}
+	else {settings = {'Autos': {}}}
 	
 	// Load the settings for all the Automated Actions
 	for (auto in settings.Autos) {
@@ -98,7 +98,7 @@ AC.load = function(saveStr) {
 			if (AC.Autos[auto].settings[setting]) AC.Autos[auto].settings[setting] = settings.Autos[auto][setting];
 		}
 	}
-	delete settings["Autos"];
+	delete settings['Autos'];
 	
 	// Load the rest of the settings into AC.Config.Settings
 	for (setting in settings) {
@@ -117,9 +117,9 @@ AC.load = function(saveStr) {
  */
 AC.errorNotify = function(errorMessage) {
 	if (Game.prefs.popups) {
-		Game.Popup("Auto Cookie " + AC.Version.Full + " Error. " + errorMessage)
+		Game.Popup('Auto Cookie ' + AC.Version.Full + ' Error. ' + errorMessage)
 	} else {
-		Game.Notify("Auto Cookie " + AC.Version.Full + " Error", errorMessage)
+		Game.Notify('Auto Cookie ' + AC.Version.Full + ' Error', errorMessage)
 	}
 }
 
@@ -130,33 +130,33 @@ AC.errorNotify = function(errorMessage) {
  */
 AC.hasBuffs = function(buffList) {
 	const activeBuffs = Object.keys(Game.buffs);
-	if (typeof buffList == "string") buffList = [buffList];
+	if (typeof buffList == 'string') buffList = [buffList];
 	return buffList.filter(value => activeBuffs.includes(value)).length;
 }
 
 /**
  * This function returns an array of news tickers for the news ticker
- * This function is registered into Cookie Clicker's 'ticker' hook.
+ * This function is registered into Cookie Clicker's "ticker" hook.
  */
 AC.newsTicker = function() {
 	// Things to mention
 	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000);
-	var listCookies = []; for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}}
+	var listCookies = []; for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == "cookie") {listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}}
 	
 	var list = []
 	
 	list.push(choose([
-		"<q>I'm sorry "+Game.bakeryName+". I'm afraid I can't do that.</q><sig>Auto Cookie</sig>",
-		"<q>Daisy, Daisy, give me your answer do...</q><sig>Auto Cookie</sig>",
-		"<q>Beep Boop.</q><sig>Auto Cookie</sig>",
-		"Auto Cookie baked you a cookie.",
-		"Your cookies are now baking cookies!",
-		"News: Do Androids Dream of Electric Cookies tops The New York Cookies Best Sellers list for the "+(daysPlayed<=1?"first time this week.":(daysPlayed+([11,12,13].includes(daysPlayed%100)?"th":daysPlayed%10==1?"st":daysPlayed%10==2?"nd":daysPlayed%10==3?"rd":"th")+" week in a row.")),
-		"<q>Auto Cookie learned to bake cookies by watching "+(Game.bakeryName=="Elekester"?"me":Game.bakeryName)+".</q><sig>Elekester</sig>",
-		"<q>The fact that Auto Cookie bakes cookies was a complete accident. It was only supposed to do my taxes.</q><sig>Elekester</sig>",
-		Game.cookiesEarned+Game.cookiesReset<1e+63?"<q>The fears of Cookie Baking Devices going rogue are in the past. Auto Cookie only wants to make us delicious cookies.</q><sig>AI Safety Expert</sig>":"Auto Cookie has made all living creatures into delicious cookies.",
-		"Auto Cookie's cookies cook cookies automatically.",
-		"Auto Cookie's favorite cookies are "+choose(listCookies)+"."
+		'<q>I"m sorry '+Game.bakeryName+'. I"m afraid I can"t do that.</q><sig>Auto Cookie</sig>',
+		'<q>Daisy, Daisy, give me your answer do...</q><sig>Auto Cookie</sig>',
+		'<q>Beep Boop.</q><sig>Auto Cookie</sig>',
+		'Auto Cookie baked you a cookie.',
+		'Your cookies are now baking cookies!',
+		'News: Do Androids Dream of Electric Cookies tops The New York Cookies Best Sellers list for the '+(daysPlayed<=1?'first time this week.':(daysPlayed+([11,12,13].includes(daysPlayed%100)?'th':daysPlayed%10==1?'st':daysPlayed%10==2?'nd':daysPlayed%10==3?'rd':'th')+' week in a row.')),
+		'<q>Auto Cookie learned to bake cookies by watching '+(Game.bakeryName=='Elekester'?'me':Game.bakeryName)+'.</q><sig>Elekester</sig>',
+		'<q>The fact that Auto Cookie bakes cookies was a complete accident. It was only supposed to do my taxes.</q><sig>Elekester</sig>',
+		Game.cookiesEarned+Game.cookiesReset<1e+63?'<q>The fears of Cookie Baking Devices going rogue are in the past. Auto Cookie only wants to make us delicious cookies.</q><sig>AI Safety Expert</sig>':'Auto Cookie has made all living creatures into delicious cookies.',
+		'Auto Cookie\'s cookies cook cookies automatically.',
+		'Auto Cookie\'s favorite cookies are '+choose(listCookies)+'.'
 	]));
 	
 	return list
@@ -229,29 +229,29 @@ AC.Auto.prototype.toggle = function() {
 /**
  * This Automated Action clicks the big cookie
  */
-new AC.Auto("Autoclicker", "Autoclicks the Big Cookie.", 200, {}, {}, function() {
+new AC.Auto('Autoclicker', 'Autoclicks the Big Cookie.', 200, {}, {}, function() {
 	Game.ClickCookie();
 });
 
 /**
  * This Automated Action clicks fortunes on the news ticker
  */
- new AC.Auto("Fortune Clicker", "Automatically clicks fortunes as they appear.", 7777, {}, {}, function() {
-	if (Game.TickerEffect && Game.TickerEffect.type=='fortune') {Game.tickerL.click()}
+ new AC.Auto('Fortune Clicker', 'Automatically clicks fortunes as they appear.', 7777, {}, {}, function() {
+	if (Game.TickerEffect && Game.TickerEffect.type=="fortune") {Game.tickerL.click()}
  });
  
  /**
  * This Automated Action purchases the Elder pledge upgrade
  */
-new AC.Auto("Elder Pledge Buyer", "Purchases the Elder pledge when it is available.", 1000, {
-	"slowDown": true	// If true, then this autos interval will be slowed to match the Elder Pledge cooldown
+new AC.Auto('Elder Pledge Buyer', 'Purchases the Elder pledge when it is available.', 1000, {
+	'slowDown': true	// If true, then this autos interval will be slowed to match the Elder Pledge cooldown
 }, {}, function() {
-	if (this.settings.slowDown && Game.Upgrades["Elder Pledge"].bought) {
+	if (this.settings.slowDown && Game.Upgrades['Elder Pledge'].bought) {
 		this.run(false, Math.ceil(33.333333333333336*Game.pledgeT)+50)
 		return;
 	}
-	else if (Game.HasUnlocked("Elder Pledge") && !Game.Upgrades["Elder Pledge"].bought && Game.Upgrades["Elder Pledge"].canBuy()) {
-		Game.Upgrades["Elder Pledge"].buy();
+	else if (Game.HasUnlocked('Elder Pledge') && !Game.Upgrades['Elder Pledge'].bought && Game.Upgrades['Elder Pledge'].canBuy()) {
+		Game.Upgrades['Elder Pledge'].buy();
 		this.run(false);
 		return;
 	}
@@ -260,9 +260,9 @@ new AC.Auto("Elder Pledge Buyer", "Purchases the Elder pledge when it is availab
 /**
  * This Automated Action clicks golden cookies and reindeer
  */
-new AC.Auto("Golden Cookie Clicker", "Autoclicks golden dookies and reindeer.", 1000, {
-	"clickWraths": 4,	// If 0, never click wraths. If 1 (or 2), click only when there is a buff in buffList active (or no buff). If -1 (or -2), click only when there isn't a buff in buffList active (or no buff). If 3, click if there is an active buff. If -3, click if there isn't an active buff. Otherwise, always click
-	"buffList": []	// List of buffs referenced in clickWraths
+new AC.Auto('Golden Cookie Clicker', 'Autoclicks golden dookies and reindeer.', 1000, {
+	'clickWraths': 4,	// If 0, never click wraths. If 1 (or 2), click only when there is a buff in buffList active (or no buff). If -1 (or -2), click only when there isn"t a buff in buffList active (or no buff). If 3, click if there is an active buff. If -3, click if there isn"t an active buff. Otherwise, always click
+	'buffList': []	// List of buffs referenced in clickWraths
 }, {}, function() {
 	Game.shimmers.forEach((function(shimmer) {
 		var condition = true;
@@ -297,12 +297,12 @@ new AC.Auto("Golden Cookie Clicker", "Autoclicks golden dookies and reindeer.", 
 /**
  * This Automated Action pops wrinklers
  */
-new AC.Auto("Wrinkler Popper", "Autopops wrinklers.", 0, {
-	"number": 0	// The number of wrinklers to keep around. If <0 keeps all but that many around
+new AC.Auto('Wrinkler Popper', 'Autopops wrinklers.', 0, {
+	'number': 0	// The number of wrinklers to keep around. If <0 keeps all but that many around
 }, {}, function() {
 	var wrinklers = Game.wrinklers.filter(wrinkler => wrinkler.sucked != 0);
 	if (wrinklers) {
-		var num = (this.settings.number<0)?((Game.Has("Elder spice")?12:10)+this.settings.number):this.settings.number; 
+		var num = (this.settings.number<0)?((Game.Has('Elder spice')?12:10)+this.settings.number):this.settings.number; 
 		wrinklers.sort(function(a, b) {return b.sucked - a.sucked});
 		for (i = num; i < wrinklers.length; i++) {Game.wrinklers[wrinklers[i].id].hp = 0}
 	}
@@ -311,19 +311,19 @@ new AC.Auto("Wrinkler Popper", "Autopops wrinklers.", 0, {
 /**
  * This Automated Action triggers Godzamok's Devastation buff by selling and buying back cursors repeatedly
  */
-new AC.Auto("Godzamok Loop", "Triggers Godzamok's Devastation buff automatically.", 10050, {
-	"loopCount": 10	// The number of times to buy and sell 100 cursors after selling all your cursors the first time. This lags the game if its too high, which ruins the timers of everything else
+new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff automatically.', 10050, {
+	'loopCount': 10	// The number of times to buy and sell 100 cursors after selling all your cursors the first time. This lags the game if its too high, which ruins the timers of everything else
 }, {
-	"condition": false	// Whether or not you have the necessary setup for Godzamok
+	'condition': false	// Whether or not you have the necessary setup for Godzamok
 }, function() {
 	if (!this.cache.condition) {
 		var condition = 0;
 		AC.Data.mouseUpgrades.forEach(function(upgrade) {if (Game.Has(upgrade)) {condition += 1}});
-		try {condition *= Game.hasGod("ruin")} catch(err) {condition = 0}
+		try {condition *= Game.hasGod('ruin')} catch(err) {condition = 0}
 		this.cache.condition = condition;
 		
 	}
-	if (!Game.hasBuff("Devastation") && this.cache.condition && Game.buyMode != -1) {
+	if (!Game.hasBuff('Devastation') && this.cache.condition && Game.buyMode != -1) {
 		var numCursors = Game.Objects.Cursor.amount
 		Game.Objects.Cursor.sell(numCursors);
 		for (var i = 0; i < this.settings.loopCount; i++) {
@@ -339,59 +339,59 @@ new AC.Auto("Godzamok Loop", "Triggers Godzamok's Devastation buff automatically
  * Config
  ******************************************************************************/
 AC.Config.Settings = {
-	"Version": AC.Version.Full
+	'Version': AC.Version.Full
 }
 
 /*******************************************************************************
  * Data
  ******************************************************************************/
 AC.Data.mouseUpgrades = [
-	"Plastic mouse",
-	"Iron mouse",
-	"Titanium mouse",
-	"Adamantium mouse",
-	"Unobtainium mouse",
-	"Eludium mouse",
-	"Wishalloy mouse",
-	"Fantasteel mouse",
-	"Nevercrack mouse",
-	"Armythril mouse",
-	"Technobsidian mouse",
-	"Plasmarble mouse",
-	"Miraculite mouse",
-	"Fortune #104"
+	'Plastic mouse',
+	'Iron mouse',
+	'Titanium mouse',
+	'Adamantium mouse',
+	'Unobtainium mouse',
+	'Eludium mouse',
+	'Wishalloy mouse',
+	'Fantasteel mouse',
+	'Nevercrack mouse',
+	'Armythril mouse',
+	'Technobsidian mouse',
+	'Plasmarble mouse',
+	'Miraculite mouse',
+	'Fortune #104'
 ]
 
 /*******************************************************************************
  * Display
  ******************************************************************************/
 AC.Display.UpdateMenu = function() {
-	if (Game.onMenu == "prefs") {
+	if (Game.onMenu == 'prefs') {
 		// Get the subsection part of the menu (everything below Options)
-		var subsection = document.getElementsByClassName("subsection")[0];
+		var subsection = document.getElementsByClassName('subsection')[0];
 		padding = subsection.removeChild(subsection.childNodes[subsection.childNodes.length-1]);
 		
-		// I'm better at HTML then I am at JS, so heres the HTML we'll be injecting
-		str = "<div class='title'>Auto Cookie Settings</div>";
-		str += "<div class='listing'>Version: " + AC.Version.Full + "</div>";
+		// I"m better at HTML then I am at JS, so heres the HTML we"ll be injecting
+		str = '<div class="title">Auto Cookie Settings</div>';
+		str += '<div class="listing">Version: ' + AC.Version.Full + '</div>';
 		
 		// Right now you can just turn the autos on or off. They should all be sliders/text boxes were you can change the interval
-		var onthing = ""
+		var onthing = ''
 		for (auto in AC.Autos) {
-			onthing = "AC.Autos[\"" + auto + "\"].settings.intvl = 1000*l(\"" + auto + "Slider\").value; l(\"" + auto + "Interval\").innerHTML = (AC.Autos[\"" + auto + "\"].settings.intvl/1000).toFixed(2);";
-			str += "<div class='listing'><div class='sliderBox'><div style='float:left;'>" + auto + "</div><div style='float:right; id='" + auto + "Interval'>" + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + "</div><input class='slider' style='clear:both;' type='range' min='0' max='11' step='0.01' value='" + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + "' onchange='" + onthing + "' oninput='" + onthing + "' onmouseup='AC.Autos[\"" + auto + "\"].run(); PlaySound(\"snd/tick.mp3\");' id='" + auto + "Slider'/></div><label>" + AC.Autos[auto].desc + "</label></div>";
+			onthing = 'AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'Slider\').value; l(\'' + auto + 'Interval\').innerHTML = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2);';
+			str += '<div class="listing"><div class="sliderBox"><div style="float:left;">' + auto + '</div><div style="float:right; id="' + auto + 'Interval">' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '</div><input class="slider" style="clear:both;" type="range" min="0" max="11" step="0.01" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto + '\'].run(); PlaySound(\'snd/tick.mp3\');" id="' + auto + 'Slider"/></div><label>' + AC.Autos[auto].desc + '</label></div>';
 			console.log(str);
 			
 			/*
 			set AC.Autos[auto].settings.intvl = slider's .value
 			set the right text's .innerHTML = AC.Autos[auto].settings.intvl
 			
-			'Game.setVolume(Math.round(l(\'volumeSlider\').value));l(\'volumeSliderRightText\').innerHTML=Game.volume+\'%\';'
+			"Game.setVolume(Math.round(l(\"volumeSlider\").value));l(\"volumeSliderRightText\").innerHTML=Game.volume+\"%\";"
 			
-			"<div class='listing'><a class='option" + (AC.Autos[auto].intvlID?"":" off") + "' id='" + auto + "Button'" + Game.clickStr + "='AC.Autos[\"" + auto + "\"].toggle(); PlaySound(\"snd/tick.mp3\");'>" + auto + (AC.Autos[auto].intvlID?" On":" Off") + "</a><label>" + AC.Autos[auto].desc + "</label></div>";
+			'<div class="listing"><a class="option' + (AC.Autos[auto].intvlID?'':' off') + '" id="' + auto + 'Button"' + Game.clickStr + '="AC.Autos[\'' + auto + '\'].toggle(); PlaySound(\'snd/tick.mp3\');">' + auto + (AC.Autos[auto].intvlID?' On':' Off') + '</a><label>' + AC.Autos[auto].desc + '</label></div>';
 
 
-			'<div class="sliderBox"><div style="float:left;">'+leftText+'</div><div style="float:right;" id="'+slider+'RightText">'+rightText.replace('[$]',startValueFunction())+'</div><input class="slider" style="clear:both;" type="range" min="0" max="100" step="1" value="'+startValueFunction()+'" onchange="'+callback+'" oninput="'+callback+'" onmouseup="PlaySound(\'snd/tick.mp3\');" id="'+slider+'"/></div>';
+			"<div class='sliderBox'><div style='float:left;'>"+leftText+"</div><div style='float:right;' id='"+slider+"RightText'>"+rightText.replace("[$]",startValueFunction())+"</div><input class='slider' style='clear:both;' type='range' min='0' max='100' step='1' value='"+startValueFunction()+"' onchange='"+callback+"' oninput='"+callback+"' onmouseup='PlaySound(\"snd/tick.mp3\");' id='"+slider+"'/></div>";
 			*/
 		}
 		
@@ -404,4 +404,4 @@ AC.Display.UpdateMenu = function() {
 /*******************************************************************************
  * Register the mod with Cookie Clicker
  ******************************************************************************/
-Game.registerMod("AutoCookie", AC);
+Game.registerMod('AutoCookie', AC);
