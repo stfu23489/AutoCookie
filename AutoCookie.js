@@ -22,7 +22,7 @@ var AC = {
 	"Game": {},	// Copies of game functions and data
 	"Version": {	// Version Information
 		"CC": "2.031",
-		"AC": "3",
+		"AC": "4",
 	}
 }
 
@@ -375,13 +375,12 @@ AC.Display.UpdateMenu = function() {
 		str = "<div class='title'>Auto Cookie Settings</div>";
 		str += "<div class='listing'>Version: " + AC.Version.Full + "</div>";
 		for (auto in AC.Autos) {
-			str += "<div class='listing'><a class='option" + (AC.Autos[auto].intvlID?"":" off") + "' id='" + AC.Autos[auto].name +"' onclick='AC.Autos[\"" + AC.Autos[auto].name + "\"].toggle(); PlaySound(\"snd/tick.mp3\");'>" + AC.Autos[auto].name + "</a><label>" + AC.Autos[auto].desc + "</label>";
+			str += "<div class='listing'><a class='option" + (AC.Autos[auto].intvlID?"":" off") + "' id='" + auto + "Button' onclick='AC.Autos[\"" + auto + "\"].toggle(); document.getElementById(\"" + auto + "Button\").innerHTML=" + (AC.Autos[auto].intvlID?"on":"off") + "; PlaySound(\"snd/tick.mp3\");'>" + auto + "</a><label>" + AC.Autos[auto].desc + "</label></div>";
 		}
 		
 		// Inject that HTML
 		subsection.innerHTML += str;
 		subsection.appendChild(padding);
-		
 	}
 }
 
