@@ -22,7 +22,7 @@ var AC = {
 	'Game': {},	// Copies of game functions and data
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.197',
+		'AC': '0.198',
 	}
 }
 
@@ -366,9 +366,9 @@ AC.Data.mouseUpgrades = [
 /*******************************************************************************
  * Display
  ******************************************************************************/
- /**
-  * This function appends Auto Cookie's settings to the options menu in Cookie Clicker
-  */
+/**
+ * This function appends Auto Cookie's settings to the options menu in Cookie Clicker
+ */
 AC.Display.UpdateMenu = function() {
 	if (Game.onMenu == 'prefs') {
 		// Get the subsection part of the menu (everything below Options)
