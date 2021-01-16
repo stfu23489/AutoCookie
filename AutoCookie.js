@@ -366,6 +366,14 @@ AC.Data.mouseUpgrades = [
  * Display
  ******************************************************************************/
 AC.Display.UpdateMenu = function() {
+	if (Game.onMenu == "prefs") {
+		var subsection = document.getElementsByClassName("subsection")[0];	// Find the subsection that has the settings
+		padding = subsection.removeChild(subsection.childNodes[subsection.childNodes.length-1]);	// Remove the last div, it just contains padding
+		str = "<div class ='listing'><a class='option' onclick='AC.Cache.test = true;'>This is a test</a><label>The test was succesful</label></div>";
+		subsection.innerHTML += str;	// Append the string
+		subsection.appendChild(padding);	// Add the padding div back in
+		
+	}
 }
 
 /*******************************************************************************
