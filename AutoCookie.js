@@ -22,7 +22,7 @@ var AC = {
 	'Game': {},	// Copies of game functions and data
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.192',
+		'AC': '0.193',
 	}
 }
 
@@ -50,9 +50,10 @@ AC.init = function() {
 		// Inject code into Cookie Clicker
 		AC.Game.UpdateMenu = Game.UpdateMenu;
 		Game.UpdateMenu = function() {
-			console.log("Update Menu");
-			AC.Game.UpdateMenu();
-			AC.Display.UpdateMenu();
+			if (!AC.Cache.freezeMenu) {
+				AC.Game.UpdateMenu();
+				AC.Display.UpdateMenu();
+			}
 		}
 		
 		// Notify the player that Auto Cookie has loaded
@@ -387,7 +388,7 @@ AC.Display.UpdateMenu = function() {
 			// Add the slider for the interval for this auto
 			onthing = 'AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'Slider\').value; l(\'' + auto + 'SliderRight\').value = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2);';
 			
-			str += '<div class="listing"><div class="sliderBox"><div style="float:left;">' + auto + '</div><div style="float:right;">' + '<input class="option" type="number" min="0" max="11" step="0.01" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" autocomplete="off" style="width: 65px; background-color: rgb(16,16,16); color: rgb(180,180,180);" onchange="AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'SliderRight\').value; l(\'' + auto + 'Slider\').value = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2); AC.Autos[\'' + auto + '\'].run();" id="' + auto + 'SliderRight">' + '</div><input class="slider" style="clear:both;" type="range" min="0" max="11" step="0.01" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto + '\'].run(); PlaySound(\'snd/tick.mp3\');" id="' + auto + 'Slider"/></div><label>' + AC.Autos[auto].desc + '</label>';
+			str += '<div class="listing"><div class="sliderBox"><div style="float:left;">' + auto + '</div><div style="float:right;">' + '<input class="option" type="number" min="0" max="11" step="0.01" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" autocomplete="off" style="width: 65px; background-color: rgb(16,16,16); color: rgb(180,180,180);" onfocus="AC.Cache.freezeMenu = true;" onchange="AC.Cache.freezeMenu = false; AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'SliderRight\').value; l(\'' + auto + 'Slider\').value = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2); AC.Autos[\'' + auto + '\'].run();" id="' + auto + 'SliderRight">' + '</div><input class="slider" style="clear:both;" type="range" min="0" max="11" step="0.01" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto + '\'].run(); PlaySound(\'snd/tick.mp3\');" id="' + auto + 'Slider"/></div><label>' + AC.Autos[auto].desc + '</label>';
 			
 			// Something to do with each auto's settings
 			
