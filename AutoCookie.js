@@ -56,7 +56,7 @@ AC.init = function() {
 		
 		// Notify the player that Auto Cookie has loaded
 		if (Game.prefs.popups) {Game.Popup("Auto Cookie " + AC.Version.Full + " loaded.")} else {Game.Notify("Auto Cookie " + AC.Version.Full + " loaded.", "", "", 1, 1)}
-	}, 500);
+	}, 100);
 }
 
 /**
@@ -266,7 +266,7 @@ new AC.Auto("Elder Pledge Buyer", "Purchases the Elder pledge when it is availab
 /**
  * This Automated Action clicks golden cookies and reindeer
  */
-new AC.Auto("Golden Cookie Clicker", "Autoclicks golden dookies and reindeer.", 1000, {
+new AC.Auto("Golden Cookie Clicker", "Autoclicks golden dookies and reindeer.",  1000, {
 	"clickWraths": 4,	// If 0, never click wraths. If 1 (or 2), click only when there is a buff in buffList active (or no buff). If -1 (or -2), click only when there isn't a buff in buffList active (or no buff). If 3, click if there is an active buff. If -3, click if there isn't an active buff. Otherwise, always click
 	"buffList": []	// List of buffs referenced in clickWraths
 }, {}, function() {
