@@ -15,7 +15,8 @@ Currently Auto Cookie can automate the following tasks.
 
 ## Source
 
-There's just the one javascript file: https://elekester.github.io/AutoCookie/AutoCookie.js
+* [AutoCookie.js](https://elekester.github.io/AutoCookie/AutoCookie.js)
+* [GitHub](https://github.com/Elekester/AutoCookie)
 
 ## Using Auto Cookie
 
