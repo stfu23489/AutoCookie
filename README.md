@@ -6,12 +6,12 @@
 
 Currently Auto Cookie can automate the following tasks.
 
-* The **Autoclicker**, which clicks up to 100 times per second.
-* The ability to **autoclick golden cookies**, with optional conditions for wrath cookies.
-* An **autoclicker** for fortunes in the news ticker, as well as a few other news ticker surprises.
-* The ability to autobuy **Elder Pledges**.
-* An **auto wrinkler popper** with the options to keep a few around or only keep a spot around.
-* An automated loop that abuses **Godzamok's** Devastation buff.
+* **Autoclicker**: Clicks the cookie once every interval.
+* **Golden Cookie Clicker**: Clicks golden cookies and other shimmers as they appear.
+* **Fortune Clicker**: Clicks on fortunes in the news ticker as they appear.
+* **Elder Pledge Buyer**: Activates the Elder Pledge Switch when it is available.
+* **Wrinkler Popper**: Pops wrinklers every interval.
+* **Godzamok Loop**: Triggers Godzamok's Devastation buff by selling and buying back cursors repeatedly.
 
 ## Source
 
