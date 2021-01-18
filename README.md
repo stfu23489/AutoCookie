@@ -19,19 +19,23 @@ There's just the one javascript file: https://elekester.github.io/AutoCookie/Aut
 
 ## Using Auto Cookie
 
+There's several different ways to load Auto Cookie into Cookie Clicker. The easiest method is Cookie Clicker Mod Manager.
+
+### Cookie Clicker Mod Manager
+
+Add `Game.LoadMod('https://elekester.github.io/AutoCookie/AutoCookie.js');` to [Cookie Clicker Mod Manager](https://github.com/klattmose/CookieClickerModManager).
+
 ### Bookmarklet
 
-Copy this code and save it as a bookmark. Paste it in the URL section. To activate, click the bookmark when the game's open.
+Copy `javascript: (function () {Game.LoadMod('https://elekester.github.io/AutoCookie/AutoCookie.js');}());` and save it as a bookmark. Paste it in the URL section. To activate, click the bookmark when the game's open. You'll have to do this every time you start the game.
 
-```javascript
-javascript: (function () {
-    Game.LoadMod('https://elekester.github.io/AutoCookie/AutoCookie.js');
-}());
-```
+### Javascript Console
+
+Enter `Game.LoadMod('https://elekester.github.io/AutoCookie/AutoCookie.js');` into your broswer's javascript console when the game's open. You'll have to do this every time you start the game.
 
 ### Userscript
 
-If you'd rather use the addon as a script via per example Greasemonkey or Tampermonkey, you can use the following script.
+If you'd rather use the addon as a script using, for example, Greasemonkey or Tampermonkey, you can use the following script.
 
 ```javascript
 // ==UserScript==
