@@ -22,7 +22,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.209',
+		'AC': '0.212',
 	}
 }
 
@@ -323,7 +323,7 @@ new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is avail
 /**
  * This automated action pops wrinklers.
  */
-new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060 function() {
+new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 	var wrinklers = Game.wrinklers.filter(wrinkler => wrinkler.sucked != 0);
 	if (wrinklers.length) {
 		sortOrder = 2*this['Wrinkler Preservation'] - 1
@@ -366,7 +366,7 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060 function() {
 /**
  * This automated action triggers Godzamok's Devastation buff by selling and buying back buildings repeatedly.
  */
-new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling and buying back cursors repeatedly.', 202101172100 function() {
+new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling and buying back cursors repeatedly.', 202101172100, function() {
 	if (typeof this.cache.condition === 'undefined' || !this.cache.condition) {
 		this.cache.condition = 0;
 		AC.Data.mouseUpgrades.forEach((function(upgrade) {if (Game.Has(upgrade)) {this.cache.condition++}}).bind(this));
