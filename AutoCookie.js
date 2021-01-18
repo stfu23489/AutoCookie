@@ -1,14 +1,4 @@
-/*******************************************************************************
-* MIT License
-*
-* Copyright (c) 2021 Clayton Craig
-*  
-* Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-*  
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-* 
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*******************************************************************************/
+// JSDoc is kind of used.
 
 /*******************************************************************************
  * Header
@@ -22,7 +12,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.219',
+		'AC': '0.220',
 	}
 }
 
@@ -31,10 +21,10 @@ AC.Version.Full = AC.Version.CC + ' / ' + AC.Version.AC;
 /*******************************************************************************
  * Cookie Clicker Modding Functions
  *
- * Functions called by Cookie Clicker as part of its Modding API
+ * Functions called by Cookie Clicker as part of its Modding API.
  ******************************************************************************/
 /**
- * This function is called by Cookie Clicker to initialize Auto Cookie
+ * This function is called by Cookie Clicker to initialize Auto Cookie.
  */
 AC.init = function() {
 	AC.Cache.loaded = false;
@@ -61,7 +51,7 @@ AC.init = function() {
 
 /**
  * This function saves Auto Cookie's current settings.
- * @returns {string} - A stringified JSON containing AC.Settings and the settings for each automated action
+ * @returns {string} - A stringified JSON containing AC.Settings and the settings for each automated action.
  */
 AC.save = function() {
 	for (var i = 0; i < AC.AutosById.length; i++) {
@@ -74,8 +64,7 @@ AC.save = function() {
 }
 
 /**
- * This function loads AC.Config.Settings and AC.Autos[auto].settings for each auto from the provided save data (if the save data is falsy, nothing is loaded and current settings are preserved)
- * Then all Automated Actions are run
+ * This function loads AC.Config.Settings and AC.Autos[auto].settings for each auto from the provided save data (if the save data is falsy, nothing is loaded and current settings are preserved). Then all Automated Actions are run.
  * @param {string} saveStr - A stringified JSON containing AC.Settings and the settings for each automated action
  */
 AC.load = function(saveStr) {
@@ -116,9 +105,9 @@ AC.errorNotify = function(errorMessage) {
 }
 
 /**
- * This function checks if you have an active buff from a list of buffs
- * @param	{array}	buffList	Either an array of strings or a string.
- * @return	{number}	Returns the number of active buffs in buffList
+ * This function checks if you have an active buff from a list of buffs.
+ * @param	{(array|string)}	buffList	Either an array of strings or a string.
+ * @return	{number}	Returns the number of active buffs in buffList.
  */
 AC.hasBuffs = function(buffList) {
 	const activeBuffs = Object.keys(Game.buffs);
@@ -164,19 +153,20 @@ AC.AutosById = [];
  * @class
  * @param {string} name - The name of the automated action.
  * @param {string} desc - A short description of the automated action.
+ * @param {number} timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to every automated action and must not change.
  * @param {function} actionFunction - 
  * @param {...Object} settiing - A setting for the automated action.
  * @param {string} setting.name - The setting's name.
  * @param {string} setting.desc - A short description of the setting.
  * @param {string} setting.type - The type of setting for creating its options in the menu.
- * @param {number} setting.timeCreated - The using the format yyyymmddhhmm (year)(month)(day)(hour)(minute). This is used to organize the save data so it should be unique to every setting and must not change.
+ * @param {number} setting.timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to every setting and must not change.
  * @param setting.value - The default value of the setting.
  */
-AC.Auto = function(name, desc, dateCreated, actionFunction, setting) {
+AC.Auto = function(name, desc, timeCreated, actionFunction, setting) {
 	// Mandatory arguments.
 	this.name = name;
 	this.desc = desc;
-	this.dateCreated = dateCreated;
+	this.timeCreated = timeCreated;
 	this.actionFunction = actionFunction.bind(this);
 	
 	// Defaulted Properties
@@ -195,7 +185,7 @@ AC.Auto = function(name, desc, dateCreated, actionFunction, setting) {
 			this.settings[arguments[i].name] = arguments[i];
 		} else {console.error('new AC.Auto ' + this.name + ' had a bad setting. Each setting must be an object with the name, desc, type, and value properties.')}
 	}
-	this.settingsById.sort(function(a, b) {return a.dateCreated - b.dateCreated})
+	this.settingsById.sort(function(a, b) {return a.timeCreated - b.timeCreated})
 	
 	AC.AutosById.push(this);
 	AC.Autos[this.name] = this;
@@ -244,7 +234,7 @@ new AC.Auto('Autoclicker', 'Clicks the cookie once every interval.', 20210117205
 	'name': 'Interval',
 	'desc': 'How often the cookie is clicked.',
 	'type': 'slider',
-	'dateCreated': 202101172101,
+	'timeCreated': 202101172101,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
@@ -257,18 +247,27 @@ new AC.Auto('Autoclicker', 'Clicks the cookie once every interval.', 20210117205
  */
 new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers as they appear.', 202101172057, function() {
 	Game.shimmers.forEach((function(shimmer) {
+		
 		shimmer.pop();
 	}).bind(this));
 }, {
 	'name': 'Interval',
 	'desc': 'How often to check for golden cookies.',
 	'type': 'slider',
-	'dateCreated': 202101172102,
+	'timeCreated': 202101172102,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
 	'max': 5000,
 	'step': 50
+}, {
+	'name': 'Click Wrath Cookies',
+	'desc': 'Whether or not to click wrath cookies.',
+	'type': 'switch',
+	'timeCreated': 202101172308,
+	'value': 1,
+	'switchVals': ['Click Wraths Off', 'Click Wraths On'],
+	'zeroOff': true
 });
 
 /**
@@ -280,7 +279,7 @@ new AC.Auto('Fortune Clicker', 'Clicks on fortunes in the news ticker as they ap
 	'name': 'Interval',
 	'desc': 'How often to check for fortunes.',
 	'type': 'slider',
-	'dateCreated': 202101172103,
+	'timeCreated': 202101172103,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
@@ -304,7 +303,7 @@ new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is avail
 	'name': 'Interval',
 	'desc': 'How often to check for the option to buy the Elder pledge toggle.',
 	'type': 'slider',
-	'dateCreated': 202101172104,
+	'timeCreated': 202101172104,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
@@ -314,7 +313,7 @@ new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is avail
 	'name': 'Slow Down',
 	'desc': 'If Slow Down is on, Elder Pledge Buyer will wait until the timer on the current Elder pledge runs out before checking again.',
 	'type': 'switch',
-	'dateCreated': 202101172105,
+	'timeCreated': 202101172105,
 	'value': 1,
 	'switchVals': ['Slow Down Off', 'Slow Down On'],
 	'zeroOff': true
@@ -334,7 +333,7 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 	'name': 'Interval',
 	'desc': 'How often to check for wrinklers to pop.',
 	'type': 'slider',
-	'dateCreated': 202101172106,
+	'timeCreated': 202101172106,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
@@ -345,7 +344,7 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 	'name': 'Preserve',
 	'desc': 'Will keep this many wrinklers alive.',
 	'type': 'slider',
-	'dateCreated': 202101172107,
+	'timeCreated': 202101172107,
 	'value': 0,
 	'units': 'wrinklers',
 	'min': 0,
@@ -355,7 +354,7 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 	'name': 'Wrinkler Sorting',
 	'desc': 'Determines if the preserved wrinklers are the ones who\' sucked the most or the least cookies.',
 	'type': 'switch',
-	'dateCreated': 202101172108,
+	'timeCreated': 202101172108,
 	'value': 1,
 	'switchVals': ['Least Sucked', 'Most Sucked'],
 	'zeroOff': false
@@ -391,7 +390,7 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'name': 'Interval',
 	'desc': 'How often to sell and buy back buildings. Setting this to less than 10,000 ms doesn\'t work that well.',
 	'type': 'slider',
-	'dateCreated': 202101172109,
+	'timeCreated': 202101172109,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
@@ -402,7 +401,7 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'name': 'Sell Extra Cursors',
 	'desc': 'How many extra cursors to buy and sell back, in groups of 100. This will lag the game.',
 	'type': 'slider',
-	'dateCreated': 202101172110,
+	'timeCreated': 202101172110,
 	'value': 0,
 	'units': '&times 100',
 	'min': 0,
@@ -412,7 +411,7 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'name': 'Sell up to',
 	'desc': 'Sell all buildings up to and including this one.',
 	'type': 'switch',
-	'dateCreated': 202101172202,
+	'timeCreated': 202101172202,
 	'value': 0,
 	'switchVals': ["Sell cursors", "Sell up to grandmas", "Sell up to farms", "Sell up to mines", "Sell up to factories", "Sell up to banks", "Sell up to temples", "Sell up to wizard towers", "Sell up to shipments", "Sell up to alchemy labs", "Sell up to portals", "Sell up to time machines", "Sell up to antimatter condensers", "Sell up to prisms", "Sell up to chancemakers", "Sell up to fractal engines", "Sell up to javascript consoles", "Sell up to idleverses"],
 	'zeroOff': false
@@ -421,7 +420,7 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 /*******************************************************************************
  * Automated Action Manipulation
  ******************************************************************************/
-AC.AutosById.sort(function(a, b) {return a.dateCreated - b.dateCreated});
+AC.AutosById.sort(function(a, b) {return a.timeCreated - b.timeCreated});
 
 /*******************************************************************************
  * Data
@@ -442,6 +441,12 @@ AC.Data.mouseUpgrades = [
 	'Miraculite mouse',
 	'Fortune #104'
 ];
+
+// Doesn't include 'Sugar frenzy'
+AC.Data.cpsBuffs = ["High-five", "Congregation", "Luxuriant harvest", "Ore vein", "Oiled-up", "Juicy profits", "Fervent adoration", "Manabloom", "Delicious lifeforms", "Breakthrough", "Righteous cataclysm", "Golden ages", "Extra cycles", "Solar flare", "Winning streak", "Macrocosm", "Refactoring", "Cosmic nursery", "Frenzy", "Elder Frenzy", "Dragon Harvest"];
+
+// Doesn't include 'Cursed finger'
+AC.Data.clickBuffs = ["Click frenzy", "Dragonflight", "Devastation"];
 
 /*******************************************************************************
  * Display
