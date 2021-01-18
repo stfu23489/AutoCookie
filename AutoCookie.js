@@ -22,7 +22,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.217',
+		'AC': '0.219',
 	}
 }
 
@@ -373,24 +373,23 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 		try {this.cache.condition *= Game.hasGod('ruin')} catch {this.cache.condition = 0}
 	}
 	if (this.cache.condition && Game.buyMode != -1) {
-		var numCursors = [];
+		var numObjects = [];
 		for (var i = 0; i <= this['Sell up to']; i++) {
-			numCursors[i] = Game.ObjectsById[i].amount;
-			Game.ObjectsById[i].sell(numCursors[i]);
+			numObjects[i] = Game.ObjectsById[i].amount;
+			Game.ObjectsById[i].sell(numObjects[i]);
 		}
-		Game.Objects.Cursor.sell(numCursors);
+		Game.Objects.Cursor.sell(numObjects);
 		for (var i = 0; i < this['Sell Extra Cursors']; i++) {
 			Game.Objects.Cursor.buy(100);
 			Game.Objects.Cursor.sell(100);
 		}
-		for (var i = 0; i <= this['Sell up to'], i++) {
-			numCursors[i] = Game.ObjectsById[i].amount;
-			Game.ObjectsById[i].buy(numCursors[i]);
+		for (var i = 0; i <= this['Sell up to']; i++) {
+			Game.ObjectsById[i].buy(numObjects[i]);
 		}
 	}
 }, {
 	'name': 'Interval',
-	'desc': 'How often to sell and buy back buildings. If this is less than 10,000 ms then this action will sell and buy back buildings in the middle of an existing buff.',
+	'desc': 'How often to sell and buy back buildings. Setting this to less than 10,000 ms doesn\'t work that well.',
 	'type': 'slider',
 	'dateCreated': 202101172109,
 	'value': 0,
@@ -419,7 +418,10 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'zeroOff': false
 });
 
-AC.AutosById.sort(function(a, b) {return a.dateCreated - b.dateCreated})
+/*******************************************************************************
+ * Automated Action Manipulation
+ ******************************************************************************/
+AC.AutosById.sort(function(a, b) {return a.dateCreated - b.dateCreated});
 
 /*******************************************************************************
  * Data
