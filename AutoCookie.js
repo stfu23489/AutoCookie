@@ -22,7 +22,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.199',
+		'AC': '0.200',
 	}
 }
 
@@ -56,7 +56,7 @@ AC.init = function() {
 		
 		// Notify the player that Auto Cookie has loaded
 		if (Game.prefs.popups) {Game.Popup('Auto Cookie ' + AC.Version.Full + ' loaded.')} else {Game.Notify('Auto Cookie ' + AC.Version.Full + ' loaded.', '', '', 1, 1)}
-	}, 250);
+	}, 50);
 }
 
 /**
