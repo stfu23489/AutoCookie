@@ -16,13 +16,13 @@
 var AC = {
 	'Autos': {},	// Automated Actions
 	'Cache': {},	// Temporary Storage
-	'Config': {},	// Settings
-	'Data': {},	// Misc. Data
+	'Data': {},	// Data
 	'Display': {},	// Display Functions
 	'Game': {},	// Copies of game functions and data
+	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.198',
+		'AC': '0.199',
 	}
 }
 
@@ -56,55 +56,47 @@ AC.init = function() {
 		
 		// Notify the player that Auto Cookie has loaded
 		if (Game.prefs.popups) {Game.Popup('Auto Cookie ' + AC.Version.Full + ' loaded.')} else {Game.Notify('Auto Cookie ' + AC.Version.Full + ' loaded.', '', '', 1, 1)}
-	}, 100);
+	}, 250);
 }
 
 /**
  * This function saves Auto Cookie's current settings.
- * @returns	{string}	A stringified JSON containing AC.Config.Settings and AC.Autos[auto].settings for each auto
+ * @returns {string} - A stringified JSON containing AC.Settings and the settings for each automated action
  */
 AC.save = function() {
-	var settings = AC.Config.Settings;
-	settings.Autos = {}
-	
-	// Add the settings of all AC.Autos to settings
-	for (auto in AC.Autos) {
-		settings.Autos[auto] = AC.Autos[auto].settings;
+	for (var i = 0; i < AC.AutosByID.length; i++) {
+		AC.Settings.A[i] = [];
+		for (var j = 0; j < AC.AutosByID[i].settings.length; j++) {
+			AC.Settings.A[i].push(AC.AutosByID[i][AC.AutosByID[i].settings[j].name]);
+		}
 	}
-	
-	return JSON.stringify(settings);
+	return JSON.stringify(AC.Settings);
 }
 
 /**
  * This function loads AC.Config.Settings and AC.Autos[auto].settings for each auto from the provided save data (if the save data is falsy, nothing is loaded and current settings are preserved)
  * Then all Automated Actions are run
- * @param	{string}	saveStr	A stringified JSON containing AC.Config.Settings and AC.Autos[auto].settings for each auto
+ * @param {string} saveStr - A stringified JSON containing AC.Settings and the settings for each automated action
  */
 AC.load = function(saveStr) {
-	if (saveStr) {
-		try {
-			var settings = JSON.parse(saveStr);
-		} catch(err) {
-			AC.errorNotify('Failed to load corrupt save data. The corrupt save data was logged to the console (F12). Loading Auto Cookie with default settings.');
-			console.log(saveStr);
-			settings = {'Autos': {}}
+	if (saveStr) {try {
+		saveStr = JSON.parse(saveStr);
+		for (var i = 0; i < saveStr.A.length; i++) {
+			for (var j = 0; j < saveStr.A[i].length; j++) {
+				if (typeof (AC.AutosByID[i][AC.AutosByID[i].settings[j].name]) !== 'undefined') {
+					AC.AutosByID[i][AC.AutosByID[i].settings[j].name] = saveStr.A[i][j];
+				}
+			}
 		}
-	}
-	else {settings = {'Autos': {}}}
-	
-	// Load the settings for all the Automated Actions
-	for (auto in settings.Autos) {
-		for (setting in settings.Autos[auto]) {
-			if (AC.Autos[auto].settings[setting]) AC.Autos[auto].settings[setting] = settings.Autos[auto][setting];
+		delete saveStr.A;
+		delete saveStr.vCC;
+		delete saveStr.vAC;
+		for (var setting in saveStr) {
+			if (AC.Settings[setting]) {
+				AC.Settings[setting] = saveStr[setting];
+			}
 		}
-	}
-	delete settings['Autos'];
-	
-	// Load the rest of the settings into AC.Config.Settings
-	for (setting in settings) {
-		if (AC.Config.Settings[setting]) AC.Config.Settings[setting] = settings[setting];
-	}
-	
+	} catch(err) {console.log(err)}}
 	AC.Cache.loaded = true;
 	for (var auto in AC.Autos) AC.Autos[auto].run();
 }
@@ -141,7 +133,6 @@ AC.hasBuffs = function(buffList) {
 AC.newsTicker = function() {
 	// Things to mention
 	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000) + 1;
-	var listCookies = []; for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}}
 	
 	var list = []
 	
@@ -156,7 +147,7 @@ AC.newsTicker = function() {
 		'<q>The fact that Auto Cookie bakes cookies was a complete accident. It was only supposed to do my taxes.</q><sig>Elekester</sig>',
 		Game.cookiesEarned+Game.cookiesReset<1e+63?'<q>The fears of Cookie Baking Devices going rogue are in the past. Auto Cookie only wants to make us delicious cookies.</q><sig>AI Safety Expert</sig>':'Auto Cookie has made all living creatures into delicious cookies.',
 		'Auto Cookie\'s cookies cook cookies automatically.',
-		'Auto Cookie\'s favorite cookies are '+choose(listCookies)+'.'
+		'Auto Cookie\'s favorite cookies are '+AC.Settings.C+'.'
 	]));
 	
 	return list
@@ -165,183 +156,233 @@ AC.newsTicker = function() {
 /*******************************************************************************
  * Automated Action Constructor and Prototypes
  ******************************************************************************/
+AC.Autos = {};
+AC.AutosByID = [];
+
 /**
- * Represents an Automated Action
- * @constructor
+ * Represents an automated action.
+ * @class
+ * @param {string} name - The name of the automated action.
+ * @param {string} desc - A short description of the automated action.
+ * @param {...Object} settiing - A setting for the automated action. The first setting is a required interval setting. In order to preserve save data, put new settings at the end.
+ * @param {string} setting.name - The setting's name. The first setting's name must be interval.
+ * @param {string} setting.desc - A short description of the setting.
+ * @param {string} setting.type - The type of setting for creating its options in the menu. See AC.Disp for more information.
+ * @param setting.value - The default value of the setting.
  */
-AC.Auto = function(name, desc, intvl, maxintvl, settings, cache, actionFunction) {
+AC.Auto = function(name, desc, actionFunction, setting) {
+	// Mandatory arguments.
 	this.name = name;
 	this.desc = desc;
-	this.settings = settings;
-	this.settings.intvl = intvl;
-	this.settings.maxintvl = maxintvl;
-	this.cache = cache;
 	this.actionFunction = actionFunction.bind(this);
 	
+	// Empty properties.
 	this.intvlID = undefined;
+	this.cache = {};
 	
-	// this.run()
-	// this.stop()
-	// this.toggle()
+	// Settings
+	this.settings = [];
+	var n = arguments.length;
+	for (var i = 3; i < n; i++) {
+		if (!this[arguments[i].name] && arguments[i].name) {
+			this[arguments[i].name] = arguments[i].value;
+			this.settings.push(arguments[i]);
+		}
+	}
 	
+	AC.AutosByID.push(this);
 	AC.Autos[this.name] = this;
 	return this;
 }
 
 /**
- * This method fires the action function of the object at regular intervals
- * @param	{boolean}	runImmediately	If true (false by default), the action function will be called once immediately.
- * @param	{number}	interval	If provided, will override this.settings.interval for this run
- * @returns	{boolean}	True if successful. False if failure.
+ * This method calls the action function of the object at regular intervals.
+ * @param {boolean} [runImmediately=false] - If truthy (false by default), the action function will be called immediately.
+ * @param {number} [interval=this.Interval] - If provided, will override this.interval for this run.
+ * @returns {boolean} - Returns true if the actionFunction was called or the interval was setup, false otherwise.
  */
 AC.Auto.prototype.run = function(runImmediately, interval) {
 	runImmediately ??= false;
-	interval ??= this.settings.intvl;
-	this.intvlID = clearInterval(this.intvlID);	// Stops the action function if it is running
-	if (interval) {
-		if (runImmediately) this.actionFunction();
-		this.intvlID = setInterval(this.actionFunction, interval);
-		return true;
-	}
-	return false;
-}
-
-/**
- * This method stops the action function from being fired at regular intervals
- */
-AC.Auto.prototype.stop = function() {
+	interval ??= this.Interval;
+	
+	// Stop the action function if it is running
 	this.intvlID = clearInterval(this.intvlID);
-}
-
-/**
- * This method toggles the firing of the action function at regular intervals
- */
-AC.Auto.prototype.toggle = function() {
-	if (!this.intvlID) this.run();
-	else this.stop();
+	
+	// Call the actionFunction if runImmediately is truthy and call it at interval if interval is a positive number
+	var success = false;
+	if (runImmediately) {
+		this.actionFunction();
+		success = true;
+	}
+	if (typeof interval === 'number' && interval > 0) {
+		this.intvlID = setInterval(this.actionFunction, interval);
+		success = true;
+	}
+	return success;
 }
 
 /*******************************************************************************
  * Automated Actions
  *
- * An automated action calls its action function at regular intervals to repeatedly perform game actions
+ * An automated action calls its action function at regular intervals to repeatedly perform game actions.
+ * In order to preserve save data, put new automated actions at the end.
  ******************************************************************************/
-
 /**
- * This Automated Action clicks the big cookie
+ * This automated action clicks the cookie once every interval.
  */
-new AC.Auto('Autoclicker', 'Autoclicks the Big Cookie.', 200, 200, {}, {}, function() {
+new AC.Auto('Autoclicker', 'Clicks the cookie once every interval.', function() {
 	Game.ClickCookie();
+}, {
+	'name': 'Interval',
+	'desc': 'How often the cookie is clicked.',
+	'type': 'slider',
+	'value': 0,
+	'units': 'ms',
+	'min': 0,
+	'max': 1000,
+	'step': 10
 });
 
 /**
- * This Automated Action clicks fortunes on the news ticker
+ * This automated action clicks shimmers.
  */
- new AC.Auto('Fortune Clicker', 'Automatically clicks fortunes as they appear.', 7777, 10000, {}, {}, function() {
+new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers as they appear.', function() {
+	Game.shimmers.forEach((function(shimmer) {
+		shimmer.pop();
+	}).bind(this));
+}, {
+	'name': 'Interval',
+	'desc': 'How often to check for golden cookies.',
+	'type': 'slider',
+	'value': 0,
+	'units': 'ms',
+	'min': 0,
+	'max': 5000,
+	'step': 50
+});
+
+/**
+ * This automated action clicks fortunes on the news ticker.
+ */
+new AC.Auto('Fortune Clicker', 'Clicks on fortunes in the news ticker as they appear.', function() {
 	if (Game.TickerEffect && Game.TickerEffect.type=='fortune') {Game.tickerL.click()}
- });
- 
- /**
- * This Automated Action purchases the Elder pledge upgrade
+}, {
+	'name': 'Interval',
+	'desc': 'How often to check for fortunes.',
+	'type': 'slider',
+	'value': 0,
+	'units': 'ms',
+	'min': 0,
+	'max': 10000,
+	'step': 100
+});
+
+/**
+ * This automated action buys the 'Elder pledge' upgrade.
  */
-new AC.Auto('Elder Pledge Buyer', 'Purchases the Elder pledge when it is available.', 1000, 5000, {
-	'slowDown': true	// If true, then this autos interval will be slowed to match the Elder Pledge cooldown
-}, {}, function() {
-	if (this.settings.slowDown && Game.Upgrades['Elder Pledge'].bought) {
-		this.run(false, Math.ceil(33.333333333333336*Game.pledgeT)+50)
+new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is available.', function() {
+	if (this['Slow Down'] && Game.Upgrades['Elder Pledge'].bought) {
+		this.run(false, Math.ceil(33.33333333333333*Game.pledgeT)+10)
 		return;
-	}
-	else if (Game.HasUnlocked('Elder Pledge') && !Game.Upgrades['Elder Pledge'].bought && Game.Upgrades['Elder Pledge'].canBuy()) {
+	} else if (Game.HasUnlocked('Elder Pledge') && !Game.Upgrades['Elder Pledge'].bought && Game.Upgrades['Elder Pledge'].canBuy()) {
 		Game.Upgrades['Elder Pledge'].buy();
 		this.run(false);
 		return;
 	}
-});
-
-/**
- * This Automated Action clicks golden cookies and reindeer
- */
-new AC.Auto('Golden Cookie Clicker', 'Autoclicks golden cookies and reindeer when they appear.', 1000, 2000, {
-	'clickWraths': 4,	// If 0, never click wraths. If 1 (or 2), click only when there is a buff in buffList active (or no buff). If -1 (or -2), click only when there isn't a buff in buffList active (or no buff). If 3, click if there is an active buff. If -3, click if there isn't an active buff. Otherwise, always click
-	'buffList': []	// List of buffs referenced in clickWraths
-}, {}, function() {
-	Game.shimmers.forEach((function(shimmer) {
-		var condition = true;
-		if (!shimmer.wrath) {}
-		else switch (this.settings.clickWraths) {
-			case 0:
-				condition = false;
-				break;
-			case 1:
-				if (!AC.hasBuffs(this.settings.buffList)) condition = false;
-				break;
-			case -1:
-				if (AC.hasBuffs(this.settings.buffList)) condition = false;
-				break;
-			case 2:
-				if (!AC.hasBuffs(this.settings.buffList) && Games.buffs) condition = false;
-				break;
-			case -2:
-				if (AC.hasBuffs(this.settings.buffList) && Games.buffs) condition = false;
-				break;
-			case 3:
-				if (!Game.buffs) condition = false;
-				break;
-			case -3:
-				if (Game.buffs) condition = false;
-				break;
-		}
-		if (condition) shimmer.pop();
-	}).bind(this));
-});
-
-/**
- * This Automated Action pops wrinklers
- */
-new AC.Auto('Wrinkler Popper', 'Autopops wrinklers.', 0, 3600000, {
-	'number': 0	// The number of wrinklers to keep around. If <0 keeps all but that many around
-}, {}, function() {
-	var wrinklers = Game.wrinklers.filter(wrinkler => wrinkler.sucked != 0);
-	if (wrinklers) {
-		var num = (this.settings.number<0)?((Game.Has('Elder spice')?12:10)+this.settings.number):this.settings.number; 
-		wrinklers.sort(function(a, b) {return b.sucked - a.sucked});
-		for (i = num; i < wrinklers.length; i++) {Game.wrinklers[wrinklers[i].id].hp = 0}
-	}
-});
- 
-/**
- * This Automated Action triggers Godzamok's Devastation buff by selling and buying back cursors repeatedly
- */
-new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff automatically.', 10050, 15000, {
-	'loopCount': 10	// The number of times to buy and sell 100 cursors after selling all your cursors the first time. This lags the game if its too high, which ruins the timers of everything else
 }, {
-	'condition': false	// Whether or not you have the necessary setup for Godzamok
-}, function() {
-	if (!this.cache.condition) {
-		var condition = 0;
-		AC.Data.mouseUpgrades.forEach(function(upgrade) {if (Game.Has(upgrade)) {condition += 1}});
-		try {condition *= Game.hasGod('ruin')} catch(err) {condition = 0}
-		this.cache.condition = condition;
-		
+	'name': 'Interval',
+	'desc': 'How often to check for the option to buy the Elder pledge toggle.',
+	'type': 'slider',
+	'value': 0,
+	'units': 'ms',
+	'min': 0,
+	'max': 5000,
+	'step': 50
+}, {
+	'name': 'Slow Down',
+	'desc': 'If Slow Down is on, Elder Pledge Buyer will wait until the timer on the current Elder pledge runs out before checking again.',
+	'type': 'switch',
+	'value': 1,
+	'switchVals': ['Slow Down Off', 'Slow Down On'],
+	'zeroOff': true
+});
+
+/**
+ * This automated action pops wrinklers.
+ */
+new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', function() {
+	var wrinklers = Game.wrinklers.filter(wrinkler => wrinkler.sucked != 0);
+	if (wrinklers.length) {
+		sortOrder = 2*this['Wrinkler Preservation'] - 1
+		wrinklers.sort(function(a, b) {return sortOrder*(b.sucked - a.sucked)});
+		for (var i = this['Wrinkler Preservation']; i < wrinklers.length; i++) {Game.wrinklers[wrinklers[i].id].hp = 0}
 	}
-	if (!Game.hasBuff('Devastation') && this.cache.condition && Game.buyMode != -1) {
-		var numCursors = Game.Objects.Cursor.amount
-		Game.Objects.Cursor.sell(numCursors);
-		for (var i = 0; i < this.settings.loopCount; i++) {
-			Game.Objects.Cursor.buy(numCursors-100);
-			Game.Objects.Cursor.sell(numCursors-100);
-		}
-		Game.Objects.Cursor.buy(numCursors);
-	}
+}, {
+	'name': 'Interval',
+	'desc': 'How often to check for wrinklers to pop.',
+	'type': 'slider',
+	'value': 0,
+	'units': 'ms',
+	'min': 0,
+	'max': 3600000,
+	'step': 10000
+	
+}, {
+	'name': 'Wrinkler Preservation',
+	'desc': 'If on, this will keep a number of wrinklers alive.',
+	'type': 'switch',
+	'value': 0,
+	'switchVals': ['Wrinkler Preservation Off', 'Preserve 1 Wrinkler', 'Preserve 2 Wrinkler', 'Preserve 3 Wrinkler', 'Preserve 4 Wrinkler', 'Preserve 5 Wrinkler', 'Preserve 6 Wrinkler', 'Preserve 7 Wrinkler', 'Preserve 8 Wrinkler', 'Preserve 9 Wrinkler', 'Preserve 10 Wrinkler', 'Preserve 11 Wrinkler'],
+	'zeroOff': true	
+}, {
+	'name': 'Wrinkler Sorting',
+	'desc': 'Determines if the preserved wrinklers are the ones who\' sucked the most or the least cookies.',
+	'type': 'switch',
+	'value': 1,
+	'switchVals': ['Least Sucked', 'Most Sucked'],
+	'zeroOff': false
 	
 });
 
-/*******************************************************************************
- * Config
- ******************************************************************************/
-AC.Config.Settings = {
-	'Version': AC.Version.Full
-}
+
+/**
+ * This automated action triggers Godzamok's Devastation buff by selling and buying back buildings repeatedly.
+ */
+new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling and buying back cursors repeatedly.', function() {
+	if (typeof this.cache.condition === 'undefined' || !this.cache.condition) {
+		this.cache.condition = 0;
+		AC.Data.mouseUpgrades.forEach((function(upgrade) {if (Game.Has(upgrade)) {this.cache.condition++}}).bind(this));
+		try {this.cache.condition *= Game.hasGod('ruin')} catch {this.cache.condition = 0}
+	}
+	if (this.cache.condition && Game.buyMode != -1) {
+		var numCursors = Game.Objects.Cursor.amount
+		Game.Objects.Cursor.sell(numCursors);
+		for (var i = 0; i < this['Sell Extra Cursors']; i++) {
+			Game.Objects.Cursor.buy(100);
+			Game.Objects.Cursor.sell(100);
+		}
+		Game.Objects.Cursor.buy(numCursors);
+	}
+}, {
+	'name': 'Interval',
+	'desc': 'How often to sell and buy back buildings. If this is less than 10,000 ms then this action will sell and buy back buildings in the middle of an existing buff.',
+	'type': 'slider',
+	'value': 0,
+	'units': 'ms',
+	'min': 0,
+	'max': 15000,
+	'step': 150
+	
+}, {
+	'name': 'Sell Extra Cursors',
+	'desc': 'How many extra cursors to buy and sell back, in groups of 100. This will lag the game.',
+	'type': 'slider',
+	'value': 0,
+	'units': '&times 100',
+	'min': 0,
+	'max': 100,
+	'step': 1
+});
 
 /*******************************************************************************
  * Data
@@ -361,42 +402,94 @@ AC.Data.mouseUpgrades = [
 	'Plasmarble mouse',
 	'Miraculite mouse',
 	'Fortune #104'
-]
+];
 
 /*******************************************************************************
  * Display
  ******************************************************************************/
 /**
- * This function appends Auto Cookie's settings to the options menu in Cookie Clicker
+ * This function appends Auto Cookie's settings to the options menu in Cookie Clicker.
  */
 AC.Display.UpdateMenu = function() {
 	if (Game.onMenu == 'prefs') {
-		// Get the subsection part of the menu (everything below Options)
+		// Get the Options Menu element (id="subsection") and remove the padding from the end.
 		var subsection = document.getElementsByClassName('subsection')[0];
 		padding = subsection.removeChild(subsection.childNodes[subsection.childNodes.length-1]);
 		
-		// I'm better at HTML then I am at JS, so heres the HTML we'll be injecting
-		str = '<div class="title" style="color: gold">Auto Cookie Settings</div>';
-		str += '<div class="listing">Version: ' + AC.Version.Full + '</div>';
+		// Create a string of HTML for Auto Cookie's settings
+		str = '<div class="title" style="color: gold">Auto Cookie Settings</div>'
+			+ '<div class="listing">Version: ' + AC.Version.Full + '</div>';
 		
-		var onthing = ''
+		// Add the settings for each automated action
 		for (auto in AC.Autos) {
-			
-			// Add the slider for the interval for this auto
-			onthing = 'AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'Slider\').value; l(\'' + auto + 'SliderRight\').value = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2);';
-			
-			str += '<div class="listing"><div class="sliderBox"><div style="float:left;">' + auto + '</div><div style="float:right;">' + '<input class="option" type="number" min="0" max="' + AC.Autos[auto].settings.maxintvl/1000 + '" step="' + AC.Autos[auto].settings.maxintvl/100000 + '" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" autocomplete="off" style="width: 65px; background-color: rgb(16,16,16); color: rgb(180,180,180);" onchange="AC.Autos[\'' + auto + '\'].settings.intvl = 1000*l(\'' + auto + 'SliderRight\').value; l(\'' + auto + 'Slider\').value = (AC.Autos[\'' + auto + '\'].settings.intvl/1000).toFixed(2); AC.Autos[\'' + auto + '\'].run();" id="' + auto + 'SliderRight">' + '</div><input class="slider" style="clear:both;" type="range" min="0" max="' + AC.Autos[auto].settings.maxintvl/1000 + '" step="' + AC.Autos[auto].settings.maxintvl/100000 + '" value="' + (AC.Autos[auto].settings.intvl/1000).toFixed(2) + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto + '\'].run(); PlaySound(\'snd/tick.mp3\');" id="' + auto + 'Slider"/></div><label>' + AC.Autos[auto].desc + '</label>';
-			
-			// Something to do with each auto's settings other than intvl and maxintvl
-			
+			auto = AC.Autos[auto]
+			str += '<div class="title" style="font-size: 16px">' + auto.name + ' Settings</div>';
+			str += '<div class="listing">' + auto.desc + '<br><br>';
+			for (setting in auto.settings) str += AC.Display.generateSettingHTML(auto, auto.settings[setting]) + '<br>';
 			str += '</div>';
 		}
 		
-		// Inject that HTML
+		// Inject the HTML into the options menu and add the padding back in at the end.
 		subsection.innerHTML += str;
 		subsection.appendChild(padding);
 	}
 }
+
+/**
+ * This function generates the HTML for a setting option in an automated action.
+ * @param {AC.Auto} auto - The automated action.
+ * @param {Object} setting - The setting for the automated action.
+ * @param {string} setting.name - The setting's name.
+ * @param {string} setting.desc - A short description of the setting.
+ * @param {string} setting.type - The type of setting for creating its options in the menu.
+ * @param auto[setting] - The current value of the setting.
+ */
+AC.Display.generateSettingHTML = function(auto, setting) {
+	const settingID = auto.settings.findIndex(set => set.name === setting.name);
+	var str = '';
+	if (setting.type === 'slider') {
+		/**
+		 * sliders must have the additional parameters:
+		 * @param {number} setting.min - The minimum value of the setting.
+		 * @param {number} setting.max - The maximum value of the setting.
+		 * @param {number} setting.mstep - The step sixe of values for the setting.
+		 */
+		var onthing = 'AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'] = 1*l(\'' + auto.name + ' ' + setting.name + ' Slider\').value;';
+		onthing += ' l(\'' + auto.name + ' ' + setting.name + ' SliderRight\').innerHTML = AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'];';
+		
+		str += '<div class="sliderBox"><div style="float:left;">' + setting.name + '</div><div style="float:right;"><span id="' + auto.name + ' ' + setting.name + ' SliderRight">' + auto[setting.name] + '</span> ' + setting.units + '</div>';
+		str += '<input class="slider" style="clear:both;" type="range" min="' + setting.min + '" max="' + setting.max + '" step="' + setting.step + '" value="' + auto[setting.name] + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto.name + '\'].run(true); PlaySound(\'snd/tick.mp3\');" id="' + auto.name + ' ' + setting.name + ' Slider"/>';
+		str += '</div><label>' + setting.desc + '</label>';
+	} else if (setting.type === 'switch') {
+		/**
+		 * switches must ahve the additional parameters:
+		 * @param {Array} setting.switchVals - An array of display values to switch through
+		 * @param {boolean} setting.zeroOff - Whether or not to turun the button 'off' when setting.value == 0
+		 */
+		 var zeroOffStr = ''
+		 if (setting.zeroOff) {
+			 zeroOffStr += 'l(\'' + auto.name + ' ' + setting.name + ' Button\').className = \'option\' + ((!AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'])?\' off\':\'\');';
+		 }
+		 str += '<a class="option' + (setting.zeroOff?((!auto[setting.name])?' off':''):'') + '" id="' + auto.name + ' ' + setting.name + ' Button" onclick="AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\']++; AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'] %= ' + setting.switchVals.length + '; l(\'' + auto.name + ' ' + setting.name + ' Button\').innerHTML = AC.Autos[\'' + auto.name + '\'].settings[' + settingID + '].switchVals[AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\']];' + zeroOffStr + '">' + setting.switchVals[auto[setting.name]] + '</a>';
+		 str += '<label>' + setting.desc + '</label>';
+	}
+	return str;
+}
+
+/*******************************************************************************
+ * Settings
+ ******************************************************************************/
+AC.Settings = {
+	'vCC': AC.Version.CC,	// Version Numbers.
+	'vAC': AC.Version.AC,
+	'A': [],	// Settings of the automated actions.
+	'C': ''	// Auto Cookie's favorite cookie.
+}
+
+// Randomly choose Auto Cookie's favorite cookie, this is saved for a run.
+AC.Cache.listCookies = [];
+for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {AC.Cache.listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}};
+AC.Settings.C = choose(AC.Cache.listCookies);
 
 /*******************************************************************************
  * Register the mod with Cookie Clicker
