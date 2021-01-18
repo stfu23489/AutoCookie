@@ -22,7 +22,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.216',
+		'AC': '0.217',
 	}
 }
 
@@ -374,7 +374,7 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	}
 	if (this.cache.condition && Game.buyMode != -1) {
 		var numCursors = [];
-		for (var i = 0; i <= this['Sell up to'], i++) {
+		for (var i = 0; i <= this['Sell up to']; i++) {
 			numCursors[i] = Game.ObjectsById[i].amount;
 			Game.ObjectsById[i].sell(numCursors[i]);
 		}
