@@ -22,7 +22,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.212',
+		'AC': '0.213',
 	}
 }
 
@@ -155,9 +155,6 @@ AC.newsTicker = function() {
 
 /*******************************************************************************
  * Automated Action Constructor and Prototypes
- * TODO: Change this.settings into this.settingsByID and this.settings
- *       Should these be created by their own constructor? Probably don't need to be.
- * this.settingsByID
  ******************************************************************************/
 AC.Autos = {};
 AC.AutosById = [];
@@ -168,11 +165,11 @@ AC.AutosById = [];
  * @param {string} name - The name of the automated action.
  * @param {string} desc - A short description of the automated action.
  * @param {function} actionFunction - 
- * @param {...Object} settiing - A setting for the automated action. In order to preserve save data, put new settings at the end.
+ * @param {...Object} settiing - A setting for the automated action.
  * @param {string} setting.name - The setting's name.
  * @param {string} setting.desc - A short description of the setting.
  * @param {string} setting.type - The type of setting for creating its options in the menu.
- * @param {number} setting.timeCreated - The using the format yyyymmddhhmm (year)(month)(day)(hour)(minute). This is used to organize the save data.
+ * @param {number} setting.timeCreated - The using the format yyyymmddhhmm (year)(month)(day)(hour)(minute). This is used to organize the save data so it should be unique to every setting and must not change.
  * @param setting.value - The default value of the setting.
  */
 AC.Auto = function(name, desc, dateCreated, actionFunction, setting) {
@@ -182,23 +179,24 @@ AC.Auto = function(name, desc, dateCreated, actionFunction, setting) {
 	this.dateCreated = dateCreated;
 	this.actionFunction = actionFunction.bind(this);
 	
-	// Empty properties.
+	// Defaulted Properties
 	this.intvlID = undefined;
 	this.cache = {};
+	this.depecrated = false;
 	
 	// Settings
 	this.settings = {};
 	this.settingsById = [];
 	var n = arguments.length;
-	for (var i = 3; i < n; i++) {
+	for (var i = 4; i < n; i++) {
 		if (!this[arguments[i].name] && typeof arguments[i].name !== 'undefined' && typeof arguments[i].desc !== 'undefined' && typeof arguments[i].type !== 'undefined' && typeof arguments[i].value !== 'undefined') {
 			this[arguments[i].name] = arguments[i].value;
 			this.settingsById.push(arguments[i]);
 			this.settings[arguments[i].name] = arguments[i];
 		} else {console.error('new AC.Auto ' + this.name + ' had a bad setting. Each setting must be an object with the name, desc, type, and value properties.')}
 	}
-	
 	this.settingsById.sort(function(a, b) {return a.dateCreated - b.dateCreated})
+	
 	AC.AutosById.push(this);
 	AC.Autos[this.name] = this;
 	return this;
@@ -234,6 +232,8 @@ AC.Auto.prototype.run = function(runImmediately, interval) {
  * Automated Actions
  *
  * An automated action calls its action function at regular intervals to repeatedly perform game actions.
+ * If any automated action is removed or a setting from the automated actions is removed, it will break save data.
+ * Instead, for automated actions set its depecrated property to true. For a setting make its type 'deprecated'
  ******************************************************************************/
 /**
  * This automated action clicks the cookie once every interval.
@@ -404,7 +404,7 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'step': 1
 });
 
-this.AutosById.sort(function(a, b) {return a.dateCreated - b.dateCreated})
+AC.AutosById.sort(function(a, b) {return a.dateCreated - b.dateCreated})
 
 /*******************************************************************************
  * Data
@@ -447,11 +447,13 @@ AC.Display.UpdateMenu = function() {
 		
 		// Add the settings for each automated action
 		for (auto in AC.Autos) {
-			auto = AC.Autos[auto]
-			str += '<div class="title" style="font-size: 16px">' + auto.name + ' Settings</div>';
-			str += '<div class="listing">' + auto.desc + '<br><br>';
-			for (setting in auto.settingsById) str += AC.Display.generateSettingHTML(auto, auto.settingsById[setting]) + '<br>';
-			str += '</div>';
+			if (!auto.deprecated) {
+				auto = AC.Autos[auto]
+				str += '<div class="title" style="font-size: 16px">' + auto.name + ' Settings</div>';
+				str += '<div class="listing">' + auto.desc + '<br><br>';
+				for (setting in auto.settingsById) str += AC.Display.generateSettingHTML(auto, auto.settingsById[setting]);
+				str += '</div>';
+			}
 		}
 		
 		// Inject the HTML into the options menu and add the padding back in at the end.
@@ -472,7 +474,9 @@ AC.Display.UpdateMenu = function() {
 AC.Display.generateSettingHTML = function(auto, setting) {
 	const settingID = auto.settingsById.findIndex(set => set.name === setting.name);
 	var str = '';
-	if (setting.type === 'slider') {
+	if (setting.type === 'deprecated') {
+		// Skip this setting, it's been deprecated.
+	} else if (setting.type === 'slider') {
 		/**
 		 * sliders must have the additional parameters:
 		 * @param {number} setting.min - The minimum value of the setting.
@@ -484,7 +488,7 @@ AC.Display.generateSettingHTML = function(auto, setting) {
 		
 		str += '<div class="sliderBox"><div style="float:left;">' + setting.name + '</div><div style="float:right;"><span id="' + auto.name + ' ' + setting.name + ' SliderRight">' + auto[setting.name] + '</span> ' + setting.units + '</div>';
 		str += '<input class="slider" style="clear:both;" type="range" min="' + setting.min + '" max="' + setting.max + '" step="' + setting.step + '" value="' + auto[setting.name] + '" onchange="' + onthing + '" oninput="' + onthing + '" ' + ((setting.name === 'Interval')?'onmouseup="AC.Autos[\'' + auto.name + '\'].run(true);':'') + 'PlaySound(\'snd/tick.mp3\');" id="' + auto.name + ' ' + setting.name + ' Slider"/>';
-		str += '</div><label>' + setting.desc + '</label>';
+		str += '</div><label>' + setting.desc + '</label><br>';
 	} else if (setting.type === 'switch') {
 		/**
 		 * switches must ahve the additional parameters:
@@ -496,7 +500,7 @@ AC.Display.generateSettingHTML = function(auto, setting) {
 			 zeroOffStr += 'l(\'' + auto.name + ' ' + setting.name + ' Button\').className = \'option\' + ((!AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'])?\' off\':\'\');';
 		 }
 		 str += '<a class="option' + (setting.zeroOff?((!auto[setting.name])?' off':''):'') + '" id="' + auto.name + ' ' + setting.name + ' Button" onclick="AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\']++; AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'] %= ' + setting.switchVals.length + '; l(\'' + auto.name + ' ' + setting.name + ' Button\').innerHTML = AC.Autos[\'' + auto.name + '\'].settingsById[' + settingID + '].switchVals[AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\']];' + zeroOffStr + '">' + setting.switchVals[auto[setting.name]] + '</a>';
-		 str += '<label>' + setting.desc + '</label>';
+		 str += '<label>' + setting.desc + '</label><br>';
 	}
 	return str;
 }
