@@ -22,7 +22,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.200',
+		'AC': '0.201',
 	}
 }
 
@@ -458,7 +458,7 @@ AC.Display.generateSettingHTML = function(auto, setting) {
 		onthing += ' l(\'' + auto.name + ' ' + setting.name + ' SliderRight\').innerHTML = AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'];';
 		
 		str += '<div class="sliderBox"><div style="float:left;">' + setting.name + '</div><div style="float:right;"><span id="' + auto.name + ' ' + setting.name + ' SliderRight">' + auto[setting.name] + '</span> ' + setting.units + '</div>';
-		str += '<input class="slider" style="clear:both;" type="range" min="' + setting.min + '" max="' + setting.max + '" step="' + setting.step + '" value="' + auto[setting.name] + '" onchange="' + onthing + '" oninput="' + onthing + '" onmouseup="AC.Autos[\'' + auto.name + '\'].run(true); PlaySound(\'snd/tick.mp3\');" id="' + auto.name + ' ' + setting.name + ' Slider"/>';
+		str += '<input class="slider" style="clear:both;" type="range" min="' + setting.min + '" max="' + setting.max + '" step="' + setting.step + '" value="' + auto[setting.name] + '" onchange="' + onthing + '" oninput="' + onthing + '" ' + ((setting.name === 'Interval')?'onmouseup="AC.Autos[\'' + auto.name + '\'].run(true);':'') + 'PlaySound(\'snd/tick.mp3\');" id="' + auto.name + ' ' + setting.name + ' Slider"/>';
 		str += '</div><label>' + setting.desc + '</label>';
 	} else if (setting.type === 'switch') {
 		/**
