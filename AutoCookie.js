@@ -1,7 +1,10 @@
-// JSDoc is kind of used.
-
 /*******************************************************************************
- * Header
+ * Welcome to AutoCookie.js, I hope you'll find this well commented. I've tried
+ * to use JSDoc and commented on individual pieces of code, but you can be the
+ * judge of how well I've stuck to that.
+ *
+ * Below the structure of AutoCookie is declared right here, along with the
+ * version information.
  ******************************************************************************/
 var AC = {
 	'Autos': {},	// Automated Actions
@@ -12,7 +15,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.220',
+		'AC': '0.222',
 	}
 }
 
@@ -31,7 +34,7 @@ AC.init = function() {
 	Game.Win('Third-party');
 	
 	setTimeout(function() {
-		// After waiting for the delay, check if Auto Cookie's save data has been loaded and the automated actions have been loaded
+		// After waiting for the delay, check if Auto Cookie's save data has been loaded and the automated actions have been loaded, if not load the automated actions
 		if (!AC.Cache.loaded) {AC.load(false)};
 		
 		// Register hooks with Cookie Clicker
@@ -64,7 +67,7 @@ AC.save = function() {
 }
 
 /**
- * This function loads AC.Config.Settings and AC.Autos[auto].settings for each auto from the provided save data (if the save data is falsy, nothing is loaded and current settings are preserved). Then all Automated Actions are run.
+ a* This function loads AC.Settings and the settings for each automated action from the provided save data. Then all atomated actions are run.
  * @param {string} saveStr - A stringified JSON containing AC.Settings and the settings for each automated action
  */
 AC.load = function(saveStr) {
@@ -91,10 +94,11 @@ AC.load = function(saveStr) {
 }
 
 /*******************************************************************************
- * Auto Cookie's Top Level Functions
+ * Auto Cookie's Other Functions
  ******************************************************************************/
 /**
- * This function notifies the player that an error has occured.
+ * This function notifies the player that an error in Auto Cookie has occured.
+ * @param {string} errorMessage - The error message to be displayed.
  */
 AC.errorNotify = function(errorMessage) {
 	if (Game.prefs.popups) {
@@ -106,8 +110,8 @@ AC.errorNotify = function(errorMessage) {
 
 /**
  * This function checks if you have an active buff from a list of buffs.
- * @param	{(array|string)}	buffList	Either an array of strings or a string.
- * @return	{number}	Returns the number of active buffs in buffList.
+ * @param {(array|string)} buffList - Either an array of strings or a string.
+ * @returns {number} - Returns the number of active buffs in buffList.
  */
 AC.hasBuffs = function(buffList) {
 	const activeBuffs = Object.keys(Game.buffs);
@@ -116,8 +120,9 @@ AC.hasBuffs = function(buffList) {
 }
 
 /**
- * This function returns an array of news tickers for the news ticker
+ * This function returns an array of news tickers for the news ticker.
  * This function is registered into Cookie Clicker's "ticker" hook.
+ * @returns {array} - An array of strings for the news ticker.
  */
 AC.newsTicker = function() {
 	// Things to mention
@@ -154,7 +159,7 @@ AC.AutosById = [];
  * @param {string} name - The name of the automated action.
  * @param {string} desc - A short description of the automated action.
  * @param {number} timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to every automated action and must not change.
- * @param {function} actionFunction - 
+ * @param {function} actionFunction - The function to be run at the interval.
  * @param {...Object} settiing - A setting for the automated action.
  * @param {string} setting.name - The setting's name.
  * @param {string} setting.desc - A short description of the setting.
@@ -247,8 +252,9 @@ new AC.Auto('Autoclicker', 'Clicks the cookie once every interval.', 20210117205
  */
 new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers as they appear.', 202101172057, function() {
 	Game.shimmers.forEach((function(shimmer) {
-		
-		shimmer.pop();
+		if (!shimmer.wrath || this['Click Wrath Cookies']) {
+			shimmer.pop();
+		}
 	}).bind(this));
 }, {
 	'name': 'Interval',
@@ -267,6 +273,14 @@ new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers a
 	'timeCreated': 202101172308,
 	'value': 1,
 	'switchVals': ['Click Wraths Off', 'Click Wraths On'],
+	'zeroOff': true
+}, {
+	'name': 'Combo',
+	'desc': 'Whether or not to attempt combos with FTHOF.',
+	'type': 'switch',
+	'timeCreated': 202101172347,
+	'value': 0,
+	'switchVals': ['Combo Off', 'Combo On'],
 	'zeroOff': true
 });
 
