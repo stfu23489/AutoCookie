@@ -22,7 +22,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.202',
+		'AC': '0.203',
 	}
 }
 
@@ -64,10 +64,10 @@ AC.init = function() {
  * @returns {string} - A stringified JSON containing AC.Settings and the settings for each automated action
  */
 AC.save = function() {
-	for (var i = 0; i < AC.AutosByID.length; i++) {
+	for (var i = 0; i < AC.AutosById.length; i++) {
 		AC.Settings.A[i] = [];
-		for (var j = 0; j < AC.AutosByID[i].settings.length; j++) {
-			AC.Settings.A[i].push(AC.AutosByID[i][AC.AutosByID[i].settings[j].name]);
+		for (var j = 0; j < AC.AutosById[i].settingsById.length; j++) {
+			AC.Settings.A[i].push(AC.AutosById[i][AC.AutosById[i].settingsById[j].name]);
 		}
 	}
 	return JSON.stringify(AC.Settings);
@@ -83,8 +83,8 @@ AC.load = function(saveStr) {
 		saveStr = JSON.parse(saveStr);
 		for (var i = 0; i < saveStr.A.length; i++) {
 			for (var j = 0; j < saveStr.A[i].length; j++) {
-				if (typeof (AC.AutosByID[i][AC.AutosByID[i].settings[j].name]) !== 'undefined') {
-					AC.AutosByID[i][AC.AutosByID[i].settings[j].name] = saveStr.A[i][j];
+				if (typeof (AC.AutosById[i][AC.AutosById[i].settingsById[j].name]) !== 'undefined') {
+					AC.AutosById[i][AC.AutosById[i].settingsById[j].name] = saveStr.A[i][j];
 				}
 			}
 		}
@@ -155,19 +155,23 @@ AC.newsTicker = function() {
 
 /*******************************************************************************
  * Automated Action Constructor and Prototypes
+ * TODO: Change this.settings into this.settingsByID and this.settings
+ *       Should these be created by their own constructor? Probably don't need to be.
+ * this.settingsByID
  ******************************************************************************/
 AC.Autos = {};
-AC.AutosByID = [];
+AC.AutosById = [];
 
 /**
  * Represents an automated action.
  * @class
  * @param {string} name - The name of the automated action.
  * @param {string} desc - A short description of the automated action.
- * @param {...Object} settiing - A setting for the automated action. The first setting is a required interval setting. In order to preserve save data, put new settings at the end.
- * @param {string} setting.name - The setting's name. The first setting's name must be interval.
+ * @param {function} actionFunction - 
+ * @param {...Object} settiing - A setting for the automated action. In order to preserve save data, put new settings at the end.
+ * @param {string} setting.name - The setting's name.
  * @param {string} setting.desc - A short description of the setting.
- * @param {string} setting.type - The type of setting for creating its options in the menu. See AC.Disp for more information.
+ * @param {string} setting.type - The type of setting for creating its options in the menu.
  * @param setting.value - The default value of the setting.
  */
 AC.Auto = function(name, desc, actionFunction, setting) {
@@ -181,16 +185,18 @@ AC.Auto = function(name, desc, actionFunction, setting) {
 	this.cache = {};
 	
 	// Settings
-	this.settings = [];
+	this.settings = {};
+	this.settingsById = [];
 	var n = arguments.length;
 	for (var i = 3; i < n; i++) {
-		if (!this[arguments[i].name] && arguments[i].name) {
+		if (!this[arguments[i].name] && typeof arguments[i].name !== 'undefined' && typeof arguments[i].desc !== 'undefined' && typeof arguments[i].type !== 'undefined' && typeof arguments[i].value !== 'undefined') {
 			this[arguments[i].name] = arguments[i].value;
-			this.settings.push(arguments[i]);
-		}
+			this.settingsById.push(arguments[i]);
+			this.settings[arguments[i].name] = arguments[i];
+		} else {console.error('new AC.Auto ' + this.name + ' had a bad setting. Each setting must be an object with the name, desc, type, and value properties.')}
 	}
 	
-	AC.AutosByID.push(this);
+	AC.AutosById.push(this);
 	AC.Autos[this.name] = this;
 	return this;
 }
@@ -203,7 +209,7 @@ AC.Auto = function(name, desc, actionFunction, setting) {
  */
 AC.Auto.prototype.run = function(runImmediately, interval) {
 	runImmediately ??= false;
-	interval ??= this.Interval;
+	interval ??= this.Interval ?? 0;
 	
 	// Stop the action function if it is running
 	this.intvlID = clearInterval(this.intvlID);
@@ -328,8 +334,8 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', function() {
 	'step': 10000
 	
 }, {
-	'name': 'Wrinkler Preservation',
-	'desc': 'If on, this will keep a number of wrinklers alive.',
+	'name': 'Preserve',
+	'desc': 'Will keep this many wrinklers alive.',
 	'type': 'slider',
 	'value': 0,
 	'units': 'wrinklers',
@@ -382,7 +388,7 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'value': 0,
 	'units': '&times 100',
 	'min': 0,
-	'max': 100,
+	'max': 1000,
 	'step': 1
 });
 
@@ -408,6 +414,9 @@ AC.Data.mouseUpgrades = [
 
 /*******************************************************************************
  * Display
+ *
+ * TODO: Everything here works, as long as this is the first mod loaded. If its loaded after a mod like Cookie Monster, it breaks Cookie Monster's menu.
+ * TODO: Instead of strings appended to the HTML it should probably use HTML DOM Elements to do this. Also the on____ functions should probably be removed from the HTML and added to this javascript file.
  ******************************************************************************/
 /**
  * This function appends Auto Cookie's settings to the options menu in Cookie Clicker.
@@ -427,7 +436,7 @@ AC.Display.UpdateMenu = function() {
 			auto = AC.Autos[auto]
 			str += '<div class="title" style="font-size: 16px">' + auto.name + ' Settings</div>';
 			str += '<div class="listing">' + auto.desc + '<br><br>';
-			for (setting in auto.settings) str += AC.Display.generateSettingHTML(auto, auto.settings[setting]) + '<br>';
+			for (setting in auto.settingsById) str += AC.Display.generateSettingHTML(auto, auto.settingsById[setting]) + '<br>';
 			str += '</div>';
 		}
 		
@@ -447,7 +456,7 @@ AC.Display.UpdateMenu = function() {
  * @param auto[setting] - The current value of the setting.
  */
 AC.Display.generateSettingHTML = function(auto, setting) {
-	const settingID = auto.settings.findIndex(set => set.name === setting.name);
+	const settingID = auto.settingsById.findIndex(set => set.name === setting.name);
 	var str = '';
 	if (setting.type === 'slider') {
 		/**
@@ -472,7 +481,7 @@ AC.Display.generateSettingHTML = function(auto, setting) {
 		 if (setting.zeroOff) {
 			 zeroOffStr += 'l(\'' + auto.name + ' ' + setting.name + ' Button\').className = \'option\' + ((!AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'])?\' off\':\'\');';
 		 }
-		 str += '<a class="option' + (setting.zeroOff?((!auto[setting.name])?' off':''):'') + '" id="' + auto.name + ' ' + setting.name + ' Button" onclick="AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\']++; AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'] %= ' + setting.switchVals.length + '; l(\'' + auto.name + ' ' + setting.name + ' Button\').innerHTML = AC.Autos[\'' + auto.name + '\'].settings[' + settingID + '].switchVals[AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\']];' + zeroOffStr + '">' + setting.switchVals[auto[setting.name]] + '</a>';
+		 str += '<a class="option' + (setting.zeroOff?((!auto[setting.name])?' off':''):'') + '" id="' + auto.name + ' ' + setting.name + ' Button" onclick="AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\']++; AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'] %= ' + setting.switchVals.length + '; l(\'' + auto.name + ' ' + setting.name + ' Button\').innerHTML = AC.Autos[\'' + auto.name + '\'].settingsById[' + settingID + '].switchVals[AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\']];' + zeroOffStr + '">' + setting.switchVals[auto[setting.name]] + '</a>';
 		 str += '<label>' + setting.desc + '</label>';
 	}
 	return str;
