@@ -22,7 +22,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.203',
+		'AC': '0.209',
 	}
 }
 
@@ -172,12 +172,14 @@ AC.AutosById = [];
  * @param {string} setting.name - The setting's name.
  * @param {string} setting.desc - A short description of the setting.
  * @param {string} setting.type - The type of setting for creating its options in the menu.
+ * @param {number} setting.timeCreated - The using the format yyyymmddhhmm (year)(month)(day)(hour)(minute). This is used to organize the save data.
  * @param setting.value - The default value of the setting.
  */
-AC.Auto = function(name, desc, actionFunction, setting) {
+AC.Auto = function(name, desc, dateCreated, actionFunction, setting) {
 	// Mandatory arguments.
 	this.name = name;
 	this.desc = desc;
+	this.dateCreated = dateCreated;
 	this.actionFunction = actionFunction.bind(this);
 	
 	// Empty properties.
@@ -196,6 +198,7 @@ AC.Auto = function(name, desc, actionFunction, setting) {
 		} else {console.error('new AC.Auto ' + this.name + ' had a bad setting. Each setting must be an object with the name, desc, type, and value properties.')}
 	}
 	
+	this.settingsById.sort(function(a, b) {return a.dateCreated - b.dateCreated})
 	AC.AutosById.push(this);
 	AC.Autos[this.name] = this;
 	return this;
@@ -231,17 +234,17 @@ AC.Auto.prototype.run = function(runImmediately, interval) {
  * Automated Actions
  *
  * An automated action calls its action function at regular intervals to repeatedly perform game actions.
- * In order to preserve save data, put new automated actions at the end.
  ******************************************************************************/
 /**
  * This automated action clicks the cookie once every interval.
  */
-new AC.Auto('Autoclicker', 'Clicks the cookie once every interval.', function() {
+new AC.Auto('Autoclicker', 'Clicks the cookie once every interval.', 202101172056, function() {
 	Game.ClickCookie();
 }, {
 	'name': 'Interval',
 	'desc': 'How often the cookie is clicked.',
 	'type': 'slider',
+	'dateCreated': 202101172101,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
@@ -252,7 +255,7 @@ new AC.Auto('Autoclicker', 'Clicks the cookie once every interval.', function() 
 /**
  * This automated action clicks shimmers.
  */
-new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers as they appear.', function() {
+new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers as they appear.', 202101172057, function() {
 	Game.shimmers.forEach((function(shimmer) {
 		shimmer.pop();
 	}).bind(this));
@@ -260,6 +263,7 @@ new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers a
 	'name': 'Interval',
 	'desc': 'How often to check for golden cookies.',
 	'type': 'slider',
+	'dateCreated': 202101172102,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
@@ -270,12 +274,13 @@ new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers a
 /**
  * This automated action clicks fortunes on the news ticker.
  */
-new AC.Auto('Fortune Clicker', 'Clicks on fortunes in the news ticker as they appear.', function() {
+new AC.Auto('Fortune Clicker', 'Clicks on fortunes in the news ticker as they appear.', 202101172058, function() {
 	if (Game.TickerEffect && Game.TickerEffect.type=='fortune') {Game.tickerL.click()}
 }, {
 	'name': 'Interval',
 	'desc': 'How often to check for fortunes.',
 	'type': 'slider',
+	'dateCreated': 202101172103,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
@@ -286,7 +291,7 @@ new AC.Auto('Fortune Clicker', 'Clicks on fortunes in the news ticker as they ap
 /**
  * This automated action buys the 'Elder pledge' upgrade.
  */
-new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is available.', function() {
+new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is available.', 202101172059, function() {
 	if (this['Slow Down'] && Game.Upgrades['Elder Pledge'].bought) {
 		this.run(false, Math.ceil(33.33333333333333*Game.pledgeT)+10)
 		return;
@@ -299,6 +304,7 @@ new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is avail
 	'name': 'Interval',
 	'desc': 'How often to check for the option to buy the Elder pledge toggle.',
 	'type': 'slider',
+	'dateCreated': 202101172104,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
@@ -308,6 +314,7 @@ new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is avail
 	'name': 'Slow Down',
 	'desc': 'If Slow Down is on, Elder Pledge Buyer will wait until the timer on the current Elder pledge runs out before checking again.',
 	'type': 'switch',
+	'dateCreated': 202101172105,
 	'value': 1,
 	'switchVals': ['Slow Down Off', 'Slow Down On'],
 	'zeroOff': true
@@ -316,7 +323,7 @@ new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is avail
 /**
  * This automated action pops wrinklers.
  */
-new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', function() {
+new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060 function() {
 	var wrinklers = Game.wrinklers.filter(wrinkler => wrinkler.sucked != 0);
 	if (wrinklers.length) {
 		sortOrder = 2*this['Wrinkler Preservation'] - 1
@@ -327,6 +334,7 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', function() {
 	'name': 'Interval',
 	'desc': 'How often to check for wrinklers to pop.',
 	'type': 'slider',
+	'dateCreated': 202101172106,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
@@ -337,6 +345,7 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', function() {
 	'name': 'Preserve',
 	'desc': 'Will keep this many wrinklers alive.',
 	'type': 'slider',
+	'dateCreated': 202101172107,
 	'value': 0,
 	'units': 'wrinklers',
 	'min': 0,
@@ -346,6 +355,7 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', function() {
 	'name': 'Wrinkler Sorting',
 	'desc': 'Determines if the preserved wrinklers are the ones who\' sucked the most or the least cookies.',
 	'type': 'switch',
+	'dateCreated': 202101172108,
 	'value': 1,
 	'switchVals': ['Least Sucked', 'Most Sucked'],
 	'zeroOff': false
@@ -356,7 +366,7 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', function() {
 /**
  * This automated action triggers Godzamok's Devastation buff by selling and buying back buildings repeatedly.
  */
-new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling and buying back cursors repeatedly.', function() {
+new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling and buying back cursors repeatedly.', 202101172100 function() {
 	if (typeof this.cache.condition === 'undefined' || !this.cache.condition) {
 		this.cache.condition = 0;
 		AC.Data.mouseUpgrades.forEach((function(upgrade) {if (Game.Has(upgrade)) {this.cache.condition++}}).bind(this));
@@ -375,6 +385,7 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'name': 'Interval',
 	'desc': 'How often to sell and buy back buildings. If this is less than 10,000 ms then this action will sell and buy back buildings in the middle of an existing buff.',
 	'type': 'slider',
+	'dateCreated': 202101172109,
 	'value': 0,
 	'units': 'ms',
 	'min': 0,
@@ -385,12 +396,15 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'name': 'Sell Extra Cursors',
 	'desc': 'How many extra cursors to buy and sell back, in groups of 100. This will lag the game.',
 	'type': 'slider',
+	'dateCreated': 202101172110,
 	'value': 0,
 	'units': '&times 100',
 	'min': 0,
 	'max': 1000,
 	'step': 1
 });
+
+this.AutosById.sort(function(a, b) {return a.dateCreated - b.dateCreated})
 
 /*******************************************************************************
  * Data
