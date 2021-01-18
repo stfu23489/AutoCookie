@@ -22,7 +22,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.201',
+		'AC': '0.202',
 	}
 }
 
@@ -330,10 +330,12 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', function() {
 }, {
 	'name': 'Wrinkler Preservation',
 	'desc': 'If on, this will keep a number of wrinklers alive.',
-	'type': 'switch',
+	'type': 'slider',
 	'value': 0,
-	'switchVals': ['Wrinkler Preservation Off', 'Preserve 1 Wrinkler', 'Preserve 2 Wrinkler', 'Preserve 3 Wrinkler', 'Preserve 4 Wrinkler', 'Preserve 5 Wrinkler', 'Preserve 6 Wrinkler', 'Preserve 7 Wrinkler', 'Preserve 8 Wrinkler', 'Preserve 9 Wrinkler', 'Preserve 10 Wrinkler', 'Preserve 11 Wrinkler'],
-	'zeroOff': true	
+	'units': 'wrinklers',
+	'min': 0,
+	'max': 11,
+	'step': 1
 }, {
 	'name': 'Wrinkler Sorting',
 	'desc': 'Determines if the preserved wrinklers are the ones who\' sucked the most or the least cookies.',
