@@ -22,7 +22,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.213',
+		'AC': '0.216',
 	}
 }
 
@@ -373,13 +373,20 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 		try {this.cache.condition *= Game.hasGod('ruin')} catch {this.cache.condition = 0}
 	}
 	if (this.cache.condition && Game.buyMode != -1) {
-		var numCursors = Game.Objects.Cursor.amount
+		var numCursors = [];
+		for (var i = 0; i <= this['Sell up to'], i++) {
+			numCursors[i] = Game.ObjectsById[i].amount;
+			Game.ObjectsById[i].sell(numCursors[i]);
+		}
 		Game.Objects.Cursor.sell(numCursors);
 		for (var i = 0; i < this['Sell Extra Cursors']; i++) {
 			Game.Objects.Cursor.buy(100);
 			Game.Objects.Cursor.sell(100);
 		}
-		Game.Objects.Cursor.buy(numCursors);
+		for (var i = 0; i <= this['Sell up to'], i++) {
+			numCursors[i] = Game.ObjectsById[i].amount;
+			Game.ObjectsById[i].buy(numCursors[i]);
+		}
 	}
 }, {
 	'name': 'Interval',
@@ -402,6 +409,14 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'min': 0,
 	'max': 1000,
 	'step': 1
+}, {
+	'name': 'Sell up to',
+	'desc': 'Sell all buildings up to and including this one.',
+	'type': 'switch',
+	'dateCreated': 202101172202,
+	'value': 0,
+	'switchVals': ["Sell cursors", "Sell up to grandmas", "Sell up to farms", "Sell up to mines", "Sell up to factories", "Sell up to banks", "Sell up to temples", "Sell up to wizard towers", "Sell up to shipments", "Sell up to alchemy labs", "Sell up to portals", "Sell up to time machines", "Sell up to antimatter condensers", "Sell up to prisms", "Sell up to chancemakers", "Sell up to fractal engines", "Sell up to javascript consoles", "Sell up to idleverses"],
+	'zeroOff': false
 });
 
 AC.AutosById.sort(function(a, b) {return a.dateCreated - b.dateCreated})
