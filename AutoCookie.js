@@ -15,7 +15,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.229',
+		'AC': '0.232',
 	}
 }
 
@@ -37,12 +37,8 @@ AC.init = function() {
 		// After waiting for the delay, check if Auto Cookie's save data has been loaded and the automated actions have been loaded, if not load the automated actions
 		if (!AC.Cache.loaded) {AC.load(false)};
 		
-		// Randomly choose Auto Cookie's favorite cookie, this is saved in the settings.
-		if (!AC.Settings.C) {
-			AC.Cache.listCookies = [];
-			for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {AC.Cache.listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}};
-			AC.Settings.C = choose(AC.Cache.listCookies);
-		}
+		// Randomly choose Auto Cookie's favorite cookie if it doesn't have one, this is saved in the settings.
+		if (!AC.Settings.C) {AC.Settings.C = AC.randomCookie()};
 		
 		// Register hooks with Cookie Clicker
 		Game.registerHook('ticker', AC.newsTicker);
@@ -74,27 +70,36 @@ AC.save = function() {
 }
 
 /**
- a* This function loads AC.Settings and the settings for each automated action from the provided save data. Then all atomated actions are run.
+ * This function loads AC.Settings and the settings for each automated action from the provided save data. Then all atomated actions are run.
  * @param {string} saveStr - A stringified JSON containing AC.Settings and the settings for each automated action
  */
 AC.load = function(saveStr) {
 	if (saveStr) {try {
 		saveData = JSON.parse(saveStr);
-		for (var i = 0; i < saveData.A.length; i++) {
-			for (var j = 0; j < saveData.A[i].length; j++) {
-				if (typeof (AC.AutosById[i][AC.AutosById[i].settingsById[j].name]) !== 'undefined') {
-					AC.AutosById[i][AC.AutosById[i].settingsById[j].name] = saveData.A[i][j];
+		if (saveData.vAC > 0.231) {
+			for (var i = 0; i < saveData.A.length; i++) {
+				for (var j = 0; j < saveData.A[i].length; j++) {
+					if (typeof (AC.AutosById[i][AC.AutosById[i].settingsById[j].name]) !== 'undefined') {
+						AC.AutosById[i][AC.AutosById[i].settingsById[j].name] = saveData.A[i][j];
+					}
 				}
 			}
-		}
-		delete saveData.vCC;
-		delete saveData.vAC;
-		for (var setting in saveData) {
-			if (AC.Settings.hasOwnProperty(setting)) {
-				AC.Settings[setting] = saveData[setting];
+			delete saveData.vCC;
+			delete saveData.vAC;
+			for (var setting in saveData) {
+				if (AC.Settings.hasOwnProperty(setting)) {
+					AC.Settings[setting] = saveData[setting];
+				}
 			}
+		} else {
+			console.log('Save Data: ' + saveStr);
+			AC.errorNotify('Your save data could not be loaded due to an update. Your raw save data has been logged on your browser\'s javascript console.');
 		}
-	} catch(err) {console.error(err); console.log(saveStr); AC.errorNotify('Couldn\'t load the save data. Check the javascript console on your browser for the error message and your save data.')}}
+	} catch(err) {
+		console.error(err);
+		console.log('Save Data: ' + saveStr);
+		AC.errorNotify('Your save data could not be loaded due to an error. Your raw save data has been logged on your browser\'s javascript console.');
+	}}
 	AC.Cache.loaded = true;
 	for (var auto in AC.Autos) AC.Autos[auto].run();
 }
@@ -134,7 +139,7 @@ AC.newsTicker = function() {
 	// Things to mention
 	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000) + 1;
 	
-	var list = []
+	var list = [];
 	
 	list.push(choose([
 		'<q>I\'m sorry '+Game.bakeryName+'. I\'m afraid I can\'t do that.</q><sig>Auto Cookie</sig>',
@@ -153,6 +158,16 @@ AC.newsTicker = function() {
 	return list
 }
 
+/**
+ * This function returns a random cookie from the all cookie upgrades in the game.
+ * @returns {string} - A random lower case cookie name.
+ */
+AC.randomCookie = function() {
+	var listCookies = [];
+	for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}};
+	return choose(listCookies);
+}
+
 /*******************************************************************************
  * Automated Action Constructor and Prototypes
  ******************************************************************************/
@@ -164,7 +179,7 @@ AC.AutosById = [];
  * @property {string} name - The setting's name.
  * @property {string} desc - A short description of the setting.
  * @property {string} type - The type of setting for creating its options in the menu.
- * @property {number} timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to every setting and must not change.
+ * @property {number} timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to everything that has this property.
  * @property {number} value - The default value of the setting.
  * @property {string} [units] - Required if type == 'slider'. The units associated with the value.
  * @property {number} [min] - Required if type == 'slider'. The minimum value of the slider.
@@ -179,10 +194,9 @@ AC.AutosById = [];
  * @class
  * @param {string} name - The name of the automated action.
  * @param {string} desc - A short description of the automated action.
- * @param {number} timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to every automated action and must not change.
+ * @param {number} timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to everything that has this property.
  * @param {function} actionFunction - The function to be run at the interval.
  * @param {...AC.Auto~Setting} settiing - A setting for the automated action.
-
  */
 AC.Auto = function(name, desc, timeCreated, actionFunction, setting) {
 	// Mandatory arguments.
@@ -195,10 +209,11 @@ AC.Auto = function(name, desc, timeCreated, actionFunction, setting) {
 	this.intvlID = undefined;
 	this.cache = {};
 	this.depecrated = false;
+	this.Header = 1;
 	
 	// Settings
-	this.settings = {};
-	this.settingsById = [];
+	this.settings = {'Header': {'name': 'Header', 'desc': 'Whether this automated action\'s settings are open or closed on the menu.', 'type': 'header', 'timeCreated': timeCreated, 'value': 1}};
+	this.settingsById = [{'name': 'Header', 'desc': 'Whether this automated action\'s settings are open or closed on the menu.', 'type': 'header', 'timeCreated': timeCreated, 'value': 1}];
 	var n = arguments.length;
 	for (var i = 4; i < n; i++) {
 		if (!this[arguments[i].name] && typeof arguments[i].name !== 'undefined' && typeof arguments[i].desc !== 'undefined' && typeof arguments[i].type !== 'undefined' && typeof arguments[i].value !== 'undefined') {
@@ -253,12 +268,6 @@ AC.Auto.prototype.run = function(runImmediately, interval) {
 new AC.Auto('Autoclicker', 'Clicks the cookie once every interval.', 202101172056, function() {
 	Game.ClickCookie();
 }, {
-	'name': 'Header',
-	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
-	'type': 'header',
-	'timeCreated': 202101182118,
-	'value': 1
-}, {
 	'name': 'Interval',
 	'desc': 'How often the cookie is clicked.',
 	'type': 'slider',
@@ -279,12 +288,6 @@ new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers a
 			shimmer.pop();
 		}
 	}).bind(this));
-}, {
-	'name': 'Header',
-	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
-	'type': 'header',
-	'timeCreated': 202101182119,
-	'value': 1
 }, {
 	'name': 'Interval',
 	'desc': 'How often to check for golden cookies.',
@@ -319,12 +322,6 @@ new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers a
 new AC.Auto('Fortune Clicker', 'Clicks on fortunes in the news ticker as they appear.', 202101172058, function() {
 	if (Game.TickerEffect && Game.TickerEffect.type=='fortune') {Game.tickerL.click()}
 }, {
-	'name': 'Header',
-	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
-	'type': 'header',
-	'timeCreated': 202101182120,
-	'value': 1
-}, {
 	'name': 'Interval',
 	'desc': 'How often to check for fortunes.',
 	'type': 'slider',
@@ -348,12 +345,6 @@ new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is avail
 		this.run(false);
 		return;
 	}
-}, {
-	'name': 'Header',
-	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
-	'type': 'header',
-	'timeCreated': 202101182121,
-	'value': 1
 }, {
 	'name': 'Interval',
 	'desc': 'How often to check for the option to buy the Elder pledge toggle.',
@@ -386,12 +377,6 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 		for (var i = this['Preserve']; i < wrinklers.length; i++) {Game.wrinklers[wrinklers[i].id].hp = 0}
 	}
 }, {
-	'name': 'Header',
-	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
-	'type': 'header',
-	'timeCreated': 202101182122,
-	'value': 1
-}, {
 	'name': 'Interval',
 	'desc': 'How often to check for wrinklers to pop.',
 	'type': 'slider',
@@ -401,7 +386,6 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 	'min': 0,
 	'max': 3600000,
 	'step': 10000
-	
 }, {
 	'name': 'Preserve',
 	'desc': 'Will keep this many wrinklers alive.',
@@ -449,12 +433,6 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 		}
 	}
 }, {
-	'name': 'Header',
-	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
-	'type': 'header',
-	'timeCreated': 202101182123,
-	'value': 1
-}, {
 	'name': 'Interval',
 	'desc': 'How often to sell and buy back buildings. Setting this to less than 10,000 ms doesn\'t work that well.',
 	'type': 'slider',
@@ -464,7 +442,6 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'min': 0,
 	'max': 15000,
 	'step': 150
-	
 }, {
 	'name': 'Sell Extra Cursors',
 	'desc': 'How many extra cursors to buy and sell back, in groups of 100. This will lag the game.',
@@ -510,7 +487,7 @@ AC.Data.mouseUpgrades = [
 	'Fortune #104'
 ];
 
-// Doesn't include 'Sugar frenzy' (do to the minor benefit).
+// Doesn't include 'Sugar frenzy' (due to the minor benefit).
 AC.Data.cpsBuffs = ["High-five", "Congregation", "Luxuriant harvest", "Ore vein", "Oiled-up", "Juicy profits", "Fervent adoration", "Manabloom", "Delicious lifeforms", "Breakthrough", "Righteous cataclysm", "Golden ages", "Extra cycles", "Solar flare", "Winning streak", "Macrocosm", "Refactoring", "Cosmic nursery", "Frenzy", "Elder Frenzy", "Dragon Harvest"];
 
 // Doesn't include 'Cursed finger' (since it is also a CPS debuff) or 'Devastation' (since its trigger is entirely player controlled).
@@ -518,9 +495,6 @@ AC.Data.clickBuffs = ["Click frenzy", "Dragonflight"];
 
 /*******************************************************************************
  * Display
- *
- * TODO: Everything here works, as long as this is the first mod loaded. If its loaded after a mod like Cookie Monster, it breaks Cookie Monster's menu.
- * TODO: Instead of strings appended to the HTML it should probably use HTML DOM Elements to do this. Also the on____ functions should probably be removed from the HTML and added to this javascript file.
  ******************************************************************************/
 /**
  * This function calls the appropriate function to update Auto Cookie's portion of the menu.
@@ -539,7 +513,7 @@ AC.Display.UpdateMenu = function() {
 AC.Display.addOptionsMenu = function() {
 	// Create the fragment.
 	var frag = document.createDocumentFragment();
-	frag.appendChild(AC.Display.addTitle('Auto Cookie Settings'));
+	frag.appendChild(AC.Display.addTitle('Auto Cookie Settings', 'S'));
 	
 	if (AC.Settings.S) {
 		// Auto Cookie's Settings
@@ -560,9 +534,10 @@ AC.Display.addOptionsMenu = function() {
 /**
  * Returns a <div class='title'> that contains the the given title.
  * @param {string} title - The title to be displayed.
+ * @param {string} headerSetting - The property of AC.Settings that holds the setting for the title header collapse button.
  * @returns - An HTML <div> Element.
  */
-AC.Display.addTitle = function(title) {
+AC.Display.addTitle = function(title, headerSetting) {
 	var div = document.createElement('div');
 	div.className = 'title';
 	div.style.color = 'gold';
@@ -580,8 +555,8 @@ AC.Display.addTitle = function(title) {
 	span.style.color = 'black';
 	span.style.fontSize = '13px';
 	span.style.verticalAlign = 'middle';
-	span.textContent = AC.Settings.S ? '-' : '+';
-	span.onclick = function() {AC.Settings.S = 1 - AC.Settings.S; Game.UpdateMenu();};
+	span.textContent = AC.Settings[headerSetting] ? '-' : '+';
+	span.onclick = function() {AC.Settings[headerSetting] = 1 - AC.Settings[headerSetting]; Game.UpdateMenu();};
 	div.appendChild(span);
 	
 	return div;
@@ -729,7 +704,7 @@ AC.Settings = {
 	'vAC': AC.Version.AC,
 	'A': [],	// Settings of the automated actions.
 	'C': '',	// Auto Cookie's favorite cookie.
-	'S': 1	// Whether this Auto Cookie's settings are open or closed on the menu.
+	'S': 1	// Whether Auto Cookie's settings are open or closed on the menu.
 }
 
 /*******************************************************************************
