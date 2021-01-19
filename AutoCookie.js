@@ -15,7 +15,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.225',
+		'AC': '0.226',
 	}
 }
 
@@ -154,18 +154,29 @@ AC.Autos = {};
 AC.AutosById = [];
 
 /**
+ * @typedef {Object} AC.Auto~Setting
+ * @property {string} name - The setting's name.
+ * @property {string} desc - A short description of the setting.
+ * @property {string} type - The type of setting for creating its options in the menu.
+ * @property {number} timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to every setting and must not change.
+ * @property {number} value - The default value of the setting.
+ * @property {string} [units] - Required if type == 'slider'. The units associated with the value.
+ * @property {number} [min] - Required if type == 'slider'. The minimum value of the slider.
+ * @property {number} [max] - Required if type == 'slider'. The maximum value of the slider.
+ * @property {number} [step] - Required if type == 'slider'. The step size of the slider.
+ * @property {Array} [switchVals] - Required if type == 'switch'. A list of strings associated with each value of the setting.
+ * @property {number} [zeroOff] - Required if type == 'switch'. 1 if a value == 0 implies the setting is off and 0 otherwise.
+ */
+
+/**
  * Represents an automated action.
  * @class
  * @param {string} name - The name of the automated action.
  * @param {string} desc - A short description of the automated action.
  * @param {number} timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to every automated action and must not change.
  * @param {function} actionFunction - The function to be run at the interval.
- * @param {...Object} settiing - A setting for the automated action.
- * @param {string} setting.name - The setting's name.
- * @param {string} setting.desc - A short description of the setting.
- * @param {string} setting.type - The type of setting for creating its options in the menu.
- * @param {number} setting.timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to every setting and must not change.
- * @param setting.value - The default value of the setting.
+ * @param {...AC.Auto~Setting} settiing - A setting for the automated action.
+
  */
 AC.Auto = function(name, desc, timeCreated, actionFunction, setting) {
 	// Mandatory arguments.
@@ -228,13 +239,19 @@ AC.Auto.prototype.run = function(runImmediately, interval) {
  *
  * An automated action calls its action function at regular intervals to repeatedly perform game actions.
  * If any automated action is removed or a setting from the automated actions is removed, it will break save data.
- * Instead, for automated actions set its depecrated property to true. For a setting make its type 'deprecated'
+ * Instead, for automated actions set its deprecated property to true. For a setting make its type 'deprecated'
  ******************************************************************************/
 /**
  * This automated action clicks the cookie once every interval.
  */
 new AC.Auto('Autoclicker', 'Clicks the cookie once every interval.', 202101172056, function() {
 	Game.ClickCookie();
+}, {
+	'name': 'Header',
+	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'type': 'header',
+	'timeCreated': 202101182118,
+	'value': 1
 }, {
 	'name': 'Interval',
 	'desc': 'How often the cookie is clicked.',
@@ -256,6 +273,12 @@ new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers a
 			shimmer.pop();
 		}
 	}).bind(this));
+}, {
+	'name': 'Header',
+	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'type': 'header',
+	'timeCreated': 202101182119,
+	'value': 1
 }, {
 	'name': 'Interval',
 	'desc': 'How often to check for golden cookies.',
@@ -290,6 +313,12 @@ new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers a
 new AC.Auto('Fortune Clicker', 'Clicks on fortunes in the news ticker as they appear.', 202101172058, function() {
 	if (Game.TickerEffect && Game.TickerEffect.type=='fortune') {Game.tickerL.click()}
 }, {
+	'name': 'Header',
+	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'type': 'header',
+	'timeCreated': 202101182120,
+	'value': 1
+}, {
 	'name': 'Interval',
 	'desc': 'How often to check for fortunes.',
 	'type': 'slider',
@@ -313,6 +342,12 @@ new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is avail
 		this.run(false);
 		return;
 	}
+}, {
+	'name': 'Header',
+	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'type': 'header',
+	'timeCreated': 202101182121,
+	'value': 1
 }, {
 	'name': 'Interval',
 	'desc': 'How often to check for the option to buy the Elder pledge toggle.',
@@ -344,6 +379,12 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 		wrinklers.sort(function(a, b) {return sortOrder*(b.sucked - a.sucked)});
 		for (var i = this['Preserve']; i < wrinklers.length; i++) {Game.wrinklers[wrinklers[i].id].hp = 0}
 	}
+}, {
+	'name': 'Header',
+	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'type': 'header',
+	'timeCreated': 202101182122,
+	'value': 1
 }, {
 	'name': 'Interval',
 	'desc': 'How often to check for wrinklers to pop.',
@@ -402,6 +443,12 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 		}
 	}
 }, {
+	'name': 'Header',
+	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'type': 'header',
+	'timeCreated': 202101182123,
+	'value': 1
+}, {
 	'name': 'Interval',
 	'desc': 'How often to sell and buy back buildings. Setting this to less than 10,000 ms doesn\'t work that well.',
 	'type': 'slider',
@@ -457,11 +504,11 @@ AC.Data.mouseUpgrades = [
 	'Fortune #104'
 ];
 
-// Doesn't include 'Sugar frenzy'
+// Doesn't include 'Sugar frenzy' (do to the minor benefit).
 AC.Data.cpsBuffs = ["High-five", "Congregation", "Luxuriant harvest", "Ore vein", "Oiled-up", "Juicy profits", "Fervent adoration", "Manabloom", "Delicious lifeforms", "Breakthrough", "Righteous cataclysm", "Golden ages", "Extra cycles", "Solar flare", "Winning streak", "Macrocosm", "Refactoring", "Cosmic nursery", "Frenzy", "Elder Frenzy", "Dragon Harvest"];
 
-// Doesn't include 'Cursed finger'
-AC.Data.clickBuffs = ["Click frenzy", "Dragonflight", "Devastation"];
+// Doesn't include 'Cursed finger' (since it is also a CPS debuff) or 'Devastation' (since its trigger is entirely player controlled).
+AC.Data.clickBuffs = ["Click frenzy", "Dragonflight"];
 
 /*******************************************************************************
  * Display
@@ -470,76 +517,165 @@ AC.Data.clickBuffs = ["Click frenzy", "Dragonflight", "Devastation"];
  * TODO: Instead of strings appended to the HTML it should probably use HTML DOM Elements to do this. Also the on____ functions should probably be removed from the HTML and added to this javascript file.
  ******************************************************************************/
 /**
- * This function appends Auto Cookie's settings to the options menu in Cookie Clicker.
+ * This function calls the appropriate function to update Auto Cookie's portion of the menu.
  */
 AC.Display.UpdateMenu = function() {
-	if (Game.onMenu == 'prefs') {
-		// Get the Options Menu element (id="subsection") and remove the padding from the end.
-		var subsection = document.getElementsByClassName('subsection')[0];
-		padding = subsection.removeChild(subsection.childNodes[subsection.childNodes.length-1]);
-		
-		// Create a string of HTML for Auto Cookie's settings
-		str = '<div class="title" style="color: gold">Auto Cookie Settings</div>'
-			+ '<div class="listing">Version: ' + AC.Version.Full + '</div>';
-		
-		// Add the settings for each automated action
-		for (auto in AC.Autos) {
-			if (!auto.deprecated) {
-				auto = AC.Autos[auto]
-				str += '<div class="title" style="font-size: 16px">' + auto.name + ' Settings</div>';
-				str += '<div class="listing">' + auto.desc + '<br><br>';
-				for (setting in auto.settingsById) str += AC.Display.generateSettingHTML(auto, auto.settingsById[setting]);
-				str += '</div>';
-			}
-		}
-		
-		// Inject the HTML into the options menu and add the padding back in at the end.
-		subsection.innerHTML += str;
-		subsection.appendChild(padding);
+	if (Game.onMenu === 'prefs') {
+		AC.Display.addOptionsMenu();
+	} else if (Game.onMenu === 'stats') {
+		// Nothing yet.
 	}
+}
+ 
+/**
+ * This function adds an HTML fragment containing the settings menu for Auto Cookie to the end of the Options menu.
+ */
+AC.Display.addOptionsMenu = function() {
+	// Create the fragment.
+	var frag = document.createDocumentFragment();
+	frag.appendChild(AC.Display.addTitle('Auto Cookie Settings'));
+	for (auto in AC.Autos) frag.appendChild(AC.Display.addAuto(AC.Autos[auto]));
+	
+	// Add the fragment to the Options menu.
+	var subsection = document.getElementsByClassName('subsection')[0]
+	subsection.insertBefore(frag, subsection.childNodes[subsection.childNodes.length - 1]);
+}
+ 
+/**
+ * Returns a <div class='title'> that contains the the given title.
+ * @param {string} title - The title to be displayed.
+ * @returns - An HTML <div> Element.
+ */
+AC.Display.addTitle = function(title) {
+	var div = document.createElement('div');
+	div.className = 'title';
+	div.style.color = 'gold';
+	div.textContent = title;
+	return div;
 }
 
 /**
- * This function generates the HTML for a setting option in an automated action.
- * @param {AC.Auto} auto - The automated action.
- * @param {Object} setting - The setting for the automated action.
- * @param {string} setting.name - The setting's name.
- * @param {string} setting.desc - A short description of the setting.
- * @param {string} setting.type - The type of setting for creating its options in the menu.
- * @param auto[setting] - The current value of the setting.
+ * Returns a collapsible menu for the settings of a given automated action.
+ * @param {Object} auto - An automated action.
+ * @returns - An HTML fragment.
  */
-AC.Display.generateSettingHTML = function(auto, setting) {
-	const settingID = auto.settingsById.findIndex(set => set.name === setting.name);
-	var str = '';
-	if (setting.type === 'deprecated') {
-		// Skip this setting, it's been deprecated.
-	} else if (setting.type === 'slider') {
-		/**
-		 * sliders must have the additional parameters:
-		 * @param {number} setting.min - The minimum value of the setting.
-		 * @param {number} setting.max - The maximum value of the setting.
-		 * @param {number} setting.mstep - The step sixe of values for the setting.
-		 */
-		var onthing = 'AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'] = 1*l(\'' + auto.name + ' ' + setting.name + ' Slider\').value;';
-		onthing += ' l(\'' + auto.name + ' ' + setting.name + ' SliderRight\').innerHTML = AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'];';
+AC.Display.addAuto = function(auto) {
+	var frag = document.createDocumentFragment();
+	
+	var div = document.createElement('div');
+	div.className = 'title';
+	div.style.fontSize = '17px';
+	div.appendChild(document.createTextNode(auto.name + ' '));
+	
+	// Span is taken from Cookie Monster's header inner function from CM.Disp.AddMenuPref.
+	var span = document.createElement('span');
+	span.style.cursor = 'pointer';
+	span.style.display = 'inline-block';
+	span.style.height = '14px';
+	span.style.width = '14px';
+	span.style.borderRadius = '7px';
+	span.style.textAlign = 'center';
+	span.style.backgroundColor = '#C0C0C0';
+	span.style.color = 'black';
+	span.style.fontSize = '13px';
+	span.style.verticalAlign = 'middle';
+	span.textContent = auto.Header ? '-' : '+';
+	span.onclick = function() {auto.Header = 1 - auto.Header; Game.UpdateMenu();};
+	div.appendChild(span);
+	
+	frag.appendChild(div);
+	
+	if (auto.Header) {
+		var desc = document.createElement('div');
+		desc.className = 'listing';
+		desc.appendChild(document.createTextNode(auto.desc));
+		frag.appendChild(desc);
 		
-		str += '<div class="sliderBox"><div style="float:left;">' + setting.name + '</div><div style="float:right;"><span id="' + auto.name + ' ' + setting.name + ' SliderRight">' + auto[setting.name] + '</span> ' + setting.units + '</div>';
-		str += '<input class="slider" style="clear:both;" type="range" min="' + setting.min + '" max="' + setting.max + '" step="' + setting.step + '" value="' + auto[setting.name] + '" onchange="' + onthing + '" oninput="' + onthing + '" ' + ((setting.name === 'Interval')?'onmouseup="AC.Autos[\'' + auto.name + '\'].run();':'') + 'PlaySound(\'snd/tick.mp3\');" id="' + auto.name + ' ' + setting.name + ' Slider"/>';
-		str += '</div><label>' + setting.desc + '</label><br>';
-	} else if (setting.type === 'switch') {
-		/**
-		 * switches must ahve the additional parameters:
-		 * @param {Array} setting.switchVals - An array of display values to switch through
-		 * @param {boolean} setting.zeroOff - Whether or not to turun the button 'off' when setting.value == 0
-		 */
-		 var zeroOffStr = ''
-		 if (setting.zeroOff) {
-			 zeroOffStr += 'l(\'' + auto.name + ' ' + setting.name + ' Button\').className = \'option\' + ((!AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'])?\' off\':\'\');';
-		 }
-		 str += '<a class="option' + (setting.zeroOff?((!auto[setting.name])?' off':''):'') + '" id="' + auto.name + ' ' + setting.name + ' Button" onclick="AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\']++; AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'] %= ' + setting.switchVals.length + '; l(\'' + auto.name + ' ' + setting.name + ' Button\').innerHTML = AC.Autos[\'' + auto.name + '\'].settingsById[' + settingID + '].switchVals[AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\']];' + zeroOffStr + '">' + setting.switchVals[auto[setting.name]] + '</a>';
-		 str += '<label>' + setting.desc + '</label><br>';
+		var listing = document.createElement('div');
+		listing.className = 'listing';
+		for (setting in auto.settings) {
+			listing.appendChild(AC.Display.addSetting(auto, auto.settings[setting]))
+		}
+		frag.appendChild(listing);
 	}
-	return str;
+	
+	return frag;
+}
+
+/**
+ * This function returns an html fragment containing the settings of a given automated action.
+ * @param {Object} auto - An automated action.
+ * @param {...AC.Auto~Setting} setting - A setting for an automated action.
+ * @returns - An HTML fragment.
+ */
+AC.Display.addSetting = function(auto, setting) {
+	var frag = document.createDocumentFragment();
+	
+	if (setting.type === 'deprecated' || setting.type === 'header') {
+		// Do Nothing.
+	} else if (setting.type === 'switch') {
+		var a = document.createElement('a');
+		if (!auto[setting.name] && setting.zeroOff) {
+			a.className = 'option off';
+		} else {
+			a.className = 'option';
+		}
+		a.textContent = setting.switchVals[auto[setting.name]];
+		a.id = auto.name + ' ' + setting.name + ' Switch';
+		a.onclick = function() {auto[setting.name]++; auto[setting.name] %= setting.switchVals.length; PlaySound('snd/tick.mp3'); Game.UpdateMenu();};
+		frag.appendChild(a);
+		
+		var label = document.createElement('label');
+		label.textContent = setting.desc;
+		frag.appendChild(label);
+		frag.appendChild(document.createElement('br'));
+	} else if (setting.type === 'slider') {
+		var div = document.createElement('div');
+		div.className = 'sliderBox';
+		
+		var sliderTitle = document.createElement('div');
+		sliderTitle.style.cssFloat = 'left';
+		sliderTitle.textContent = setting.name;
+		div.appendChild(sliderTitle);
+		
+		var sliderValue = document.createElement('div');
+		sliderValue.style.cssFloat = 'right';
+		sliderValue.textContent = auto[setting.name] + ' ' + setting.units;
+		sliderValue.id = auto.name + ' ' + setting.name + ' Slider Value';
+		div.appendChild(sliderValue);
+		
+		var onthing = function() {
+			auto[setting.name] = 1*l(auto.name + ' ' + setting.name + ' Slider').value;
+			l(auto.name + ' ' + setting.name + ' Slider Value').textContent = auto[setting.name] + ' ' + setting.units;
+		}
+		
+		var slider = document.createElement('input');
+		slider.className = 'slider';
+		slider.style.clear = 'both';
+		slider.type = 'range';
+		slider.min = setting.min;
+		slider.max = setting.max;
+		slider.step = setting.step;
+		slider.value = auto[setting.name]
+		slider.onchange = onthing;
+		slider.oninput = onthing;
+		if (setting.name === 'Interval') {
+			slider.onmouseup = function() {auto.run(); PlaySound('snd/tick.mp3')};
+		} else {
+			slider.onmouseup = function() {PlaySound('snd/tick.mp3')};
+		}
+		slider.id = auto.name + ' ' + setting.name + ' Slider';
+		div.appendChild(slider);
+		
+		frag.appendChild(div);
+		
+		var label = document.createElement('label');
+		label.textContent = setting.desc;
+		frag.appendChild(label);
+		frag.appendChild(document.createElement('br'));
+	}
+	
+	return frag;
 }
 
 /*******************************************************************************
