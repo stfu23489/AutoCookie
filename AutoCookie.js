@@ -15,7 +15,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.227',
+		'AC': '0.229',
 	}
 }
 
@@ -116,7 +116,7 @@ AC.errorNotify = function(errorMessage) {
 
 /**
  * This function checks if you have an active buff from a list of buffs.
- * @param {(array|string)} buffList - Either an array of strings or a string.
+ * @param {(Array|string)} buffList - Either an array of strings or a string.
  * @returns {number} - Returns the number of active buffs in buffList.
  */
 AC.hasBuffs = function(buffList) {
@@ -128,7 +128,7 @@ AC.hasBuffs = function(buffList) {
 /**
  * This function returns an array of news tickers for the news ticker.
  * This function is registered into Cookie Clicker's "ticker" hook.
- * @returns {array} - An array of strings for the news ticker.
+ * @returns {Array} - An array of strings for the news ticker.
  */
 AC.newsTicker = function() {
 	// Things to mention
