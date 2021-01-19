@@ -15,7 +15,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.222',
+		'AC': '0.225',
 	}
 }
 
@@ -338,10 +338,11 @@ new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is avail
  */
 new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 	var wrinklers = Game.wrinklers.filter(wrinkler => wrinkler.sucked != 0);
+	console.log(wrinklers);
 	if (wrinklers.length) {
-		sortOrder = 2*this['Wrinkler Preservation'] - 1
+		sortOrder = 2*this['Preserve'] - 1
 		wrinklers.sort(function(a, b) {return sortOrder*(b.sucked - a.sucked)});
-		for (var i = this['Wrinkler Preservation']; i < wrinklers.length; i++) {Game.wrinklers[wrinklers[i].id].hp = 0}
+		for (var i = this['Preserve']; i < wrinklers.length; i++) {Game.wrinklers[wrinklers[i].id].hp = 0}
 	}
 }, {
 	'name': 'Interval',
@@ -370,7 +371,7 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 	'type': 'switch',
 	'timeCreated': 202101172108,
 	'value': 1,
-	'switchVals': ['Least Sucked', 'Most Sucked'],
+	'switchVals': ['Most Sucked', 'Least Sucked'],
 	'zeroOff': false
 	
 });
@@ -523,7 +524,7 @@ AC.Display.generateSettingHTML = function(auto, setting) {
 		onthing += ' l(\'' + auto.name + ' ' + setting.name + ' SliderRight\').innerHTML = AC.Autos[\'' + auto.name + '\'][\'' + setting.name + '\'];';
 		
 		str += '<div class="sliderBox"><div style="float:left;">' + setting.name + '</div><div style="float:right;"><span id="' + auto.name + ' ' + setting.name + ' SliderRight">' + auto[setting.name] + '</span> ' + setting.units + '</div>';
-		str += '<input class="slider" style="clear:both;" type="range" min="' + setting.min + '" max="' + setting.max + '" step="' + setting.step + '" value="' + auto[setting.name] + '" onchange="' + onthing + '" oninput="' + onthing + '" ' + ((setting.name === 'Interval')?'onmouseup="AC.Autos[\'' + auto.name + '\'].run(true);':'') + 'PlaySound(\'snd/tick.mp3\');" id="' + auto.name + ' ' + setting.name + ' Slider"/>';
+		str += '<input class="slider" style="clear:both;" type="range" min="' + setting.min + '" max="' + setting.max + '" step="' + setting.step + '" value="' + auto[setting.name] + '" onchange="' + onthing + '" oninput="' + onthing + '" ' + ((setting.name === 'Interval')?'onmouseup="AC.Autos[\'' + auto.name + '\'].run();':'') + 'PlaySound(\'snd/tick.mp3\');" id="' + auto.name + ' ' + setting.name + ' Slider"/>';
 		str += '</div><label>' + setting.desc + '</label><br>';
 	} else if (setting.type === 'switch') {
 		/**
