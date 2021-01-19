@@ -15,7 +15,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.232',
+		'AC': '0.233',
 	}
 }
 
@@ -312,7 +312,7 @@ new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers a
 	'type': 'switch',
 	'timeCreated': 202101172347,
 	'value': 0,
-	'switchVals': ['Combo Off', 'Combo On'],
+	'switchVals': ['Combo Off'],
 	'zeroOff': true
 });
 
