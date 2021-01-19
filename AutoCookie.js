@@ -254,7 +254,7 @@ new AC.Auto('Autoclicker', 'Clicks the cookie once every interval.', 20210117205
 	Game.ClickCookie();
 }, {
 	'name': 'Header',
-	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
 	'type': 'header',
 	'timeCreated': 202101182118,
 	'value': 1
@@ -281,7 +281,7 @@ new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers a
 	}).bind(this));
 }, {
 	'name': 'Header',
-	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
 	'type': 'header',
 	'timeCreated': 202101182119,
 	'value': 1
@@ -320,7 +320,7 @@ new AC.Auto('Fortune Clicker', 'Clicks on fortunes in the news ticker as they ap
 	if (Game.TickerEffect && Game.TickerEffect.type=='fortune') {Game.tickerL.click()}
 }, {
 	'name': 'Header',
-	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
 	'type': 'header',
 	'timeCreated': 202101182120,
 	'value': 1
@@ -350,7 +350,7 @@ new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is avail
 	}
 }, {
 	'name': 'Header',
-	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
 	'type': 'header',
 	'timeCreated': 202101182121,
 	'value': 1
@@ -387,7 +387,7 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 	}
 }, {
 	'name': 'Header',
-	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
 	'type': 'header',
 	'timeCreated': 202101182122,
 	'value': 1
@@ -450,7 +450,7 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	}
 }, {
 	'name': 'Header',
-	'desc': 'Whether or not this automated action settings are open or closed on the menu.',
+	'desc': 'Whether this automated action\'s settings are open or closed on the menu.',
 	'type': 'header',
 	'timeCreated': 202101182123,
 	'value': 1
@@ -540,7 +540,17 @@ AC.Display.addOptionsMenu = function() {
 	// Create the fragment.
 	var frag = document.createDocumentFragment();
 	frag.appendChild(AC.Display.addTitle('Auto Cookie Settings'));
-	for (auto in AC.Autos) frag.appendChild(AC.Display.addAuto(AC.Autos[auto]));
+	
+	if (AC.Settings.S) {
+		// Auto Cookie's Settings
+		var div = document.createElement('div');
+		div.className = 'listing';
+		div.textContent = 'Version: ' + AC.Version.Full;
+		frag.appendChild(div);
+		
+		// Append the settings for every automated action.
+		for (auto in AC.Autos) frag.appendChild(AC.Display.addAuto(AC.Autos[auto]));
+	}
 	
 	// Add the fragment to the Options menu.
 	var subsection = document.getElementsByClassName('subsection')[0]
@@ -556,7 +566,24 @@ AC.Display.addTitle = function(title) {
 	var div = document.createElement('div');
 	div.className = 'title';
 	div.style.color = 'gold';
-	div.textContent = title;
+	div.appendChild(document.createTextNode(title + ' '));
+	
+	// Span is taken from Cookie Monster's header inner function from CM.Disp.AddMenuPref.
+	var span = document.createElement('span');
+	span.style.cursor = 'pointer';
+	span.style.display = 'inline-block';
+	span.style.height = '14px';
+	span.style.width = '14px';
+	span.style.borderRadius = '7px';
+	span.style.textAlign = 'center';
+	span.style.backgroundColor = '#C0C0C0';
+	span.style.color = 'black';
+	span.style.fontSize = '13px';
+	span.style.verticalAlign = 'middle';
+	span.textContent = AC.Settings.S ? '-' : '+';
+	span.onclick = function() {AC.Settings.S = 1 - AC.Settings.S; Game.UpdateMenu();};
+	div.appendChild(span);
+	
 	return div;
 }
 
@@ -701,7 +728,8 @@ AC.Settings = {
 	'vCC': AC.Version.CC,	// Version Numbers.
 	'vAC': AC.Version.AC,
 	'A': [],	// Settings of the automated actions.
-	'C': ''	// Auto Cookie's favorite cookie.
+	'C': '',	// Auto Cookie's favorite cookie.
+	'S': 1	// Whether this Auto Cookie's settings are open or closed on the menu.
 }
 
 /*******************************************************************************
