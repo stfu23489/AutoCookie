@@ -15,7 +15,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.226',
+		'AC': '0.227',
 	}
 }
 
@@ -37,6 +37,13 @@ AC.init = function() {
 		// After waiting for the delay, check if Auto Cookie's save data has been loaded and the automated actions have been loaded, if not load the automated actions
 		if (!AC.Cache.loaded) {AC.load(false)};
 		
+		// Randomly choose Auto Cookie's favorite cookie, this is saved in the settings.
+		if (!AC.Settings.C) {
+			AC.Cache.listCookies = [];
+			for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {AC.Cache.listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}};
+			AC.Settings.C = choose(AC.Cache.listCookies);
+		}
+		
 		// Register hooks with Cookie Clicker
 		Game.registerHook('ticker', AC.newsTicker);
 		
@@ -49,7 +56,7 @@ AC.init = function() {
 		
 		// Notify the player that Auto Cookie has loaded
 		if (Game.prefs.popups) {Game.Popup('Auto Cookie ' + AC.Version.Full + ' loaded.')} else {Game.Notify('Auto Cookie ' + AC.Version.Full + ' loaded.', '', '', 1, 1)}
-	}, 50);
+	}, 500);
 }
 
 /**
@@ -72,23 +79,22 @@ AC.save = function() {
  */
 AC.load = function(saveStr) {
 	if (saveStr) {try {
-		saveStr = JSON.parse(saveStr);
-		for (var i = 0; i < saveStr.A.length; i++) {
-			for (var j = 0; j < saveStr.A[i].length; j++) {
+		saveData = JSON.parse(saveStr);
+		for (var i = 0; i < saveData.A.length; i++) {
+			for (var j = 0; j < saveData.A[i].length; j++) {
 				if (typeof (AC.AutosById[i][AC.AutosById[i].settingsById[j].name]) !== 'undefined') {
-					AC.AutosById[i][AC.AutosById[i].settingsById[j].name] = saveStr.A[i][j];
+					AC.AutosById[i][AC.AutosById[i].settingsById[j].name] = saveData.A[i][j];
 				}
 			}
 		}
-		delete saveStr.A;
-		delete saveStr.vCC;
-		delete saveStr.vAC;
-		for (var setting in saveStr) {
-			if (AC.Settings[setting]) {
-				AC.Settings[setting] = saveStr[setting];
+		delete saveData.vCC;
+		delete saveData.vAC;
+		for (var setting in saveData) {
+			if (AC.Settings.hasOwnProperty(setting)) {
+				AC.Settings[setting] = saveData[setting];
 			}
 		}
-	} catch(err) {console.log(err)}}
+	} catch(err) {console.error(err); console.log(saveStr); AC.errorNotify('Couldn\'t load the save data. Check the javascript console on your browser for the error message and your save data.')}}
 	AC.Cache.loaded = true;
 	for (var auto in AC.Autos) AC.Autos[auto].run();
 }
@@ -465,7 +471,7 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'type': 'slider',
 	'timeCreated': 202101172110,
 	'value': 0,
-	'units': '&times 100',
+	'units': '× 100',
 	'min': 0,
 	'max': 1000,
 	'step': 1
@@ -622,7 +628,16 @@ AC.Display.addSetting = function(auto, setting) {
 		}
 		a.textContent = setting.switchVals[auto[setting.name]];
 		a.id = auto.name + ' ' + setting.name + ' Switch';
-		a.onclick = function() {auto[setting.name]++; auto[setting.name] %= setting.switchVals.length; PlaySound('snd/tick.mp3'); Game.UpdateMenu();};
+		a.onclick = function() {
+			auto[setting.name]++;
+			auto[setting.name] %= setting.switchVals.length;
+			l(auto.name + ' ' + setting.name + ' Switch').textContent = setting.switchVals[auto[setting.name]];
+			if(setting.zeroOff) {
+				if (!auto[setting.name]) {l(auto.name + ' ' + setting.name + ' Switch').className = 'option off'}
+				else if (auto[setting.name] === 1) {l(auto.name + ' ' + setting.name + ' Switch').className = 'option'}
+			}
+			PlaySound('snd/tick.mp3');
+		};
 		frag.appendChild(a);
 		
 		var label = document.createElement('label');
@@ -681,17 +696,13 @@ AC.Display.addSetting = function(auto, setting) {
 /*******************************************************************************
  * Settings
  ******************************************************************************/
+// AC.Settings is loaded from save data as part of AC.load() and updated with the current settings whenever the game is saved.
 AC.Settings = {
 	'vCC': AC.Version.CC,	// Version Numbers.
 	'vAC': AC.Version.AC,
 	'A': [],	// Settings of the automated actions.
 	'C': ''	// Auto Cookie's favorite cookie.
 }
-
-// Randomly choose Auto Cookie's favorite cookie, this is saved for a run.
-AC.Cache.listCookies = [];
-for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {AC.Cache.listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}};
-AC.Settings.C = choose(AC.Cache.listCookies);
 
 /*******************************************************************************
  * Register the mod with Cookie Clicker
