@@ -1,10 +1,7 @@
 /*******************************************************************************
- * Welcome to AutoCookie.js, I hope you'll find this well commented. I've tried
- * to use JSDoc and commented on individual pieces of code, but you can be the
- * judge of how well I've stuck to that.
+ * Welcome to AutoCookie.js, I hope you'll find this well commented. I've tried to use JSDoc and I've commented on individual pieces of code, but you can be the judge of how well I've stuck to that.
  *
- * Below the structure of AutoCookie is declared right here, along with the
- * version information.
+ * Here the structure of Auto Cookie is declared, along with the version information.
  ******************************************************************************/
 var AC = {
 	'Autos': {},	// Automated Actions
@@ -15,7 +12,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.233',
+		'AC': '0.234',
 	}
 }
 
@@ -27,37 +24,37 @@ AC.Version.Full = AC.Version.CC + ' / ' + AC.Version.AC;
  * Functions called by Cookie Clicker as part of its Modding API.
  ******************************************************************************/
 /**
- * This function is called by Cookie Clicker to initialize Auto Cookie.
+ * This function is called by Cookie Clicker to initialize Auto Cookie. It loads the default settings if no save data is loaded by Cookie Clicker and starts the automated actions in AC.Autos. It also registers hooks with Cookie Clicker and injects code into the game.
  */
 AC.init = function() {
 	AC.Cache.loaded = false;
 	Game.Win('Third-party');
 	
 	setTimeout(function() {
-		// After waiting for the delay, check if Auto Cookie's save data has been loaded and the automated actions have been loaded, if not load the automated actions
+		// After waiting for the delay, check if Auto Cookie's save data has been loaded and the automated actions have been started, if not use the default settings and start the automated actions.
 		if (!AC.Cache.loaded) {AC.load(false)};
 		
-		// Randomly choose Auto Cookie's favorite cookie if it doesn't have one, this is saved in the settings.
+		// Randomly choose Auto Cookie's favorite cookie if it doesn't already have one, this is saved in the settings.
 		if (!AC.Settings.C) {AC.Settings.C = AC.randomCookie()};
 		
-		// Register hooks with Cookie Clicker
+		// Register hooks with Cookie Clicker.
 		Game.registerHook('ticker', AC.newsTicker);
 		
-		// Inject code into Cookie Clicker
+		// Inject code into Cookie Clicker.
 		AC.Game.UpdateMenu = Game.UpdateMenu;
 		Game.UpdateMenu = function() {
 			AC.Game.UpdateMenu();
 			AC.Display.UpdateMenu();
 		}
 		
-		// Notify the player that Auto Cookie has loaded
+		// Notify the player that Auto Cookie has loaded.
 		if (Game.prefs.popups) {Game.Popup('Auto Cookie ' + AC.Version.Full + ' loaded.')} else {Game.Notify('Auto Cookie ' + AC.Version.Full + ' loaded.', '', '', 1, 1)}
 	}, 500);
 }
 
 /**
- * This function saves Auto Cookie's current settings.
- * @returns {string} - A stringified JSON containing AC.Settings and the settings for each automated action.
+ * This function returns a stringified JSON containing AC.Settings and the settings for each automated action.
+ * @returns {string}
  */
 AC.save = function() {
 	for (var i = 0; i < AC.AutosById.length; i++) {
@@ -120,9 +117,9 @@ AC.errorNotify = function(errorMessage) {
 }
 
 /**
- * This function checks if you have an active buff from a list of buffs.
+ * This function checks if you have an active buff from a list of buffs and returns the number of matching buffs.
  * @param {(Array|string)} buffList - Either an array of strings or a string.
- * @returns {number} - Returns the number of active buffs in buffList.
+ * @returns {number}
  */
 AC.hasBuffs = function(buffList) {
 	const activeBuffs = Object.keys(Game.buffs);
@@ -133,7 +130,7 @@ AC.hasBuffs = function(buffList) {
 /**
  * This function returns an array of news tickers for the news ticker.
  * This function is registered into Cookie Clicker's "ticker" hook.
- * @returns {Array} - An array of strings for the news ticker.
+ * @returns {Array}
  */
 AC.newsTicker = function() {
 	// Things to mention
@@ -159,8 +156,8 @@ AC.newsTicker = function() {
 }
 
 /**
- * This function returns a random cookie from the all cookie upgrades in the game.
- * @returns {string} - A random lower case cookie name.
+ * This function returns a random lower case cookie from the all cookie upgrades in the game.
+ * @returns {string}
  */
 AC.randomCookie = function() {
 	var listCookies = [];
@@ -175,18 +172,21 @@ AC.Autos = {};
 AC.AutosById = [];
 
 /**
+ * The definition of a setting for an AC.Auto
  * @typedef {Object} AC.Auto~Setting
- * @property {string} name - The setting's name.
- * @property {string} desc - A short description of the setting.
- * @property {string} type - The type of setting for creating its options in the menu.
+ * @property {string} name        - The setting's name.
+ * @property {string} desc        - A short description of the setting.
+ * @property {string} type        - The type of setting for creating its options in the menu.
  * @property {number} timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to everything that has this property.
- * @property {number} value - The default value of the setting.
- * @property {string} [units] - Required if type == 'slider'. The units associated with the value.
- * @property {number} [min] - Required if type == 'slider'. The minimum value of the slider.
- * @property {number} [max] - Required if type == 'slider'. The maximum value of the slider.
- * @property {number} [step] - Required if type == 'slider'. The step size of the slider.
+ * @property {number} value       - The default value of the setting.
+ *
+ * @property {string} [units]     - Required if type == 'slider'. The units associated with the value.
+ * @property {number} [min]       - Required if type == 'slider'. The minimum value of the slider.
+ * @property {number} [max]       - Required if type == 'slider'. The maximum value of the slider.
+ * @property {number} [step]      - Required if type == 'slider'. The step size of the slider.
+ *
  * @property {Array} [switchVals] - Required if type == 'switch'. A list of strings associated with each value of the setting.
- * @property {number} [zeroOff] - Required if type == 'switch'. 1 if a value == 0 implies the setting is off and 0 otherwise.
+ * @property {number} [zeroOff]   - Required if type == 'switch'. 1 if a value == 0 implies the setting is off and 0 otherwise.
  */
 
 /**
@@ -230,10 +230,10 @@ AC.Auto = function(name, desc, timeCreated, actionFunction, setting) {
 }
 
 /**
- * This method calls the action function of the object at regular intervals.
+ * This method calls the action function of the object at regular intervals and returns true if the action function was called.
  * @param {boolean} [runImmediately=false] - If truthy (false by default), the action function will be called immediately.
- * @param {number} [interval=this.Interval] - If provided, will override this.interval for this run.
- * @returns {boolean} - Returns true if the actionFunction was called or the interval was setup, false otherwise.
+ * @param {number} [interval=this.Interval ?? 0] - If provided, will override this.interval for this run.
+ * @returns {boolean}
  */
 AC.Auto.prototype.run = function(runImmediately, interval) {
 	runImmediately ??= false;
@@ -513,14 +513,20 @@ AC.Display.UpdateMenu = function() {
 AC.Display.addOptionsMenu = function() {
 	// Create the fragment.
 	var frag = document.createDocumentFragment();
-	frag.appendChild(AC.Display.addTitle('Auto Cookie Settings', 'S'));
+	
+	var titleDiv = document.createElement('div');
+	titleDiv.className = 'title';
+	titleDiv.style.color = 'gold';
+	titleDiv.textContent = 'Auto Cookie Settings ';
+	titleDiv.appendChild(AC.Display.addCollapseButton(AC.Settings, 'S'));
+	frag.appendChild(titleDiv);
 	
 	if (AC.Settings.S) {
 		// Auto Cookie's Settings
-		var div = document.createElement('div');
-		div.className = 'listing';
-		div.textContent = 'Version: ' + AC.Version.Full;
-		frag.appendChild(div);
+		var listingDiv = document.createElement('div');
+		listingDiv.className = 'listing';
+		listingDiv.textContent = 'Version: ' + AC.Version.Full;
+		frag.appendChild(listingDiv);
 		
 		// Append the settings for every automated action.
 		for (auto in AC.Autos) frag.appendChild(AC.Display.addAuto(AC.Autos[auto]));
@@ -530,20 +536,15 @@ AC.Display.addOptionsMenu = function() {
 	var subsection = document.getElementsByClassName('subsection')[0]
 	subsection.insertBefore(frag, subsection.childNodes[subsection.childNodes.length - 1]);
 }
- 
+
 /**
- * Returns a <div class='title'> that contains the the given title.
- * @param {string} title - The title to be displayed.
- * @param {string} headerSetting - The property of AC.Settings that holds the setting for the title header collapse button.
- * @returns - An HTML <div> Element.
+ * This function returns a <span> that contains a -/+ button that when clicked changes an object's property between the 1 and 0 values.
+ * This span's style is copied from Cookie Monster to maintain consistency.
+ * @param {Object} settingObject - The object containing the setting.
+ * @param {string} setting - The property of the object that has the setting as its value.
+ * @returns {HTMLElement}
  */
-AC.Display.addTitle = function(title, headerSetting) {
-	var div = document.createElement('div');
-	div.className = 'title';
-	div.style.color = 'gold';
-	div.appendChild(document.createTextNode(title + ' '));
-	
-	// Span is taken from Cookie Monster's header inner function from CM.Disp.AddMenuPref.
+AC.Display.addCollapseButton = function(settingObject, setting) {
 	var span = document.createElement('span');
 	span.style.cursor = 'pointer';
 	span.style.display = 'inline-block';
@@ -555,17 +556,16 @@ AC.Display.addTitle = function(title, headerSetting) {
 	span.style.color = 'black';
 	span.style.fontSize = '13px';
 	span.style.verticalAlign = 'middle';
-	span.textContent = AC.Settings[headerSetting] ? '-' : '+';
-	span.onclick = function() {AC.Settings[headerSetting] = 1 - AC.Settings[headerSetting]; Game.UpdateMenu();};
-	div.appendChild(span);
+	span.textContent = settingObject[setting] ? '-' : '+';
+	span.onclick = function() {settingObject[setting]++; settingObject[setting] %= 2; Game.UpdateMenu();};
 	
-	return div;
+	return span;
 }
 
 /**
  * Returns a collapsible menu for the settings of a given automated action.
- * @param {Object} auto - An automated action.
- * @returns - An HTML fragment.
+ * @param {AC.Auto} auto - An automated action.
+ * @returns {HTMLElement}
  */
 AC.Display.addAuto = function(auto) {
 	var frag = document.createDocumentFragment();
@@ -573,24 +573,8 @@ AC.Display.addAuto = function(auto) {
 	var div = document.createElement('div');
 	div.className = 'title';
 	div.style.fontSize = '17px';
-	div.appendChild(document.createTextNode(auto.name + ' '));
-	
-	// Span is taken from Cookie Monster's header inner function from CM.Disp.AddMenuPref.
-	var span = document.createElement('span');
-	span.style.cursor = 'pointer';
-	span.style.display = 'inline-block';
-	span.style.height = '14px';
-	span.style.width = '14px';
-	span.style.borderRadius = '7px';
-	span.style.textAlign = 'center';
-	span.style.backgroundColor = '#C0C0C0';
-	span.style.color = 'black';
-	span.style.fontSize = '13px';
-	span.style.verticalAlign = 'middle';
-	span.textContent = auto.Header ? '-' : '+';
-	span.onclick = function() {auto.Header = 1 - auto.Header; Game.UpdateMenu();};
-	div.appendChild(span);
-	
+	div.textContent = auto.name + ' ';
+	div.appendChild(AC.Display.addCollapseButton(auto, 'Header'));
 	frag.appendChild(div);
 	
 	if (auto.Header) {
@@ -602,7 +586,7 @@ AC.Display.addAuto = function(auto) {
 		var listing = document.createElement('div');
 		listing.className = 'listing';
 		for (setting in auto.settings) {
-			listing.appendChild(AC.Display.addSetting(auto, auto.settings[setting]))
+			listing.appendChild(AC.Display.addSetting(auto, auto.settings[setting]));
 		}
 		frag.appendChild(listing);
 	}
@@ -611,10 +595,10 @@ AC.Display.addAuto = function(auto) {
 }
 
 /**
- * This function returns an html fragment containing the settings of a given automated action.
- * @param {Object} auto - An automated action.
- * @param {...AC.Auto~Setting} setting - A setting for an automated action.
- * @returns - An HTML fragment.
+ * This function returns an html fragment containing a given setting of a given automated action.
+ * @param {AC.Auto} auto - An automated action.
+ * @param {...AC.Auto~Setting} setting - A setting for that automated action.
+ * @returns {HTMLElement}
  */
 AC.Display.addSetting = function(auto, setting) {
 	var frag = document.createDocumentFragment();
@@ -622,6 +606,7 @@ AC.Display.addSetting = function(auto, setting) {
 	if (setting.type === 'deprecated' || setting.type === 'header') {
 		// Do Nothing.
 	} else if (setting.type === 'switch') {
+		// Add a button that when clicked cycles through this settings values.
 		var a = document.createElement('a');
 		if (!auto[setting.name] && setting.zeroOff) {
 			a.className = 'option off';
@@ -642,11 +627,13 @@ AC.Display.addSetting = function(auto, setting) {
 		};
 		frag.appendChild(a);
 		
+		// Add a label containing the setting description and append it to the fragment.
 		var label = document.createElement('label');
 		label.textContent = setting.desc;
 		frag.appendChild(label);
 		frag.appendChild(document.createElement('br'));
 	} else if (setting.type === 'slider') {
+		// Add a slider for this settings values.
 		var div = document.createElement('div');
 		div.className = 'sliderBox';
 		
@@ -686,6 +673,7 @@ AC.Display.addSetting = function(auto, setting) {
 		
 		frag.appendChild(div);
 		
+		// Add a label containing the setting description and append it to the fragment.
 		var label = document.createElement('label');
 		label.textContent = setting.desc;
 		frag.appendChild(label);
