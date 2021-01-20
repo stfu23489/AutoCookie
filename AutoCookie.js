@@ -12,7 +12,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.235',
+		'AC': '0.236',
 	}
 }
 
@@ -106,7 +106,7 @@ AC.load = function(saveStr) {
 		AC.errorNotify('Your save data could not be loaded due to an error. Your raw save data has been logged on your browser\'s javascript console.');
 	}}
 	AC.Cache.loaded = true;
-	for (var auto in AC.Autos) AC.Autos[auto].run();
+	for (var auto in AC.Autos) if (!AC.Autos[auto].deprecated) AC.Autos[auto].run();
 }
 
 /*******************************************************************************
@@ -200,10 +200,10 @@ AC.AutosById = [];
 /**
  * Represents an automated action.
  * @class
- * @param {string} name - The name of the automated action.
- * @param {string} desc - A short description of the automated action.
- * @param {number} timeCreated - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to everything that has this property.
- * @param {function} actionFunction - The function to be run at the interval.
+ * @param {string} name                 - The name of the automated action.
+ * @param {string} desc                 - A short description of the automated action.
+ * @param {number} timeCreated          - The time using the format yyyymmddhhmm (year)(month)(day)(24 hour)(minute) based on the current Central Time. This is used to organize the save data so it should be unique to everything that has this property.
+ * @param {function()} actionFunction   - The function to be run at the interval.
  * @param {...AC.Auto~Setting} settiing - A setting for the automated action.
  */
 AC.Auto = function(name, desc, timeCreated, actionFunction, setting) {
@@ -220,15 +220,15 @@ AC.Auto = function(name, desc, timeCreated, actionFunction, setting) {
 	this.Header = 1;
 	
 	// Settings
-	this.settings = {'Header': {'name': 'Header', 'desc': 'Whether this automated action\'s settings are open or closed on the menu.', 'type': 'header', 'timeCreated': timeCreated, 'value': 1}};
-	this.settingsById = [{'name': 'Header', 'desc': 'Whether this automated action\'s settings are open or closed on the menu.', 'type': 'header', 'timeCreated': timeCreated, 'value': 1}];
+	this.settings = {'Header': {'name': 'Header', 'desc': 'Whether or not this automated action\'s settings have been collapsed (0 means collapsed).', 'type': 'header', 'timeCreated': timeCreated, 'value': 1}};
+	this.settingsById = [{'name': 'Header', 'desc': 'Whether or not this automated action\'s settings have been collapsed (0 means collapsed).', 'type': 'header', 'timeCreated': timeCreated, 'value': 1}];
 	var n = arguments.length;
 	for (var i = 4; i < n; i++) {
-		if (!this[arguments[i].name] && typeof arguments[i].name !== 'undefined' && typeof arguments[i].desc !== 'undefined' && typeof arguments[i].type !== 'undefined' && typeof arguments[i].value !== 'undefined') {
+		if (!this[arguments[i].name] && typeof arguments[i].name !== 'undefined' && typeof arguments[i].desc !== 'undefined' && typeof arguments[i].type !== 'undefined' && typeof arguments[i].value !== 'undefined' && typeof arguments[i].timeCreated !== 'undefined') {
 			this[arguments[i].name] = arguments[i].value;
 			this.settingsById.push(arguments[i]);
 			this.settings[arguments[i].name] = arguments[i];
-		} else {console.error('new AC.Auto ' + this.name + ' had a bad setting. Each setting must be an object with the name, desc, type, and value properties.')}
+		} else {console.error('new AC.Auto ' + this.name + ' had a bad setting. Each setting must be an object with the name, desc, type, timeCreated, and value properties.')}
 	}
 	this.settingsById.sort(function(a, b) {return a.timeCreated - b.timeCreated})
 	
@@ -267,8 +267,7 @@ AC.Auto.prototype.run = function(runImmediately, interval) {
  * Automated Actions
  *
  * An automated action calls its action function at regular intervals to repeatedly perform game actions.
- * If any automated action is removed or a setting from the automated actions is removed, it will break save data.
- * Instead, for automated actions set its deprecated property to true. For a setting make its type 'deprecated'
+ * If any automated action is removed or a setting from the automated actions is removed, it will break save data. Instead, for automated actions set its deprecated property to true. For a setting make its type 'deprecated'.
  ******************************************************************************/
 /**
  * This automated action clicks the cookie once every interval.
@@ -541,7 +540,7 @@ AC.Display.addOptionsMenu = function() {
 	}
 	
 	// Add the fragment to the Options menu. Note that the subsection class is only used for a div inside of the menu div. That div contains all the settings.
-	var subsection = l'menu').lastChild;
+	var subsection = l('menu').lastChild;
 	subsection.insertBefore(frag, subsection.childNodes[subsection.childNodes.length - 1]);
 }
 
@@ -578,25 +577,27 @@ AC.Display.addCollapseButton = function(settingObject, setting) {
 AC.Display.addAuto = function(auto) {
 	var frag = document.createDocumentFragment();
 	
-	var div = document.createElement('div');
-	div.className = 'title';
-	div.style.fontSize = '17px';
-	div.textContent = auto.name + ' ';
-	div.appendChild(AC.Display.addCollapseButton(auto, 'Header'));
-	frag.appendChild(div);
-	
-	if (auto.Header) {
-		var desc = document.createElement('div');
-		desc.className = 'listing';
-		desc.appendChild(document.createTextNode(auto.desc));
-		frag.appendChild(desc);
+	if (!auto.deprecated) {
+		var div = document.createElement('div');
+		div.className = 'title';
+		div.style.fontSize = '17px';
+		div.textContent = auto.name + ' ';
+		div.appendChild(AC.Display.addCollapseButton(auto, 'Header'));
+		frag.appendChild(div);
 		
-		var listing = document.createElement('div');
-		listing.className = 'listing';
-		for (setting in auto.settings) {
-			listing.appendChild(AC.Display.addSetting(auto, auto.settings[setting]));
+		if (auto.Header) {
+			var desc = document.createElement('div');
+			desc.className = 'listing';
+			desc.appendChild(document.createTextNode(auto.desc));
+			frag.appendChild(desc);
+			
+			var listing = document.createElement('div');
+			listing.className = 'listing';
+			for (setting in auto.settings) {
+				listing.appendChild(AC.Display.addSetting(auto, auto.settings[setting]));
+			}
+			frag.appendChild(listing);
 		}
-		frag.appendChild(listing);
 	}
 	
 	return frag;
@@ -696,11 +697,11 @@ AC.Display.addSetting = function(auto, setting) {
  ******************************************************************************/
 // AC.Settings is loaded from save data as part of AC.load() and updated with the current settings whenever the game is saved.
 AC.Settings = {
-	'vCC': AC.Version.CC,	// Version Numbers.
-	'vAC': AC.Version.AC,
-	'A': [],	// Settings of the automated actions.
+	'vCC': AC.Version.CC,	// Cookie Clicker Version.
+	'vAC': AC.Version.AC,	// Auto Cookie Version.
+	'A': [],	// Settings of the automated actions. This is loaded from the save data when AC.load() is called and updated whenever AC.save() is called.
 	'C': '',	// Auto Cookie's favorite cookie.
-	'S': 1	// Whether Auto Cookie's settings are open or closed on the menu.
+	'S': 1	// Whether or not Auto Cookie's settings have been collapsed (0 means collapsed).
 }
 
 /*******************************************************************************
