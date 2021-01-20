@@ -12,7 +12,7 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.236',
+		'AC': '0.237',
 	}
 }
 
@@ -41,9 +41,6 @@ AC.init = function() {
 	setTimeout(function() {
 		// After waiting for the delay, check if Auto Cookie's save data has been loaded and the automated actions have been started, if not use the default settings and start the automated actions.
 		if (!AC.Cache.loaded) {AC.load(false)};
-		
-		// Randomly choose Auto Cookie's favorite cookie if it doesn't already have one, this is saved in the settings.
-		if (!AC.Settings.C) {AC.Settings.C = AC.randomCookie()};
 		
 		// Register hooks with Cookie Clicker.
 		Game.registerHook('ticker', AC.newsTicker);
@@ -79,6 +76,9 @@ AC.save = function() {
  * @param {string} saveStr - A stringified JSON containing AC.Settings and the settings for each automated action
  */
 AC.load = function(saveStr) {
+	AC.Cache.loaded = true;
+	
+	// Attempt to load the save data from saveStr
 	if (saveStr) {try {
 		saveData = JSON.parse(saveStr);
 		if (saveData.vAC > 0.231) {
@@ -105,8 +105,16 @@ AC.load = function(saveStr) {
 		console.log('Save Data: ' + saveStr);
 		AC.errorNotify('Your save data could not be loaded due to an error. Your raw save data has been logged on your browser\'s javascript console.');
 	}}
-	AC.Cache.loaded = true;
+	
+	// Start the automated actions.
 	for (var auto in AC.Autos) if (!AC.Autos[auto].deprecated) AC.Autos[auto].run();
+	
+	// Randomly choose Auto Cookie's favorite cookie if it doesn't already have one, this is saved in the settings.
+	if (!AC.Settings.C) {
+		var listCookies = ['frozen cookies', 'automatic cookies'];
+		for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}};
+		AC.Settings.C = choose(listCookies);
+	}
 }
 
 /*******************************************************************************
@@ -161,16 +169,6 @@ AC.newsTicker = function() {
 	]));
 	
 	return list
-}
-
-/**
- * This function returns a random lower case cookie from the all cookie upgrades in the game.
- * @returns {string}
- */
-AC.randomCookie = function() {
-	var listCookies = [];
-	for (var upgrade in Game.Upgrades) {if (Game.Upgrades[upgrade].pool == 'cookie') {listCookies.push(Game.Upgrades[upgrade].name.toLowerCase())}};
-	return choose(listCookies);
 }
 
 /*******************************************************************************
