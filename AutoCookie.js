@@ -12,11 +12,19 @@ var AC = {
 	'Settings': {},	// Settings
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.234',
+		'AC': '0.235',
 	}
 }
 
 AC.Version.Full = AC.Version.CC + ' / ' + AC.Version.AC;
+
+/*******************************************************************************
+ * Cookie Clicker Functions
+ *
+ * Auto Cookie depends on the following functions being declared by Cookie Clicker. They are kept here in the unlikely event that they are removed from main.js
+ ******************************************************************************/
+// function l(what) {return document.getElementById(what);}
+// function choose(arr) {return arr[Math.floor(Math.random()*arr.length)];}
 
 /*******************************************************************************
  * Cookie Clicker Modding Functions
@@ -532,13 +540,13 @@ AC.Display.addOptionsMenu = function() {
 		for (auto in AC.Autos) frag.appendChild(AC.Display.addAuto(AC.Autos[auto]));
 	}
 	
-	// Add the fragment to the Options menu.
-	var subsection = document.getElementsByClassName('subsection')[0]
+	// Add the fragment to the Options menu. Note that the subsection class is only used for a div inside of the menu div. That div contains all the settings.
+	var subsection = l'menu').lastChild;
 	subsection.insertBefore(frag, subsection.childNodes[subsection.childNodes.length - 1]);
 }
 
 /**
- * This function returns a <span> that contains a -/+ button that when clicked changes an object's property between the 1 and 0 values.
+ * This function returns a <span> that contains a -/+ button that when clicked changes an object's property between 0 and 1.
  * This span's style is copied from Cookie Monster to maintain consistency.
  * @param {Object} settingObject - The object containing the setting.
  * @param {string} setting - The property of the object that has the setting as its value.
