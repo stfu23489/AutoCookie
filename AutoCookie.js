@@ -5,7 +5,9 @@
  ******************************************************************************/
 var AC = {
 	'Autos': {},	// Automated Actions
-	'Cache': {},	// Temporary Storage
+	'Cache': {	// Temporary Storage
+		'Stats': []
+	},
 	'Data': {},	// Data
 	'Display': {},	// Display Functions
 	'Game': {},	// Copies of game functions and data
@@ -13,7 +15,7 @@ var AC = {
 	'Sim': {},	// Simulations
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.239',
+		'AC': '0.240',
 	}
 }
 
@@ -144,41 +146,6 @@ AC.newsTicker = function() {
 	]));
 	
 	return list
-}
-
-/**
- * A collection of statistics at a given time.
- * @typedef {Object} Statistics
- * @property {number} time - The time the statistic was collected at, as the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC.
- * @property {number} cookies - The cookies in bank.
- * @property {number} cookiesEarned - The cookies baked this ascension.
- * @property {number} cookiesReset - The cookies forfeited by ascending.
- * @property {number} 
- */
- 
-/**
- * This function collects game statistics and stores them in AC.Cache.Stats. This function is registered into Cookie Clicker's 'check' hook.
- */
-AC.collectStats = function() {
-	var statistic = {
-		'time': Date.now(),
-		'cookies': Game.cookies,
-		'cookiesRun': Game.cookiesEarned,
-		'cookiesAll': Game.cookiesEarned + Game.cookiesReset,
-		'cps': Game.cookiesPs,
-		'cpc': Game.computedMouseCps,
-		'clicks': Game.cookieClicks,
-		'goldenRun': Game.goldenClicksLocal,
-		'goldenAll': Game.goldenClicks
-	}
-	
-	AC.Cache.Stats.push(statistic);
-	if (AC.Cache.Stats.length > AC.Settings.L) AC.Cache.Stats.shift();
-	
-	// Return the function if there's only one element.
-	if (AC.Cache.Stats.length === 1) return;
-	
-	statistic.averageCps = (statistic.cookies - AC.Cache.Stats[0].cookies)/(statistic.time - AC.Cache.Stats[0].time);
 }
 
 /*******************************************************************************
@@ -737,7 +704,6 @@ AC.Settings = {
 	'A': [],	// Settings of the automated actions. This is loaded from the save data when AC.load() is called and updated whenever AC.save() is called.
 	'C': '',	// Auto Cookie's favorite cookie.
 	'S': 1,	// Whether or not Auto Cookie's settings have been collapsed (0 means collapsed).
-	'L': 100	// The maximum length of AC.Cache.Stats
 }
 
 /*******************************************************************************
