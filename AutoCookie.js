@@ -5,9 +5,7 @@
  ******************************************************************************/
 var AC = {
 	'Autos': {},	// Automated Actions
-	'Cache': {	// Temporary Storage
-		'Stats': []
-	},
+	'Cache': {},	// Temporary Storage
 	'Data': {},	// Data
 	'Display': {},	// Display Functions
 	'Game': {},	// Copies of game functions and data
@@ -15,7 +13,7 @@ var AC = {
 	'Sim': {},	// Simulations
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.240',
+		'AC': '0.241',
 	}
 }
 
@@ -47,7 +45,6 @@ AC.init = function() {
 		
 		// Register hooks with Cookie Clicker.
 		Game.registerHook('ticker', AC.newsTicker);
-		Game.registerHook('check', AC.collectStats);
 		
 		// Inject code into Cookie Clicker.
 		AC.Game.UpdateMenu = Game.UpdateMenu;
@@ -317,7 +314,7 @@ new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers a
 }, {
 	'name': 'Combo',
 	'desc': 'Whether or not to attempt combos with FTHOF.',
-	'type': 'switch',
+	'type': 'deprecated',
 	'timeCreated': 202101172347,
 	'value': 0,
 	'switchVals': ['Combo Off'],
