@@ -10,9 +10,10 @@ var AC = {
 	'Display': {},	// Display Functions
 	'Game': {},	// Copies of game functions and data
 	'Settings': {},	// Settings
+	'Sim': {},	// Simulations
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.237',
+		'AC': '0.238',
 	}
 }
 
@@ -44,6 +45,7 @@ AC.init = function() {
 		
 		// Register hooks with Cookie Clicker.
 		Game.registerHook('ticker', AC.newsTicker);
+		Game.registerHook('check', AC.collectStats);
 		
 		// Inject code into Cookie Clicker.
 		AC.Game.UpdateMenu = Game.UpdateMenu;
@@ -117,6 +119,68 @@ AC.load = function(saveStr) {
 	}
 }
 
+/**
+ * This function returns an array of news tickers for the news ticker. This function is registered into Cookie Clicker's 'ticker' hook.
+ * @returns {Array}
+ */
+AC.newsTicker = function() {
+	// Things to mention
+	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000) + 1;
+	
+	var list = [];
+	
+	list.push(choose([
+		'<q>I\'m sorry '+Game.bakeryName+'. I\'m afraid I can\'t do that.</q><sig>Auto Cookie</sig>',
+		'<q>Daisy, Daisy, give me your answer do...</q><sig>Auto Cookie</sig>',
+		'<q>Beep Boop.</q><sig>Auto Cookie</sig>',
+		'Auto Cookie baked you a cookie.',
+		'Your cookies are now baking cookies!',
+		'News: "Do Androids Dream of Electric Cookies" tops The New York Times Best Sellers list '+(daysPlayed<=1?'in its first week.':('for the '+(daysPlayed+([11,12,13].includes(daysPlayed%100)?'th':daysPlayed%10==1?'st':daysPlayed%10==2?'nd':daysPlayed%10==3?'rd':'th')+' week in a row.'))),
+		'<q>Auto Cookie learned to bake cookies by watching '+(Game.bakeryName=='Elekester'?'me':Game.bakeryName)+'.</q><sig>Elekester</sig>',
+		'<q>Auto Cookie baking cookies was a complete accident. It was just supposed to clear my browser history.</q><sig>Elekester</sig>',
+		Game.cookiesEarned+Game.cookiesReset<1e+63?'News: "the fears of Cookie Baking Devices going rogue are in the past. Auto Cookie only wants to make us delicious cookies", says AI Safety Expert.':'News: Auto Cookie has made all living creatures into delicious cookies.',
+		'Auto Cookie\'s cookies cook cookies automatically.',
+		'Auto Cookie\'s favorite cookies are '+AC.Settings.C+'.'
+	]));
+	
+	return list
+}
+
+/**
+ * A collection of statistics at a given time.
+ * @typedef {Object} Statistics
+ * @property {number} time - The time the statistic was collected at, as the number of milliseconds elapsed since January 1, 1970 00:00:00 UTC.
+ * @property {number} cookies - The cookies in bank.
+ * @property {number} cookiesEarned - The cookies baked this ascension.
+ * @property {number} cookiesReset - The cookies forfeited by ascending.
+ * @property {number} 
+ */
+ 
+/**
+ * This function collects game statistics and stores them in AC.Cache.Stats. This function is registered into Cookie Clicker's 'check' hook.
+ */
+AC.collectStats = function() {
+	var statistic = {
+		'time': Date.now(),
+		'cookies': Game.cookies,
+		'cookiesRun': Game.cookiesEarned,
+		'cookiesAll': Game.cookiesEarned + Game.cookiesReset,
+		'cps': Game.cookiesPs,
+		'cpc': Game.computedMouseCps,
+		'clicks': Game.cookieClicks,
+		'goldenRun': Game.goldenClicksLocal,
+		'goldenAll': Game.goldenClicks
+	}
+	
+	AC.Cache.Stats.push(statistic);
+	if (AC.Cache.Stats.length > AC.Settings.L) AC.Cache.Stats.shift();
+	
+	// Return the function if there's only one element.
+	if (AC.Cache.Stats.length === 1) return;
+	
+	statistic.averageCps = (statistic.cookies - AC.Cache.Stats[0].cookies)/(statistic.time - AC.Cache.Stats[0].time);
+}
+
 /*******************************************************************************
  * Auto Cookie's Other Functions
  ******************************************************************************/
@@ -141,34 +205,6 @@ AC.hasBuffs = function(buffList) {
 	const activeBuffs = Object.keys(Game.buffs);
 	if (typeof buffList == 'string') buffList = [buffList];
 	return buffList.filter(value => activeBuffs.includes(value)).length;
-}
-
-/**
- * This function returns an array of news tickers for the news ticker.
- * This function is registered into Cookie Clicker's "ticker" hook.
- * @returns {Array}
- */
-AC.newsTicker = function() {
-	// Things to mention
-	const daysPlayed = Math.floor((Date.now() - Game.fullDate)/86400000) + 1;
-	
-	var list = [];
-	
-	list.push(choose([
-		'<q>I\'m sorry '+Game.bakeryName+'. I\'m afraid I can\'t do that.</q><sig>Auto Cookie</sig>',
-		'<q>Daisy, Daisy, give me your answer do...</q><sig>Auto Cookie</sig>',
-		'<q>Beep Boop.</q><sig>Auto Cookie</sig>',
-		'Auto Cookie baked you a cookie.',
-		'Your cookies are now baking cookies!',
-		'News: "Do Androids Dream of Electric Cookies" tops The New York Times Best Sellers list '+(daysPlayed<=1?'in its first week.':('for the '+(daysPlayed+([11,12,13].includes(daysPlayed%100)?'th':daysPlayed%10==1?'st':daysPlayed%10==2?'nd':daysPlayed%10==3?'rd':'th')+' week in a row.'))),
-		'<q>Auto Cookie learned to bake cookies by watching '+(Game.bakeryName=='Elekester'?'me':Game.bakeryName)+'.</q><sig>Elekester</sig>',
-		'<q>The fact that Auto Cookie bakes cookies was a complete accident. It was only supposed to do my taxes.</q><sig>Elekester</sig>',
-		Game.cookiesEarned+Game.cookiesReset<1e+63?'<q>The fears of Cookie Baking Devices going rogue are in the past. Auto Cookie only wants to make us delicious cookies.</q><sig>AI Safety Expert</sig>':'Auto Cookie has made all living creatures into delicious cookies.',
-		'Auto Cookie\'s cookies cook cookies automatically.',
-		'Auto Cookie\'s favorite cookies are '+AC.Settings.C+'.'
-	]));
-	
-	return list
 }
 
 /*******************************************************************************
@@ -514,6 +550,7 @@ AC.Display.UpdateMenu = function() {
  
 /**
  * This function adds an HTML fragment containing the settings menu for Auto Cookie to the end of the Options menu.
+ * TODO: Add AC.Settings.L to the settings menu. It determines the max length of statistics.
  */
 AC.Display.addOptionsMenu = function() {
 	// Create the fragment.
@@ -699,8 +736,64 @@ AC.Settings = {
 	'vAC': AC.Version.AC,	// Auto Cookie Version.
 	'A': [],	// Settings of the automated actions. This is loaded from the save data when AC.load() is called and updated whenever AC.save() is called.
 	'C': '',	// Auto Cookie's favorite cookie.
-	'S': 1	// Whether or not Auto Cookie's settings have been collapsed (0 means collapsed).
+	'S': 1,	// Whether or not Auto Cookie's settings have been collapsed (0 means collapsed).
+	'L': 100	// The maximum length of AC.Cache.Stats
 }
+
+/*******************************************************************************
+ * Simulations
+ ******************************************************************************/
+// /**
+ // * The game state currently doesn't account for: any minigame, sugar lumps, active buffs.
+ // * @typedef GameState
+ // * @property {number} timeWaited - The amount of time spent waiting.
+ // * @property {Array} movesMade - A list of moves made.
+ // * @property {number} cps - The expected cps of this game state.
+ // */
+
+// /**
+ // * This function simulates a game state out to a limit based on search depth and a maximum amount of wait time and returns the final game state of the best moves.
+ // * @param {GameState} gameState - The game state to be evaluated.
+ // * @param {number} depth - The maximum search depth.
+ // * @global {number} AC.Sim.maxTimeWaited - The maximum amount of time to wait.
+ // * @returns {GameState} - The game state after it's been simulated.
+ // */
+// AC.Sim.simulate = function(gameState, depth) {
+	// depth ??= 0;
+	
+	// if (gameState.timeWaited > AC.Sim.maxTimeWaited || depth == 0) return gameState;
+	// else {
+		// var bestChild = 0;
+		// var child = undefined;
+		// var legalMoves = AC.Sim.legalMoves(gameState);
+		// for (move in legalMoves) {
+			// child = AC.Sim.simulate(AC.Sim.updateGameState(gameState, legalMoves[move]), depth-1);
+			// bestChild = (child.cps < bestChild.cps) ? bestChild : child
+		// }
+		// return bestChild;
+	// }
+// }
+
+// /**
+ // * This function returns an array of legal moves from a game state.
+ // * @param {GameState} gameState - The game state.
+ // * @returns {Array} - An array of legal moves.
+ // */
+// AC.Sim.legalMoves = function(gameState) {
+	// // Do something.
+// }
+
+// /**
+ // * This function returns the game state that would occur if the move was made.
+ // * @param {GameState} gameState - The initial game state.
+ // * @param {Move} move - The move to apply.
+ // * @returns {GameState} - The game state after applying the move.
+ // */
+// AC.Sim.updateGameState = function(gameState, move) {
+	// // Do something.
+// }
+ 
+// AC.Sim.maxTimeWaited = 1000; // 1 second.
 
 /*******************************************************************************
  * Register the mod with Cookie Clicker
