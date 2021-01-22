@@ -13,7 +13,7 @@ var AC = {
 	'Sim': {},	// Simulations
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.238',
+		'AC': '0.239',
 	}
 }
 
@@ -763,7 +763,7 @@ AC.Settings = {
 	
 	// if (gameState.timeWaited > AC.Sim.maxTimeWaited || depth == 0) return gameState;
 	// else {
-		// var bestChild = 0;
+		// var bestChild = {'cps':0};
 		// var child = undefined;
 		// var legalMoves = AC.Sim.legalMoves(gameState);
 		// for (move in legalMoves) {
