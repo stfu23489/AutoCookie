@@ -13,7 +13,7 @@ var AC = {
 	'Sim': {},	// Simulations
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.241',
+		'AC': '0.242',
 	}
 }
 
@@ -137,7 +137,7 @@ AC.newsTicker = function() {
 		'News: "Do Androids Dream of Electric Cookies" tops The New York Times Best Sellers list '+(daysPlayed<=1?'in its first week.':('for the '+(daysPlayed+([11,12,13].includes(daysPlayed%100)?'th':daysPlayed%10==1?'st':daysPlayed%10==2?'nd':daysPlayed%10==3?'rd':'th')+' week in a row.'))),
 		'<q>Auto Cookie learned to bake cookies by watching '+(Game.bakeryName=='Elekester'?'me':Game.bakeryName)+'.</q><sig>Elekester</sig>',
 		'<q>Auto Cookie baking cookies was a complete accident. It was just supposed to clear my browser history.</q><sig>Elekester</sig>',
-		Game.cookiesEarned+Game.cookiesReset<1e+63?'News: "the fears of Cookie Baking Devices going rogue are in the past. Auto Cookie only wants to make us delicious cookies", says AI Safety Expert.':'News: Auto Cookie has made all living creatures into delicious cookies.',
+		Game.cookiesEarned+Game.cookiesReset<1e+63?'News: "The fears of Cookie Baking Devices going rogue are in the past. Auto Cookie only wants to make us delicious cookies", says AI Safety Expert.':'News: Auto Cookie has made all living creatures into delicious cookies.',
 		'Auto Cookie\'s cookies cook cookies automatically.',
 		'Auto Cookie\'s favorite cookies are '+AC.Settings.C+'.'
 	]));
@@ -317,7 +317,7 @@ new AC.Auto('Golden Cookie Clicker', 'Clicks golden cookies and other shimmers a
 	'type': 'deprecated',
 	'timeCreated': 202101172347,
 	'value': 0,
-	'switchVals': ['Combo Off'],
+	'switchVals': ['Combo Off', 'Dualcast FTHOF'],
 	'zeroOff': true
 });
 
@@ -375,7 +375,6 @@ new AC.Auto('Elder Pledge Buyer', 'Buys the Elder pledge toggle when it is avail
  */
 new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 	var wrinklers = Game.wrinklers.filter(wrinkler => wrinkler.sucked != 0);
-	console.log(wrinklers);
 	if (wrinklers.length) {
 		sortOrder = 2*this['Preserve'] - 1
 		wrinklers.sort(function(a, b) {return sortOrder*(b.sucked - a.sucked)});
@@ -475,22 +474,7 @@ AC.AutosById.sort(function(a, b) {return a.timeCreated - b.timeCreated});
 /*******************************************************************************
  * Data
  ******************************************************************************/
-AC.Data.mouseUpgrades = [
-	'Plastic mouse',
-	'Iron mouse',
-	'Titanium mouse',
-	'Adamantium mouse',
-	'Unobtainium mouse',
-	'Eludium mouse',
-	'Wishalloy mouse',
-	'Fantasteel mouse',
-	'Nevercrack mouse',
-	'Armythril mouse',
-	'Technobsidian mouse',
-	'Plasmarble mouse',
-	'Miraculite mouse',
-	'Fortune #104'
-];
+AC.Data.mouseUpgrades = ['Plastic mouse', 'Iron mouse', 'Titanium mouse', 'Adamantium mouse', 'Unobtainium mouse', 'Eludium mouse', 'Wishalloy mouse', 'Fantasteel mouse', 'Nevercrack mouse', 'Armythril mouse', 'Technobsidian mouse', 'Plasmarble mouse', 'Miraculite mouse', 'Fortune #104'];
 
 // Doesn't include 'Sugar frenzy' (due to the minor benefit).
 AC.Data.cpsBuffs = ["High-five", "Congregation", "Luxuriant harvest", "Ore vein", "Oiled-up", "Juicy profits", "Fervent adoration", "Manabloom", "Delicious lifeforms", "Breakthrough", "Righteous cataclysm", "Golden ages", "Extra cycles", "Solar flare", "Winning streak", "Macrocosm", "Refactoring", "Cosmic nursery", "Frenzy", "Elder Frenzy", "Dragon Harvest"];
