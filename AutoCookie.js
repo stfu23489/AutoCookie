@@ -15,7 +15,7 @@ var AC = {
 	'Sim': {},	// Simulations
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.243',
+		'AC': '0.244',
 	}
 }
 
@@ -566,6 +566,7 @@ AC.Display.addAuto = function(auto) {
 		var div = document.createElement('div');
 		div.className = 'title';
 		div.style.fontSize = '17px';
+		div.style.opacity = '0.7';
 		div.textContent = auto.name + ' ';
 		div.appendChild(AC.Display.addCollapseButton(auto, 'Header'));
 		frag.appendChild(div);
