@@ -2,6 +2,8 @@
  * Welcome to AutoCookie.js, I hope you'll find this well commented. I've tried to use JSDoc and I've commented on individual pieces of code, but you can be the judge of how well I've stuck to that.
  *
  * Here the structure of Auto Cookie is declared, along with the version information.
+ *
+ * TODO: Implement combo automated action. Cast FTHOF, sell Towers. Wait for the next logic tick in the minigame to be called. Cast FTHOF again. You should be able to add a mod hook for this, but it wasn't quite working for me. Maybe you need to declare a global function. If you need to hard wire it, logic ticks happen faster than 34 ms.
  ******************************************************************************/
 var AC = {
 	'Autos': {},	// Automated Actions
@@ -13,7 +15,7 @@ var AC = {
 	'Sim': {},	// Simulations
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.242',
+		'AC': '0.243',
 	}
 }
 
@@ -421,7 +423,7 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 		AC.Data.mouseUpgrades.forEach((function(upgrade) {if (Game.Has(upgrade)) {this.cache.condition++}}).bind(this));
 		try {this.cache.condition *= Game.hasGod('ruin')} catch {this.cache.condition = 0}
 	}
-	if (this.cache.condition && Game.buyMode != -1) {
+	if (this.cache.condition && Game.buyMode != -1 && !Game.hasBuff('Devastation')) {
 		var numObjects = [];
 		for (var i = 0; i <= this['Sell up to']; i++) {
 			numObjects[i] = Game.ObjectsById[i].amount;
