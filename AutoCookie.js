@@ -15,7 +15,7 @@ var AC = {
 	'Sim': {},	// Simulations
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.244',
+		'AC': '0.245',
 	}
 }
 
@@ -544,7 +544,7 @@ AC.Display.addCollapseButton = function(settingObject, setting) {
 	span.style.width = '14px';
 	span.style.borderRadius = '7px';
 	span.style.textAlign = 'center';
-	span.style.backgroundColor = '#C0C0C0';
+	span.style.backgroundColor = 'rgb(192, 192, 192)';
 	span.style.color = 'black';
 	span.style.fontSize = '13px';
 	span.style.verticalAlign = 'middle';
