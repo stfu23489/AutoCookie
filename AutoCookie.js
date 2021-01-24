@@ -15,7 +15,7 @@ var AC = {
 	'Sim': {},	// Simulations
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.245',
+		'AC': '0.246',
 	}
 }
 
@@ -163,14 +163,17 @@ AC.errorNotify = function(errorMessage) {
 }
 
 /**
- * This function checks if you have an active buff from a list of buffs and returns the number of matching buffs.
+ * This function checks if you have an active buff from a list of buffs and returns an array of the matching buffs, similar to Game.hasBuff().
  * @param {(Array|string)} buffList - Either an array of strings or a string.
- * @returns {number}
+ * @returns {Array}
  */
 AC.hasBuffs = function(buffList) {
-	const activeBuffs = Object.keys(Game.buffs);
 	if (typeof buffList == 'string') buffList = [buffList];
-	return buffList.filter(value => activeBuffs.includes(value)).length;
+	var buffs = [];
+	for (var i = 0; i < buffList.length; i++) {
+		if (Game.hasBuff(buffList[i])) buffs.push(Game.hasBuff(buffList[i]));
+	}
+	return buffs;
 }
 
 /*******************************************************************************
