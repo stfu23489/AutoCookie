@@ -15,7 +15,7 @@ var AC = {
 	'Sim': {},	// Simulations
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.246',
+		'AC': '0.247',
 	}
 }
 
@@ -597,6 +597,8 @@ AC.Display.addAuto = function(auto) {
  * @param {AC.Auto} auto - An automated action.
  * @param {...AC.Auto~Setting} setting - A setting for that automated action.
  * @returns {HTMLElement}
+ *
+ * TODO: break event listeners into their own functions to free memory.
  */
 AC.Display.addSetting = function(auto, setting) {
 	var frag = document.createDocumentFragment();
@@ -616,13 +618,13 @@ AC.Display.addSetting = function(auto, setting) {
 		a.onclick = function() {
 			auto[setting.name]++;
 			auto[setting.name] %= setting.switchVals.length;
-			l(auto.name + ' ' + setting.name + ' Switch').textContent = setting.switchVals[auto[setting.name]];
+			a.textContent = setting.switchVals[auto[setting.name]];
 			if(setting.zeroOff) {
-				if (!auto[setting.name]) {l(auto.name + ' ' + setting.name + ' Switch').className = 'option off'}
-				else if (auto[setting.name] === 1) {l(auto.name + ' ' + setting.name + ' Switch').className = 'option'}
+				if (!auto[setting.name]) {a.className = 'option off'}
+				else if (auto[setting.name] === 1) {a.className = 'option'}
 			}
 			PlaySound('snd/tick.mp3');
-		};
+		}
 		frag.appendChild(a);
 		
 		// Add a label containing the setting description and append it to the fragment.
@@ -646,11 +648,6 @@ AC.Display.addSetting = function(auto, setting) {
 		sliderValue.id = auto.name + ' ' + setting.name + ' Slider Value';
 		div.appendChild(sliderValue);
 		
-		var onthing = function() {
-			auto[setting.name] = 1*l(auto.name + ' ' + setting.name + ' Slider').value;
-			l(auto.name + ' ' + setting.name + ' Slider Value').textContent = auto[setting.name] + ' ' + setting.units;
-		}
-		
 		var slider = document.createElement('input');
 		slider.className = 'slider';
 		slider.style.clear = 'both';
@@ -659,8 +656,10 @@ AC.Display.addSetting = function(auto, setting) {
 		slider.max = setting.max;
 		slider.step = setting.step;
 		slider.value = auto[setting.name]
-		slider.onchange = onthing;
-		slider.oninput = onthing;
+		slider.oninput = function() {
+			auto[setting.name] = 1*slider.value;
+			l(auto.name + ' ' + setting.name + ' Slider Value').textContent = auto[setting.name] + ' ' + setting.units;
+		}
 		if (setting.name === 'Interval') {
 			slider.onmouseup = function() {auto.run(); PlaySound('snd/tick.mp3')};
 		} else {
