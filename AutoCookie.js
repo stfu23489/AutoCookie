@@ -618,10 +618,10 @@ AC.Display.addSetting = function(auto, setting) {
 		a.onclick = function() {
 			auto[setting.name]++;
 			auto[setting.name] %= setting.switchVals.length;
-			a.textContent = setting.switchVals[auto[setting.name]];
+			l(auto.name + ' ' + setting.name + ' Switch').textContent = setting.switchVals[auto[setting.name]];
 			if(setting.zeroOff) {
-				if (!auto[setting.name]) {a.className = 'option off'}
-				else if (auto[setting.name] === 1) {a.className = 'option'}
+				if (!auto[setting.name]) {l(auto.name + ' ' + setting.name + ' Switch').className = 'option off'}
+				else if (auto[setting.name] === 1) {l(auto.name + ' ' + setting.name + ' Switch').className = 'option'}
 			}
 			PlaySound('snd/tick.mp3');
 		}
@@ -657,7 +657,7 @@ AC.Display.addSetting = function(auto, setting) {
 		slider.step = setting.step;
 		slider.value = auto[setting.name]
 		slider.oninput = function() {
-			auto[setting.name] = 1*slider.value;
+			auto[setting.name] = 1*l(auto.name + ' ' + setting.name + ' Slider Value').value;
 			l(auto.name + ' ' + setting.name + ' Slider Value').textContent = auto[setting.name] + ' ' + setting.units;
 		}
 		if (setting.name === 'Interval') {
