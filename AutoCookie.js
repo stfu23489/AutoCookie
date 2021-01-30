@@ -15,7 +15,7 @@ var AC = {
 	'Sim': {},	// Simulations
 	'Version': {	// Version Information
 		'CC': '2.031',
-		'AC': '0.247',
+		'AC': '0.249',
 	}
 }
 
@@ -657,7 +657,7 @@ AC.Display.addSetting = function(auto, setting) {
 		slider.step = setting.step;
 		slider.value = auto[setting.name]
 		slider.oninput = function() {
-			auto[setting.name] = 1*l(auto.name + ' ' + setting.name + ' Slider Value').value;
+			auto[setting.name] = 1*l(auto.name + ' ' + setting.name + ' Slider').value;
 			l(auto.name + ' ' + setting.name + ' Slider Value').textContent = auto[setting.name] + ' ' + setting.units;
 		}
 		if (setting.name === 'Interval') {
