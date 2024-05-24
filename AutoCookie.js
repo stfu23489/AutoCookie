@@ -420,7 +420,7 @@ new AC.Auto('Wrinkler Popper', 'Pops wrinklers.', 202101172060, function() {
 /**
  * This automated action triggers Godzamok's Devastation buff by selling and buying back buildings repeatedly.
  */
-new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling and buying back Factory repeatedly.', 202101172100, function() {
+new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling and buying back cursors repeatedly.', 202101172100, function() {
 	if (typeof this.cache.condition === 'undefined' || !this.cache.condition) {
 		this.cache.condition = 0;
 		AC.Data.mouseUpgrades.forEach((function(upgrade) {if (Game.Has(upgrade)) {this.cache.condition++}}).bind(this));
@@ -432,10 +432,10 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 			numObjects[i] = Game.ObjectsById[i].amount;
 			Game.ObjectsById[i].sell(numObjects[i]);
 		}
-		Game.Objects.Factory.sell(numObjects);
-		for (var i = 0; i < this['Sell Extra Factory']; i++) {
-			Game.Objects.Factory.buy(100);
-			Game.Objects.Factory.sell(100);
+		Game.Objects.Cursor.sell(numObjects);
+		for (var i = 0; i < this['Sell Extra Cursors']; i++) {
+			Game.Objects.Cursor.buy(100);
+			Game.Objects.Cursor.sell(100);
 		}
 		for (var i = 0; i <= this['Sell up to']; i++) {
 			Game.ObjectsById[i].buy(numObjects[i]);
@@ -452,8 +452,8 @@ new AC.Auto('Godzamok Loop', 'Triggers Godzamok\'s Devastation buff by selling a
 	'max': 15000,
 	'step': 150
 }, {
-	'name': 'Sell Extra Factory',
-	'desc': 'How many extra Factory to buy and sell back, in groups of 100. This will lag the game.',
+	'name': 'Sell Extra Cursors',
+	'desc': 'How many extra cursors to buy and sell back, in groups of 100. This will lag the game.',
 	'type': 'slider',
 	'timeCreated': 202101172110,
 	'value': 0,
